@@ -9,6 +9,7 @@ import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/widgets/rounded_container.dart';
+import '../../../core/functions/is_dark_mode.dart';
 import '../../document/views/groups_page.dart';
 import '../../document/views/upload_documents_page.dart';
 import '../../document/widgets/document_card.dart';
@@ -276,7 +277,12 @@ class _SessionDetailsPageState extends State<SessionDetailsPage> {
                             ),
                           );
                         },
-                        child: Icon(Iconsax.add, color: AppColors.charcoalGrey),
+                        child: Icon(
+                          Iconsax.add,
+                          color: isDarkMode(context)
+                              ? AppColors.pureWhite
+                              : AppColors.charcoalGrey,
+                        ),
                       ),
                     ],
                   ),

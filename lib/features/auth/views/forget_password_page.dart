@@ -112,14 +112,15 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
           AppLocalizations.of(context)!.forgetPasswordTitle,
           style: Theme.of(
             context,
-          ).textTheme.titleLarge!.copyWith(color: AppColors.pureWhite),
+          ).textTheme.displayLarge!.copyWith(color: AppColors.pureWhite),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 10),
         Text(
           AppLocalizations.of(context)!.enterEmailOrPhoneForReset,
           style: Theme.of(
             context,
-          ).textTheme.bodySmall!.copyWith(color: AppColors.pureWhite),
+          ).textTheme.titleLarge!.copyWith(color: AppColors.pureWhite),
           textAlign: TextAlign.center,
         ),
       ],

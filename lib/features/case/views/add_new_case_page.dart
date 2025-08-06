@@ -59,7 +59,7 @@ class _AddNewCasePageState extends State<AddNewCasePage> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme:  ColorScheme.light(
+            colorScheme: ColorScheme.light(
               primary: Theme.of(context).primaryColor,
               onPrimary: AppColors.pureWhite,
               onSurface: AppColors.black,

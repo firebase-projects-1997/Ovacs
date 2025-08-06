@@ -3,6 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import '../../../common/widgets/rounded_container.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/functions/is_dark_mode.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../main.dart';
 import '../providers/documents_provider.dart';
@@ -86,7 +87,12 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
                         ),
                       );
                     },
-                    child: Icon(Iconsax.add, color: AppColors.charcoalGrey),
+                    child: Icon(
+                      Iconsax.add,
+                      color: isDarkMode(context)
+                          ? AppColors.pureWhite
+                          : AppColors.charcoalGrey,
+                    ),
                   ),
                 ],
               ),

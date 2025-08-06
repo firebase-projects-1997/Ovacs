@@ -6,6 +6,7 @@ import '../../../common/widgets/rounded_container.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 
+import '../../../core/functions/is_dark_mode.dart';
 import '../../../data/models/case_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../provider/cases_provider.dart';
@@ -160,7 +161,7 @@ class _CasesPageState extends State<CasesPage> {
                 );
               },
 
-              child: Icon(Iconsax.add, color: AppColors.charcoalGrey),
+              child: Icon(Iconsax.add, color: isDarkMode(context) ? AppColors.pureWhite :AppColors.charcoalGrey),
             ),
           ],
         ),

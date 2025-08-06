@@ -129,7 +129,8 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
           AppLocalizations.of(context)!.createNewPassword,
           style: Theme.of(
             context,
-          ).textTheme.titleLarge!.copyWith(color: AppColors.pureWhite),
+          ).textTheme.displayLarge!.copyWith(color: AppColors.pureWhite),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 10),
         Text(
@@ -138,7 +139,7 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
           )!.setYourNewPasswordSoYouCanLoginAndAccessOvacs,
           style: Theme.of(
             context,
-          ).textTheme.bodySmall!.copyWith(color: AppColors.pureWhite),
+          ).textTheme.titleLarge!.copyWith(color: AppColors.pureWhite),
           textAlign: TextAlign.center,
         ),
       ],

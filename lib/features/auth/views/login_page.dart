@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/core/constants/app_colors.dart';
+import 'package:new_ovacs/core/functions/is_dark_mode.dart';
 import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 import 'package:new_ovacs/core/constants/app_images.dart';
@@ -63,13 +64,10 @@ class _LoginPageState extends State<LoginPage> {
                       _buildHeaderText(context),
 
                       RoundedContainer(
-                        backgroundColor: AppColors.pureWhite.withValues(
-                          alpha: .3,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 30,
-                        ),
+                        backgroundColor: isDarkMode(context)
+                            ? AppColors.black.withValues(alpha: .3)
+                            : AppColors.pureWhite.withValues(alpha: .3),
+                        blur: true,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           spacing: 10,
@@ -157,18 +155,22 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildHeaderText(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 15,
       children: [
         Text(
           AppLocalizations.of(context)!.welcomeBack,
           style: Theme.of(
             context,
-          ).textTheme.titleLarge!.copyWith(color: AppColors.pureWhite),
+          ).textTheme.displayLarge!.copyWith(color: AppColors.pureWhite),
+          textAlign: TextAlign.center,
         ),
         Text(
           AppLocalizations.of(context)!.enterYourLogId,
           style: Theme.of(
             context,
-          ).textTheme.bodySmall!.copyWith(color: AppColors.pureWhite),
+          ).textTheme.headlineSmall!.copyWith(color: AppColors.pureWhite),
+          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -205,7 +207,11 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordC.text.trim(),
       );
       if (success && context.mounted) {
-        showAppSnackBar(context, AppLocalizations.of(context)!.welcomeBackMessage, type: SnackBarType.success);
+        showAppSnackBar(
+          context,
+          AppLocalizations.of(context)!.welcomeBackMessage,
+          type: SnackBarType.success,
+        );
         navigatorKey.currentState!.pushReplacementNamed(
           AppRoutes.navigationMenuRoute,
         );

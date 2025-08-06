@@ -150,7 +150,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
           AppLocalizations.of(context)!.otpVerification,
           style: Theme.of(
             context,
-          ).textTheme.titleLarge!.copyWith(color: AppColors.pureWhite),
+          ).textTheme.displayLarge!.copyWith(color: AppColors.pureWhite),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 15),
@@ -158,7 +158,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
           AppLocalizations.of(context)!.pleaseEnterTheCodeWeJustSentTo,
           style: Theme.of(
             context,
-          ).textTheme.bodyLarge!.copyWith(color: AppColors.pureWhite),
+          ).textTheme.headlineSmall!.copyWith(color: AppColors.pureWhite),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
@@ -166,7 +166,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
           widget.email,
           style: Theme.of(
             context,
-          ).textTheme.bodyMedium!.copyWith(color: AppColors.pureWhite),
+          ).textTheme.bodyMedium!.copyWith(color: AppColors.black),
           textAlign: TextAlign.center,
         ),
       ],

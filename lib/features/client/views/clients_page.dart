@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../common/widgets/rounded_container.dart';
+import '../../../core/functions/is_dark_mode.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../main.dart';
 import '../providers/clients_provider.dart';
@@ -162,7 +163,9 @@ class _ClientsPageState extends State<ClientsPage> {
               },
               child: Icon(
                 Iconsax.document_upload,
-                color: AppColors.charcoalGrey,
+                color: isDarkMode(context)
+                    ? AppColors.pureWhite
+                    : AppColors.charcoalGrey,
               ),
             ),
           ],
@@ -180,7 +183,12 @@ class _ClientsPageState extends State<ClientsPage> {
               onTap: () => navigatorKey.currentState!.pushNamed(
                 AppRoutes.addClientRoute,
               ),
-              child: Icon(Iconsax.add, color: AppColors.charcoalGrey),
+              child: Icon(
+                Iconsax.add,
+                color: isDarkMode(context)
+                    ? AppColors.pureWhite
+                    : AppColors.charcoalGrey,
+              ),
             ),
           ],
         ),

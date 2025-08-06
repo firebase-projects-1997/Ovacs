@@ -10,6 +10,7 @@ import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/widgets/rounded_container.dart';
+import '../../../core/functions/is_dark_mode.dart';
 import '../../client/views/client_info_page.dart';
 import '../../session/providers/sessions_provider.dart';
 import '../../session/views/session_details_page.dart';
@@ -262,7 +263,12 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
                           );
                         },
 
-                        child: Icon(Iconsax.add, color: AppColors.charcoalGrey),
+                        child: Icon(
+                          Iconsax.add,
+                          color: isDarkMode(context)
+                              ? AppColors.pureWhite
+                              : AppColors.charcoalGrey,
+                        ),
                       ),
                     ],
                   ),

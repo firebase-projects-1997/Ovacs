@@ -144,10 +144,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.register,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    style: Theme.of(context).textTheme.displayLarge!.copyWith(
                       color: AppColors.pureWhite,
                     ),
+                    textAlign: TextAlign.center,
                   ),
 
                   // User name
