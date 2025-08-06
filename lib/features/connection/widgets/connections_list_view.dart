@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:new_ovacs/core/constants/app_sizes.dart';
-import '../../../data/models/account_model.dart';
+import '../../../data/models/connection_request_model.dart';
 import 'account_card.dart';
 
 class ConnectionsListView extends StatelessWidget {
-  final List<AccountModel> connections;
+  final List<ConnectionRequestModel> connections;
 
   const ConnectionsListView({super.key, required this.connections});
 

@@ -236,22 +236,22 @@ class ProfileInfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$label: ',
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium!.copyWith(color: AppColors.mediumGrey),
-          ),
-          Expanded(
-            child: Text(
-              value ?? '—',
+      child: Text.rich(
+        overflow: TextOverflow.ellipsis,
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '$label: ',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium!.copyWith(color: AppColors.mediumGrey),
+            ),
+            TextSpan(
+              text: value ?? '-',
               style: Theme.of(context).textTheme.bodySmall,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

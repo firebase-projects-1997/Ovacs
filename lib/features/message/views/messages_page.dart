@@ -6,9 +6,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:new_ovacs/common/widgets/rounded_container.dart';
 import 'package:new_ovacs/core/constants/app_colors.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
+import 'package:new_ovacs/features/auth/providers/auth_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -71,6 +71,19 @@ class _MessagesPageState extends State<MessagesPage> {
     _audioPlayer.positionStream
         .throttleTime(const Duration(milliseconds: 100))
         .listen((pos) => _positionNotifier.value = pos);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.minScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   @override
@@ -409,35 +422,48 @@ class _MessagesPageState extends State<MessagesPage> {
   }
 
   Widget _buildMessageItem(MessageModel message) {
+    final provider = context.read<AuthProvider>();
+    final isMe = provider.user?.account?.id == message.account;
     final isVoice = message.type == 'voice';
 
-    return RoundedContainer(
-      backgroundColor: AppColors.mediumGrey.withOpacity(0.1),
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            message.senderName,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 8),
-          if (isVoice)
-            _buildVoicePlayer(message)
-          else
-            Text(
-              message.content ?? '',
-              style: Theme.of(context).textTheme.bodySmall,
+    return Align(
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 300),
+        decoration: BoxDecoration(
+          color: isMe
+              ? AppColors.primaryBlue.withOpacity(0.1)
+              : Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.all(12),
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!isMe)
+              Text(
+                message.senderName,
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+            const SizedBox(height: 4),
+            if (isVoice)
+              _buildVoicePlayer(message)
+            else
+              Text(
+                message.content ?? '',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            const SizedBox(height: 4),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                _formatTime(message.createdAt),
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
             ),
-          const SizedBox(height: 6),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Text(
-              _formatTime(message.createdAt),
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

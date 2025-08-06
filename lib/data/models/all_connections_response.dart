@@ -1,10 +1,10 @@
-import 'account_model.dart';
+import 'connection_request_model.dart';
 
 class AllConnectionsResponse {
   final int totalFollowing;
   final int totalFollowers;
-  final List<AccountModel> following;
-  final List<AccountModel> followers;
+  final List<ConnectionRequestModel> following;
+  final List<ConnectionRequestModel> followers;
 
   AllConnectionsResponse({
     required this.totalFollowing,
@@ -18,11 +18,11 @@ class AllConnectionsResponse {
       totalFollowing: json['total_following'] ?? 0,
       totalFollowers: json['total_followers'] ?? 0,
       following: (json['following'] as List<dynamic>?)
-              ?.map((e) => AccountModel.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => ConnectionRequestModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       followers: (json['followers'] as List<dynamic>?)
-              ?.map((e) => AccountModel.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => ConnectionRequestModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
     );

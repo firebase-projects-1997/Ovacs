@@ -81,6 +81,7 @@ class LabeledTextField extends StatelessWidget {
           enableSuggestions: enableSuggestions,
           autocorrect: autocorrect,
           inputFormatters: inputFormatters,
+          style: Theme.of(context).textTheme.bodySmall,
           decoration: InputDecoration(
             hintText: hint,
             filled: filled,

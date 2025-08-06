@@ -34,12 +34,9 @@ class _NavigationMenuState extends State<NavigationMenu> {
         'icon': Iconsax.document_text,
         'name': AppLocalizations.of(context)!.cases,
       },
+      {'icon': Iconsax.link, 'name': AppLocalizations.of(context)!.connections},
       {
         'icon': Iconsax.profile_2user,
-        'name': AppLocalizations.of(context)!.connections,
-      },
-      {
-        'icon': Iconsax.user_square,
         'name': AppLocalizations.of(context)!.clients,
       },
       {'icon': Iconsax.setting, 'name': AppLocalizations.of(context)!.settings},
@@ -97,7 +94,6 @@ class _NavigationMenuState extends State<NavigationMenu> {
                   children: [
                     const SizedBox(height: 12),
 
-                    // AnimatedScale للأيقونة
                     AnimatedScale(
                       scale: isSelected ? 1.3 : 1.0,
                       duration: const Duration(milliseconds: 300),
@@ -107,7 +103,6 @@ class _NavigationMenuState extends State<NavigationMenu> {
 
                     const SizedBox(height: 10),
 
-                    // AnimatedDefaultTextStyle للنص
                     AnimatedDefaultTextStyle(
                       style: theme.textTheme.bodySmall!.copyWith(
                         color: textColor,

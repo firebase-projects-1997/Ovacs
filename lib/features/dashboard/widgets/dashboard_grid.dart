@@ -71,9 +71,9 @@ class _DashboardCard extends StatelessWidget {
 
   static List<Color> bgColors = [
     AppColors.primaryBlue,
+    AppColors.tealGreen,
     AppColors.brightSkyBlue,
     AppColors.gold,
-    Color(0xFF9013FE),
   ];
 
   @override

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/common/widgets/rounded_container.dart';
-import '../../../data/models/account_model.dart';
+import '../../../data/models/connection_request_model.dart';
 import '../../../l10n/app_localizations.dart';
 
 class AccountCard extends StatelessWidget {
-  final AccountModel account;
+  final ConnectionRequestModel account;
 
   const AccountCard({super.key, required this.account});
 
@@ -14,12 +13,8 @@ class AccountCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return RoundedContainer(
       child: ListTile(
-        title: Text(account.name ?? l10n.noName),
+        title: Text(account.receiverName),
         subtitle: Text(l10n.idWithValue(account.id.toString())),
-        trailing: Icon(
-          account.isActive == true ? Iconsax.tick_circle : Iconsax.close_circle,
-          color: account.isActive == true ? Colors.green : Colors.red,
-        ),
       ),
     );
   }

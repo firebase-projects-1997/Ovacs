@@ -63,9 +63,11 @@ class _ClientDetailsPageState extends State<ClientDetailsPage> {
                 RoundedContainer(
                   child: Column(
                     children: [
-                      Text(
-                        client.name,
-                        style: theme.textTheme.titleLarge?.copyWith(),
+                      Text.rich(
+                        TextSpan(
+                          text: client.name,
+                          style: theme.textTheme.titleLarge?.copyWith(),
+                        ),
                       ),
                       Divider(),
                       _InfoRow(
@@ -144,16 +146,20 @@ class _InfoRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.mediumGrey,
+                Text.rich(
+                  TextSpan(
+                    text: label,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppColors.mediumGrey,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  value.isNotEmpty ? value : '-',
-                  style: theme.textTheme.bodyLarge?.copyWith(),
+                Text.rich(
+                  TextSpan(
+                    text: value.isNotEmpty ? value : '-',
+                    style: theme.textTheme.bodyLarge?.copyWith(),
+                  ),
                 ),
               ],
             ),

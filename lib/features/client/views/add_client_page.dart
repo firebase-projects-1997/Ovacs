@@ -84,13 +84,6 @@ class _AddNewClientPageState extends State<AddNewClientPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.addNewClient,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 12),
-
                       LabeledTextField(
                         filled: true,
                         fillColor: AppColors.mediumGrey.withValues(alpha: .1),
@@ -213,24 +206,35 @@ class _PhoneInputRow extends StatelessWidget {
                     final countries = countryProvider.countries;
                     return DropdownButtonFormField<CountryModel>(
                       isExpanded: true,
+                      value: selectedCountry,
                       decoration: InputDecoration(
                         fillColor: AppColors.mediumGrey.withValues(alpha: .1),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                        ),
                       ),
-                      value: selectedCountry,
-                      hint: Text(AppLocalizations.of(context)!.code),
+                      hint: Text(
+                        '+',
+                        style: Theme.of(context).textTheme.bodySmall!,
+                      ),
                       items: countries
                           .map(
                             (country) => DropdownMenuItem(
                               value: country,
-                              child: Text(country.phoneCode ?? ''),
+                              child: Text(
+                                country.phoneCode ?? '',
+                                style: Theme.of(context).textTheme.bodySmall!,
+                              ),
                             ),
                           )
                           .toList(),
                       onChanged: (newValue) {
                         onCountryChanged(newValue);
+                      },
+                      validator: (value) {
+                        if (value == null) {
+                          return AppLocalizations.of(
+                            context,
+                          )!.pleaseSelectACountryCode;
+                        }
+                        return null;
                       },
                     );
                   }

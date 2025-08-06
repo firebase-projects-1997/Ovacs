@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:new_ovacs/data/models/account_model.dart';
 import '../../../core/error/failure.dart';
+import '../../../data/models/connection_request_model.dart';
 import '../../../data/repositories/connection_repository.dart';
 
 class ConnectionProvider with ChangeNotifier {
   final ConnectionsRepository _repository;
   ConnectionProvider(this._repository);
 
-  List<AccountModel> following = [];
+  List<ConnectionRequestModel> following = [];
   int totalFollowing = 0;
-  List<AccountModel> followers = [];
+  List<ConnectionRequestModel> followers = [];
   int totalFollowers = 0;
   bool isLoading = false;
   Failure? failure;

@@ -15,68 +15,102 @@ class SessionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return RoundedContainer(
       onTap: onTap,
-
       child: Column(
         spacing: 10,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _InfoRow(label: AppLocalizations.of(context)!.sessionName, value: sessionModel.title ?? ''),
+          Text.rich(
+            overflow: TextOverflow.ellipsis,
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: AppLocalizations.of(context)!.sessionName,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium!.copyWith(color: AppColors.mediumGrey),
+                ),
+                TextSpan(
+                  text: sessionModel.title ?? '',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
 
-          _InfoRow(
-            label: AppLocalizations.of(context)!.description,
-            value: sessionModel.description ?? '',
+          Text.rich(
+            overflow: TextOverflow.ellipsis,
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: AppLocalizations.of(context)!.description,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium!.copyWith(color: AppColors.mediumGrey),
+                ),
+                TextSpan(
+                  text: sessionModel.description ?? '',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
           ),
 
           Row(
             children: [
               Expanded(
-                child: _InfoRow(
-                  label: AppLocalizations.of(context)!.time,
-                  value: sessionModel.time ?? AppLocalizations.of(context)!.noTimeAdded,
+                child: Text.rich(
+                  overflow: TextOverflow.ellipsis,
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: AppLocalizations.of(context)!.time,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: AppColors.mediumGrey,
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                            sessionModel.date
+                                ?.toIso8601String()
+                                .split('T')
+                                .last
+                                .split('.000Z')
+                                .first ??
+                            AppLocalizations.of(context)!.noTimeAdded,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Expanded(
-                child: _InfoRow(
-                  label: AppLocalizations.of(context)!.date,
-                  value:
-                      sessionModel.date?.toIso8601String().split('T').first ??
-                      '',
+                child: Text.rich(
+                  overflow: TextOverflow.ellipsis,
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: AppLocalizations.of(context)!.date,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: AppColors.mediumGrey,
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                            sessionModel.date
+                                ?.toIso8601String()
+                                .split('T')
+                                .first ??
+                            '',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
           ),
         ],
       ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _InfoRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          label,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium!.copyWith(color: AppColors.mediumGrey),
-        ),
-        const SizedBox(width: 5),
-        Expanded(
-          child: Text(
-            value,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ),
-      ],
     );
   }
 }

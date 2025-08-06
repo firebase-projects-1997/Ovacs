@@ -196,7 +196,6 @@ class _SessionDetailsPageState extends State<SessionDetailsPage> {
                   ),
                   const SizedBox(height: 10),
                   RoundedContainer(
-                    backgroundColor: AppColors.mediumGrey.withValues(alpha: .1),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -205,20 +204,9 @@ class _SessionDetailsPageState extends State<SessionDetailsPage> {
                           value: value.sessionModel?.title ?? '',
                         ),
                         const SizedBox(height: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.description,
-                              style: Theme.of(context).textTheme.bodyMedium!
-                                  .copyWith(color: AppColors.mediumGrey),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              value.sessionModel?.description ?? '',
-                              style: Theme.of(context).textTheme.bodySmall!,
-                            ),
-                          ],
+                        _InfoColumn(
+                          label: AppLocalizations.of(context)!.description,
+                          value: value.sessionModel?.description ?? '',
                         ),
                         const SizedBox(height: 16),
                         Row(
@@ -226,7 +214,14 @@ class _SessionDetailsPageState extends State<SessionDetailsPage> {
                             Expanded(
                               child: _InfoColumn(
                                 label: AppLocalizations.of(context)!.time,
-                                value: value.sessionModel?.time ?? '',
+                                value:
+                                    value.sessionModel?.date
+                                        ?.toIso8601String()
+                                        .split('T')
+                                        .last
+                                        .split(".000Z")
+                                        .first ??
+                                    '',
                                 isLink: true,
                               ),
                             ),
@@ -265,9 +260,11 @@ class _SessionDetailsPageState extends State<SessionDetailsPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.documents,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                      Text.rich(
+                        TextSpan(
+                          text: AppLocalizations.of(context)!.documents,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
                       ),
                       RoundedContainer(
                         onTap: () {
@@ -359,22 +356,28 @@ class _InfoColumn extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
+        Text.rich(
+          TextSpan(
+            text: label,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium!.copyWith(color: AppColors.mediumGrey),
+          ),
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium!.copyWith(color: AppColors.mediumGrey),
         ),
         const SizedBox(height: 5),
-        Text(
-          value,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-            color: isLink ? AppColors.primaryBlue : null,
-            decoration: isLink ? TextDecoration.underline : TextDecoration.none,
-            decorationColor: isLink ? AppColors.primaryBlue : null,
+        Text.rich(
+          TextSpan(
+            text: value,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: isLink ? AppColors.primaryBlue : null,
+              decoration: isLink
+                  ? TextDecoration.underline
+                  : TextDecoration.none,
+              decorationColor: isLink ? AppColors.primaryBlue : null,
+            ),
           ),
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
