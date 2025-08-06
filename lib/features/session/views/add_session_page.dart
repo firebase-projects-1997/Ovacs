@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:new_ovacs/common/widgets/labeled_text_field.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
@@ -159,7 +160,7 @@ class _AddSessionPageState extends State<AddSessionPage> {
                           label: 'Time',
                           labelColor: AppColors.charcoalGrey,
                           hint: 'HH:mm',
-                          icon: Icons.access_time,
+                          icon: Iconsax.timer,
                           enabled: false,
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {

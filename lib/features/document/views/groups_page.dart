@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:new_ovacs/core/constants/app_sizes.dart';
 import 'package:provider/provider.dart';
 import 'package:new_ovacs/common/widgets/rounded_container.dart';
 import 'package:new_ovacs/data/models/document_group_model.dart';
@@ -192,98 +193,81 @@ class _GroupsPageState extends State<GroupsPage> {
           ? const Center(child: CircularProgressIndicator())
           : groupsProvider.status == GroupsStatus.error
           ? Center(child: Text(groupsProvider.errorMessage ?? 'Error'))
-          : Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: GridView.builder(
-                itemCount: groups.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                ),
-                itemBuilder: (context, index) {
-                  final group = groups[index];
-                  return RoundedContainer(
-                    onTap: () {
-                      navigatorKey.currentState!.push(
-                        MaterialPageRoute(
-                          builder: (context) => GroupDetailsPage(
-                            groupId: group.id,
-                            sessionId: widget.sessionId,
-                          ),
+          : ListView.separated(
+              separatorBuilder: (context, index) => SizedBox(height: 10),
+              padding: AppSizes.noAppBarPadding(context),
+              itemCount: groups.length,
+              itemBuilder: (context, index) {
+                final group = groups[index];
+                return RoundedContainer(
+                  onTap: () {
+                    navigatorKey.currentState!.push(
+                      MaterialPageRoute(
+                        builder: (context) => GroupDetailsPage(
+                          groupId: group.id,
+                          sessionId: widget.sessionId,
                         ),
-                      );
-                    },
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.folder,
-                              size: 75,
-                              color: Colors.orange.shade700,
-                            ),
-                            const SizedBox(height: 8),
-                            Expanded(
-                              child: Text(
-                                group.name,
-                                style: Theme.of(context).textTheme.titleMedium,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
+                      ),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Iconsax.folder5,
+                        size: 75,
+                        color: Colors.orange.shade700,
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Text(
+                          group.name,
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: PopupMenuButton<String>(
-                            onSelected: (value) {
-                              if (value == 'edit') {
-                                _showEditDialog(group);
-                              } else if (value == 'delete') {
-                                _showDeleteDialog(group);
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 'edit',
-                                child: Row(
-                                  children: const [
-                                    Icon(
-                                      Iconsax.edit,
-                                      size: 18,
-                                      color: AppColors.primaryBlue,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text('Edit'),
-                                  ],
+                      ),
+                      PopupMenuButton<String>(
+                        onSelected: (value) {
+                          if (value == 'edit') {
+                            _showEditDialog(group);
+                          } else if (value == 'delete') {
+                            _showDeleteDialog(group);
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'edit',
+                            child: Row(
+                              children: const [
+                                Icon(
+                                  Iconsax.edit,
+                                  size: 18,
+                                  color: AppColors.primaryBlue,
                                 ),
-                              ),
-                              PopupMenuItem(
-                                value: 'delete',
-                                child: Row(
-                                  children: const [
-                                    Icon(
-                                      Iconsax.trash,
-                                      size: 18,
-                                      color: AppColors.red,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text('Delete'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                            icon: const Icon(Icons.more_vert),
+                                SizedBox(width: 8),
+                                Text('Edit'),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: const [
+                                Icon(
+                                  Iconsax.trash,
+                                  size: 18,
+                                  color: AppColors.red,
+                                ),
+                                SizedBox(width: 8),
+                                Text('Delete'),
+                              ],
+                            ),
+                          ),
+                        ],
+                        icon: const Icon(Iconsax.more_circle),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
     );
   }

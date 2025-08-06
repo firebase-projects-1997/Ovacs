@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
 import 'package:provider/provider.dart';
 
@@ -63,7 +64,7 @@ class _EditClientPageState extends State<EditClientPage> {
         elevation: 0,
         title: const Text('Edit Client'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Iconsax.arrow_left),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),

@@ -71,6 +71,7 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
         ),
         actions: [
           PopupMenuButton<String>(
+            icon: Icon(Iconsax.more_circle),
             onSelected: (selectedValue) async {
               switch (selectedValue) {
                 case 'edit':
@@ -275,12 +276,7 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
                           );
                         },
 
-                        child: SvgPicture.asset(
-                          AppImages.plus,
-                          color: isDarkMode(context)
-                              ? AppColors.pureWhite
-                              : AppColors.charcoalGrey,
-                        ),
+                        child: Icon(Iconsax.add, color: AppColors.mediumGrey),
                       ),
                     ],
                   ),

@@ -350,7 +350,7 @@ class _MessagesPageState extends State<MessagesPage> {
                   borderSide: BorderSide.none,
                 ),
                 suffixIcon: _isRecording
-                    ? const Icon(Icons.circle, color: Colors.red, size: 10)
+                    ? Icon(Iconsax.info_circle, color: Colors.red, size: 10)
                     : null,
               ),
             ),
@@ -456,7 +456,7 @@ class _MessagesPageState extends State<MessagesPage> {
             IconButton(
               iconSize: 30,
               icon: Icon(
-                isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                isPlaying ? Iconsax.pause_circle : Iconsax.play_circle,
                 color: Colors.blueAccent,
               ),
               onPressed: () async {

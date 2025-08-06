@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/widgets/rounded_container.dart';
@@ -136,7 +137,7 @@ class _CasesPageState extends State<CasesPage> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Row(
             children: [
-              SvgPicture.asset(AppImages.search),
+              Icon(Iconsax.search_normal, color: AppColors.mediumGrey),
               const SizedBox(width: 8),
               Text(
                 AppLocalizations.of(context)!.search,
@@ -162,12 +163,7 @@ class _CasesPageState extends State<CasesPage> {
                 );
               },
 
-              child: SvgPicture.asset(
-                AppImages.plus,
-                color: isDarkMode(context)
-                    ? AppColors.pureWhite
-                    : AppColors.charcoalGrey,
-              ),
+              child: Icon(Iconsax.add, color: AppColors.mediumGrey),
             ),
           ],
         ),

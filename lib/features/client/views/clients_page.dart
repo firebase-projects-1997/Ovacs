@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/core/constants/app_routes.dart';
 import 'package:new_ovacs/core/functions/is_dark_mode.dart';
 import 'package:provider/provider.dart';
@@ -142,7 +143,7 @@ class _ClientsPageState extends State<ClientsPage> {
                 },
                 child: Row(
                   children: [
-                    SvgPicture.asset(AppImages.search),
+                    Icon(Iconsax.search_normal, color: AppColors.mediumGrey),
                     const SizedBox(width: 8),
                     Text(
                       AppLocalizations.of(context)!.search,
@@ -154,12 +155,7 @@ class _ClientsPageState extends State<ClientsPage> {
             ),
             const SizedBox(width: 8),
             RoundedContainer(
-              child: SvgPicture.asset(
-                AppImages.upload,
-                color: isDarkMode(context)
-                    ? AppColors.pureWhite
-                    : AppColors.charcoalGrey,
-              ),
+              child: Icon(Iconsax.document_upload, color: AppColors.mediumGrey),
             ),
           ],
         ),
@@ -176,12 +172,7 @@ class _ClientsPageState extends State<ClientsPage> {
               onTap: () => navigatorKey.currentState!.pushNamed(
                 AppRoutes.addClientRoute,
               ),
-              child: SvgPicture.asset(
-                AppImages.plus,
-                color: isDarkMode(context)
-                    ? AppColors.pureWhite
-                    : AppColors.charcoalGrey,
-              ),
+              child: Icon(Iconsax.add, color: AppColors.mediumGrey),
             ),
           ],
         ),

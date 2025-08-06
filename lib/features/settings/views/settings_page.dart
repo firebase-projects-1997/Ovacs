@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/common/widgets/rounded_container.dart';
 import 'package:new_ovacs/core/constants/app_colors.dart';
 import 'package:new_ovacs/core/constants/app_routes.dart';
@@ -42,7 +43,6 @@ class SettingsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // 🌙 Theme Switch
                   RoundedContainer(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,24 +51,35 @@ class SettingsPage extends StatelessWidget {
                           AppLocalizations.of(context)!.darkMode,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          transitionBuilder: (child, animation) =>
-                              ScaleTransition(scale: animation, child: child),
-                          child: Switch(
-                            key: ValueKey<bool>(themeProvider.isDarkMode),
-                            value: themeProvider.isDarkMode,
-                            onChanged: (value) {
-                              themeProvider.toggleTheme();
-                            },
+                        GestureDetector(
+                          onTap: () {
+                            themeProvider.toggleTheme();
+                          },
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 400),
+                            transitionBuilder: (child, animation) =>
+                                RotationTransition(
+                                  turns: animation,
+                                  child: child,
+                                ),
+                            child: Icon(
+                              themeProvider.isDarkMode
+                                  ? Iconsax.moon
+                                  : Iconsax.sun_1,
+                              key: ValueKey<bool>(themeProvider.isDarkMode),
+                              size: 32,
+                              color: themeProvider.isDarkMode
+                                  ? AppColors.primaryBlue
+                                  : Colors.orangeAccent,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
+
                   const SizedBox(height: 20),
 
-                  // 🌍 Language Dropdown
                   RoundedContainer(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,29 +88,53 @@ class SettingsPage extends StatelessWidget {
                           AppLocalizations.of(context)!.language,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
-                        DropdownButton<Locale>(
-                          value: localeProvider.locale,
-                          onChanged: (locale) {
-                            if (locale != null) {
-                              localeProvider.setLocale(locale);
-                            }
+                        GestureDetector(
+                          onTap: () {
+                            final newLocale =
+                                localeProvider.locale.languageCode == 'en'
+                                ? Locale('ar')
+                                : Locale('en');
+                            localeProvider.setLocale(newLocale);
                           },
-                          items: [
-                            DropdownMenuItem(
-                              value: Locale('en'),
-                              child: Text(
-                                AppLocalizations.of(context)!.english,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 400),
+                            transitionBuilder: (child, animation) {
+                              return ScaleTransition(
+                                scale: animation,
+                                child: child,
+                              );
+                            },
+                            child: Row(
+                              key: ValueKey<String>(
+                                localeProvider.locale.languageCode,
                               ),
+                              children: [
+                                Icon(
+                                  localeProvider.locale.languageCode == 'en'
+                                      ? Iconsax.global
+                                      : Iconsax.global,
+                                  color: AppColors.primaryBlue,
+                                  size: 28,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  localeProvider.locale.languageCode == 'en'
+                                      ? AppLocalizations.of(context)!.english
+                                      : AppLocalizations.of(context)!.arabic,
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primaryBlue,
+                                      ),
+                                ),
+                              ],
                             ),
-                            DropdownMenuItem(
-                              value: Locale('ar'),
-                              child: Text(AppLocalizations.of(context)!.arabic),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
                   ),
+
                   const SizedBox(height: 20),
 
                   // 👤 Account Info

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:new_ovacs/common/providers/locale_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../common/widgets/rounded_container.dart';
@@ -42,7 +45,6 @@ class _CalendarViewState extends State<CalendarView> {
 
     return RoundedContainer(
       blur: true,
-      backgroundColor: AppColors.mediumGrey.withValues(alpha: .1),
       child: TableCalendar(
         firstDay: DateTime.utc(2000, 1, 1),
         lastDay: DateTime.utc(3000, 12, 31),
@@ -75,12 +77,16 @@ class _CalendarViewState extends State<CalendarView> {
             color: AppColors.primaryBlue,
             shape: BoxShape.circle,
           ),
-          todayTextStyle: textTheme.bodySmall!,
+          todayTextStyle: textTheme.bodySmall!.copyWith(
+            color: AppColors.pureWhite,
+          ),
           selectedDecoration: BoxDecoration(
             color: AppColors.gold,
             shape: BoxShape.circle,
           ),
-          selectedTextStyle: textTheme.bodySmall!,
+          selectedTextStyle: textTheme.bodySmall!.copyWith(
+            color: AppColors.pureWhite,
+          ),
           defaultTextStyle: textTheme.bodySmall!,
           outsideTextStyle: textTheme.bodySmall!,
           weekendTextStyle: textTheme.bodySmall!,
@@ -94,8 +100,16 @@ class _CalendarViewState extends State<CalendarView> {
         headerStyle: HeaderStyle(
           titleTextStyle: textTheme.bodyMedium!,
           formatButtonVisible: false,
-          leftChevronIcon: const Icon(Icons.chevron_left),
-          rightChevronIcon: const Icon(Icons.chevron_right),
+          leftChevronIcon: Icon(
+            Provider.of<LocaleProvider>(context).locale == Locale('ar')
+                ? Iconsax.arrow_right
+                : Iconsax.arrow_square_left,
+          ),
+          rightChevronIcon: Icon(
+            Provider.of<LocaleProvider>(context).locale == Locale('ar')
+                ? Iconsax.arrow_square_left
+                : Iconsax.arrow_right,
+          ),
         ),
         daysOfWeekStyle: DaysOfWeekStyle(
           weekdayStyle: textTheme.bodySmall!,

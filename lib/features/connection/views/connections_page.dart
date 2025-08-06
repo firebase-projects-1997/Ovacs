@@ -52,6 +52,7 @@ class _ConnectionsPageState extends State<ConnectionsPage>
             ),
             actions: [
               IconButton(
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 onPressed: () {
                   navigatorKey.currentState!.push(
                     MaterialPageRoute(
@@ -59,7 +60,7 @@ class _ConnectionsPageState extends State<ConnectionsPage>
                     ),
                   );
                 },
-                icon: Icon(Iconsax.people),
+                icon: Icon(Iconsax.profile_2user),
               ),
             ],
           ),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:new_ovacs/common/widgets/rounded_container.dart';
 import 'package:provider/provider.dart';
+import 'package:iconsax/iconsax.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../common/widgets/rounded_container.dart';
 import '../providers/client_details_provider.dart';
 
 class ClientDetailsPage extends StatefulWidget {
@@ -28,19 +29,20 @@ class _ClientDetailsPageState extends State<ClientDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final local = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(local.clientDetails),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Iconsax.arrow_left),
+          onPressed: () => Navigator.pop(context),
         ),
+        title: Text(local.clientDetails),
+        centerTitle: true,
+        elevation: 0,
       ),
       body: Consumer<ClientDetailProvider>(
-        builder: (context, provider, child) {
+        builder: (context, provider, _) {
           if (provider.status == ClientDetailStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -56,51 +58,52 @@ class _ClientDetailsPageState extends State<ClientDetailsPage> {
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
-            child: RoundedContainer(
-              padding: const EdgeInsets.all(24),
-
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _ClientDetailItem(
-                    icon: Icons.badge,
-                    label: local.id,
-                    value: client.id.toString(),
+            child: Column(
+              children: [
+                RoundedContainer(
+                  child: Column(
+                    children: [
+                      Text(
+                        client.name,
+                        style: theme.textTheme.titleLarge?.copyWith(),
+                      ),
+                      Divider(),
+                      _InfoRow(
+                        icon: Iconsax.card,
+                        label: local.id,
+                        value: client.id.toString(),
+                      ),
+                      _InfoRow(
+                        icon: Iconsax.profile_tick,
+                        label: local.accountNumber,
+                        value: client.account.toString(),
+                      ),
+                      _InfoRow(
+                        icon: Iconsax.sms,
+                        label: local.email,
+                        value: client.email,
+                      ),
+                      _InfoRow(
+                        icon: Iconsax.call,
+                        label: local.phone,
+                        value: client.mobile,
+                      ),
+                      _InfoRow(
+                        icon: Iconsax.flag,
+                        label: local.country,
+                        value: client.country.name ?? '-',
+                      ),
+                      _InfoRow(
+                        icon: Iconsax.calendar,
+                        label: local.createdAt,
+                        value: DateFormat.yMMMMd().format(
+                          client.createdAt.toLocal(),
+                        ),
+                      ),
+                    ],
                   ),
-                  _ClientDetailItem(
-                    icon: Icons.account_box,
-                    label: local.accountNumber,
-                    value: client.account.toString(),
-                  ),
-                  _ClientDetailItem(
-                    icon: Icons.person,
-                    label: local.name,
-                    value: client.name,
-                  ),
-                  _ClientDetailItem(
-                    icon: Icons.email,
-                    label: local.email,
-                    value: client.email,
-                  ),
-                  _ClientDetailItem(
-                    icon: Icons.phone,
-                    label: local.phone,
-                    value: client.mobile,
-                  ),
-                  _ClientDetailItem(
-                    icon: Icons.flag,
-                    label: local.country,
-                    value: client.country.name ?? '-',
-                  ),
-                  _ClientDetailItem(
-                    icon: Icons.calendar_today,
-                    label: local.createdAt,
-                    value: DateFormat.yMMMMd().format(
-                      client.createdAt.toLocal(),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
@@ -109,12 +112,12 @@ class _ClientDetailsPageState extends State<ClientDetailsPage> {
   }
 }
 
-class _ClientDetailItem extends StatelessWidget {
+class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
 
-  const _ClientDetailItem({
+  const _InfoRow({
     required this.icon,
     required this.label,
     required this.value,
@@ -122,28 +125,35 @@ class _ClientDetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.primaryBlue, size: 24),
-          const SizedBox(width: 12),
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.primaryBlue.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.all(10),
+            child: Icon(icon, color: AppColors.primaryBlue, size: 20),
+          ),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.mediumGrey,
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value.isNotEmpty ? value : '-',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: theme.textTheme.bodyLarge?.copyWith(),
                 ),
               ],
             ),

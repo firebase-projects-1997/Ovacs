@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:iconsax/iconsax.dart'; // تأكد من إضافته في pubspec.yaml
 
-import '../../../core/constants/app_images.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../case/views/cases_page.dart';
 import '../../client/views/clients_page.dart';
@@ -30,21 +29,22 @@ class _NavigationMenuState extends State<NavigationMenu> {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> navigationMenuList = [
-      {'icon': AppImages.home, 'name': AppLocalizations.of(context)!.home},
-      {'icon': AppImages.cases, 'name': AppLocalizations.of(context)!.cases},
+      {'icon': Iconsax.element_4, 'name': AppLocalizations.of(context)!.home},
       {
-        'icon': AppImages.connections,
+        'icon': Iconsax.document_text,
+        'name': AppLocalizations.of(context)!.cases,
+      },
+      {
+        'icon': Iconsax.profile_2user,
         'name': AppLocalizations.of(context)!.connections,
       },
       {
-        'icon': AppImages.clients,
+        'icon': Iconsax.user_square,
         'name': AppLocalizations.of(context)!.clients,
       },
-      {
-        'icon': AppImages.settings,
-        'name': AppLocalizations.of(context)!.settings,
-      },
+      {'icon': Iconsax.setting, 'name': AppLocalizations.of(context)!.settings},
     ];
+
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -53,7 +53,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           border: Border(
-            top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.2)),
+            top: BorderSide(color: theme.dividerColor.withAlpha(50)),
           ),
           color:
               theme.bottomNavigationBarTheme.backgroundColor ??
@@ -96,13 +96,27 @@ class _NavigationMenuState extends State<NavigationMenu> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(height: 12),
-                    SvgPicture.asset(single['icon'], color: selectedColor),
-                    const SizedBox(height: 4),
-                    Text(
-                      single['name'],
+
+                    // AnimatedScale للأيقونة
+                    AnimatedScale(
+                      scale: isSelected ? 1.3 : 1.0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOut,
+                      child: Icon(single['icon'], color: selectedColor),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // AnimatedDefaultTextStyle للنص
+                    AnimatedDefaultTextStyle(
                       style: theme.textTheme.bodySmall!.copyWith(
                         color: textColor,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                       ),
+                      duration: const Duration(milliseconds: 300),
+                      child: Text(single['name']),
                     ),
                   ],
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/widgets/labeled_text_field.dart';
@@ -168,7 +169,7 @@ class _SearchCasesPageState extends State<SearchCasesPage> {
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    icon: const Icon(Icons.search),
+                    icon: Icon(Iconsax.search_normal),
                     onPressed: _applyFilters,
                     label: Text(AppLocalizations.of(context)!.applyFilters),
                   ),

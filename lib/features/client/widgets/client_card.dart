@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
 import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
@@ -83,7 +84,7 @@ class ClientCard extends StatelessWidget {
                     child: Text(AppLocalizations.of(context)!.delete),
                   ),
                 ],
-                icon: const Icon(Icons.more_vert),
+                icon: Icon(Iconsax.more_circle),
               ),
             ],
           ),

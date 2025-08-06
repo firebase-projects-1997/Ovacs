@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:new_ovacs/common/widgets/labeled_text_field.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
@@ -269,13 +270,7 @@ class _AddNewCasePageState extends State<AddNewCasePage> {
                     borderRadius: BorderRadius.circular(5),
                     color: AppColors.primaryBlue,
                   ),
-                  child: SvgPicture.asset(
-                    AppImages.plus,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.pureWhite,
-                      BlendMode.srcIn,
-                    ),
-                  ),
+                  child: Icon(Iconsax.add, color: AppColors.mediumGrey),
                 ),
               ),
             ),

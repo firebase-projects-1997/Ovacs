@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -122,7 +123,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: AppColors.charcoalGrey.withValues(alpha:0.04),
+            color: AppColors.charcoalGrey.withValues(alpha: 0.04),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -196,7 +197,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                           label: 'Time',
                           labelColor: AppColors.charcoalGrey,
                           hint: 'HH:mm',
-                          icon: Icons.access_time,
+                          icon: Iconsax.timer,
                           enabled: false,
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
@@ -237,7 +238,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                                     context
                                         .read<SessionsProvider>()
                                         .fetchSessions(widget.caseId);
-                                    
+
                                     Navigator.of(context).pop(true);
                                     showAppSnackBar(
                                       context,

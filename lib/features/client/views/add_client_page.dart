@@ -1,6 +1,7 @@
 import 'dart:ui'; // For ImageFilter
 
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
 import 'package:new_ovacs/features/client/providers/clients_provider.dart';
 import 'package:provider/provider.dart';
@@ -61,7 +62,7 @@ class _AddNewClientPageState extends State<AddNewClientPage> {
         elevation: 0,
         title: Text(AppLocalizations.of(context)!.addNewClient),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Iconsax.arrow_left),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),

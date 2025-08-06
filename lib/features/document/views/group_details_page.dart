@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import '../../../common/widgets/rounded_container.dart';
 import '../../../core/constants/app_colors.dart';
@@ -88,12 +89,7 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
                         ),
                       );
                     },
-                    child: SvgPicture.asset(
-                      AppImages.plus,
-                      color: isDarkMode(context)
-                          ? AppColors.pureWhite
-                          : AppColors.charcoalGrey,
-                    ),
+                    child: Icon(Iconsax.add, color: AppColors.mediumGrey),
                   ),
                 ],
               ),
