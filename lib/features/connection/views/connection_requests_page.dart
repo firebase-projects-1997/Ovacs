@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:new_ovacs/core/constants/app_colors.dart';
+import 'package:new_ovacs/core/constants/app_sizes.dart';
 import 'package:provider/provider.dart';
-import '../../../generated/l10n.dart';
 
 import '../../../common/widgets/rounded_container.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/received_requests_provider.dart';
 import '../providers/sent_requests_provider.dart';
 
@@ -44,11 +45,12 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = S.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.connectionRequests),
         bottom: TabBar(
+          indicatorSize: TabBarIndicatorSize.tab,
           controller: _tabController,
           tabs: [
             Tab(text: l10n.received),
@@ -68,7 +70,7 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage>
                 return Center(child: Text(provider.failure!.message));
               }
               return ListView.separated(
-                padding: EdgeInsets.all(20),
+                padding: AppSizes.noAppBarPadding(context),
                 separatorBuilder: (context, index) => SizedBox(height: 10),
                 itemCount: provider.receivedRequests.length,
                 itemBuilder: (context, index) {
@@ -198,7 +200,7 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage>
                 return Center(child: Text(provider.failure!.message));
               }
               return ListView.separated(
-                padding: EdgeInsets.all(20),
+                padding: AppSizes.noAppBarPadding(context),
                 separatorBuilder: (context, index) => SizedBox(height: 10),
                 itemCount: provider.sentRequests.length,
                 itemBuilder: (context, index) {

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:new_ovacs/core/constants/app_sizes.dart';
 import 'package:provider/provider.dart';
-import '../../../generated/l10n.dart';
 
 import '../../../common/widgets/rounded_container.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/non_connections_provider.dart';
 
 class NonConnectionsPage extends StatefulWidget {
@@ -28,7 +29,7 @@ class _NonConnectionsPageState extends State<NonConnectionsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = S.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(title: Text(l10n.connectionSuggestions)),
       body: Consumer<NonConnectionsProvider>(
@@ -37,7 +38,7 @@ class _NonConnectionsPageState extends State<NonConnectionsPage> {
             : value.failure != null
             ? Center(child: Text(value.failure!.message))
             : ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: AppSizes.noAppBarPadding(context),
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 10),
                 itemCount: value.users.length,
