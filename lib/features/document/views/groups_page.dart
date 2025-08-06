@@ -110,7 +110,6 @@ class _GroupsPageState extends State<GroupsPage> {
                 ).fetchGroupsBySession(widget.sessionId);
                 Navigator.pop(context);
               }
-              ;
             },
             child: const Text('Delete'),
           ),

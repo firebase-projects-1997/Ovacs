@@ -113,7 +113,7 @@ class MessageRepository {
     }
 
     String? token;
-    final saved = await _storageService.getString(StorageKeys.loginResponse);
+    final saved = _storageService.getString(StorageKeys.loginResponse);
     if (saved != null) {
       final decoded = jsonDecode(saved);
       final loginResponse = LoginResponse.fromJson(decoded);

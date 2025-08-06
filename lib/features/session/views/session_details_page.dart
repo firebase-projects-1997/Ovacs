@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/core/constants/app_colors.dart';
-import 'package:new_ovacs/core/constants/app_images.dart';
 import 'package:new_ovacs/core/constants/app_sizes.dart';
-import 'package:new_ovacs/core/functions/is_dark_mode.dart';
 import 'package:new_ovacs/features/document/providers/documents_provider.dart';
 import 'package:new_ovacs/features/session/providers/session_details_provider.dart';
 import 'package:new_ovacs/features/session/views/edit_session_page.dart';
@@ -282,7 +279,7 @@ class _SessionDetailsPageState extends State<SessionDetailsPage> {
                             ),
                           );
                         },
-                        child: Icon(Iconsax.add, color: AppColors.pureWhite),
+                        child: Icon(Iconsax.add, color: AppColors.charcoalGrey),
                       ),
                     ],
                   ),

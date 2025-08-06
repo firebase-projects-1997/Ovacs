@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/core/constants/app_routes.dart';
-import 'package:new_ovacs/core/functions/is_dark_mode.dart';
+import 'package:new_ovacs/core/functions/show_snackbar.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_images.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../common/widgets/rounded_container.dart';
 import '../../../l10n/app_localizations.dart';
@@ -155,7 +153,17 @@ class _ClientsPageState extends State<ClientsPage> {
             ),
             const SizedBox(width: 8),
             RoundedContainer(
-              child: Icon(Iconsax.document_upload, color: AppColors.mediumGrey),
+              onTap: () {
+                showAppSnackBar(
+                  context,
+                  'comming soon',
+                  type: SnackBarType.info,
+                );
+              },
+              child: Icon(
+                Iconsax.document_upload,
+                color: AppColors.charcoalGrey,
+              ),
             ),
           ],
         ),
@@ -172,7 +180,7 @@ class _ClientsPageState extends State<ClientsPage> {
               onTap: () => navigatorKey.currentState!.pushNamed(
                 AppRoutes.addClientRoute,
               ),
-              child: Icon(Iconsax.add, color: AppColors.mediumGrey),
+              child: Icon(Iconsax.add, color: AppColors.charcoalGrey),
             ),
           ],
         ),

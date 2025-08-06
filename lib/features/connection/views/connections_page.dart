@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:new_ovacs/core/constants/app_colors.dart';
 import 'package:new_ovacs/features/connection/views/non_connections_page.dart';
 import 'package:new_ovacs/l10n/app_localizations.dart';
 import 'package:new_ovacs/main.dart';
@@ -81,7 +82,7 @@ class _ConnectionsPageState extends State<ConnectionsPage>
                 MaterialPageRoute(builder: (context) => NonConnectionsPage()),
               );
             },
-            child: Icon(Iconsax.add),
+            child: Icon(Iconsax.add, color: AppColors.pureWhite,),
           ),
         );
       },

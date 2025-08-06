@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:new_ovacs/common/widgets/labeled_text_field.dart';
@@ -12,7 +11,6 @@ import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_images.dart';
 import '../../../common/widgets/rounded_container.dart';
 import '../../../data/models/client_model.dart';
 import '../../../l10n/app_localizations.dart';

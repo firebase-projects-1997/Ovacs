@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/core/constants/app_colors.dart';
-import 'package:new_ovacs/core/functions/is_dark_mode.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
 import 'package:new_ovacs/features/case/provider/case_details_provider.dart';
 import 'package:new_ovacs/features/case/provider/cases_provider.dart';
@@ -12,7 +10,6 @@ import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/widgets/rounded_container.dart';
-import '../../../core/constants/app_images.dart';
 import '../../client/views/client_info_page.dart';
 import '../../session/providers/sessions_provider.dart';
 import '../../session/views/session_details_page.dart';
@@ -276,7 +273,7 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
                           );
                         },
 
-                        child: Icon(Iconsax.add, color: AppColors.mediumGrey),
+                        child: Icon(Iconsax.add, color: AppColors.charcoalGrey),
                       ),
                     ],
                   ),

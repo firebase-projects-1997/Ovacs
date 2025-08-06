@@ -264,6 +264,5 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     } else {
       showAppSnackBar(context, auth.error);
     }
-    ;
   }
 }

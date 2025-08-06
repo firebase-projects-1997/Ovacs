@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/widgets/rounded_container.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_images.dart';
 import '../../../core/constants/app_sizes.dart';
 
-import '../../../core/functions/is_dark_mode.dart';
 import '../../../data/models/case_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../provider/cases_provider.dart';
@@ -163,7 +160,7 @@ class _CasesPageState extends State<CasesPage> {
                 );
               },
 
-              child: Icon(Iconsax.add, color: AppColors.mediumGrey),
+              child: Icon(Iconsax.add, color: AppColors.charcoalGrey),
             ),
           ],
         ),
