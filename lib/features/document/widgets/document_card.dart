@@ -97,9 +97,9 @@ class DocumentCard extends StatelessWidget {
                   TextSpan(
                     text: document.groupName!,
                     style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: AppColors.primaryBlue,
+                      color: Theme.of(context).primaryColor,
                       decoration: TextDecoration.underline,
-                      decorationColor: AppColors.primaryBlue,
+                      decorationColor: Theme.of(context).primaryColor,
                     ),
                   ),
                 ],

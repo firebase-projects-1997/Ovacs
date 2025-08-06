@@ -2003,6 +2003,11 @@ class S {
   String idWithValue(Object id) {
     return Intl.message('ID: $id', name: 'idWithValue', desc: '', args: [id]);
   }
+
+  /// `App Color`
+  String get primaryColor {
+    return Intl.message('App Color', name: 'primaryColor', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

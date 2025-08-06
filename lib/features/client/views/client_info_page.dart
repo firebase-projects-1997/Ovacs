@@ -135,11 +135,11 @@ class _InfoRow extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: AppColors.primaryBlue.withValues(alpha: 0.08),
+              color: Theme.of(context).primaryColor.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
             ),
             padding: const EdgeInsets.all(10),
-            child: Icon(icon, color: AppColors.primaryBlue, size: 20),
+            child: Icon(icon, color: Theme.of(context).primaryColor, size: 20),
           ),
           const SizedBox(width: 16),
           Expanded(

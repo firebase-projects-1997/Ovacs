@@ -79,9 +79,9 @@ class CaseCard extends StatelessWidget {
                 TextSpan(
                   text: caseModel.clientName,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: AppColors.primaryBlue,
+                    color: Theme.of(context).primaryColor,
                     decoration: TextDecoration.underline,
-                    decorationColor: AppColors.primaryBlue,
+                    decorationColor: Theme.of(context).primaryColor,
                   ),
                 ),
               ],
@@ -132,11 +132,13 @@ class CaseCard extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: AppColors.primaryBlue,
+                              color: Theme.of(context).primaryColor,
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(4),
-                            color: AppColors.primaryBlue.withValues(alpha: 0.1),
+                            color: Theme.of(
+                              context,
+                            ).primaryColor.withValues(alpha: 0.1),
                           ),
                           child: Text(
                             lawyer,

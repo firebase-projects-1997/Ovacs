@@ -358,11 +358,11 @@ class _InfoColumn extends StatelessWidget {
           TextSpan(
             text: value,
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
-              color: isLink ? AppColors.primaryBlue : null,
+              color: isLink ? Theme.of(context).primaryColor : null,
               decoration: isLink
                   ? TextDecoration.underline
                   : TextDecoration.none,
-              decorationColor: isLink ? AppColors.primaryBlue : null,
+              decorationColor: isLink ? Theme.of(context).primaryColor : null,
             ),
           ),
           overflow: TextOverflow.ellipsis,

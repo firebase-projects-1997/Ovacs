@@ -6,7 +6,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:new_ovacs/core/constants/app_colors.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
 import 'package:new_ovacs/features/auth/providers/auth_provider.dart';
 import 'package:path_provider/path_provider.dart';
@@ -387,7 +386,7 @@ class _MessagesPageState extends State<MessagesPage> {
             ),
           ] else
             CircleAvatar(
-              backgroundColor: AppColors.primaryBlue,
+              backgroundColor: Theme.of(context).primaryColor,
               child: IconButton(
                 icon: Icon(
                   isTextNotEmpty ? Iconsax.send1 : Iconsax.microphone,
@@ -432,7 +431,7 @@ class _MessagesPageState extends State<MessagesPage> {
         constraints: const BoxConstraints(maxWidth: 300),
         decoration: BoxDecoration(
           color: isMe
-              ? AppColors.primaryBlue.withOpacity(0.1)
+              ? Theme.of(context).primaryColor.withOpacity(0.1)
               : Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
         ),

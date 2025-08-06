@@ -242,5 +242,6 @@
   "accept": "Accept",
   "reject": "Reject",
   "pending": "Pending",
-  "idWithValue": "ID: {id}"
+  "idWithValue": "ID: {id}",
+  "primaryColor": "App Color"
 }

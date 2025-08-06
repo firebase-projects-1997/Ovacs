@@ -335,7 +335,7 @@ class _AddClientButtons extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               padding: const EdgeInsets.symmetric(vertical: 12),
-              backgroundColor: AppColors.primaryBlue,
+              backgroundColor: Theme.of(context).primaryColor,
               foregroundColor: Colors.white,
             ),
             child: isLoading

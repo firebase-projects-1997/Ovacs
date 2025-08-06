@@ -38,7 +38,7 @@ class ClientCard extends StatelessWidget {
                       context,
                       AppLocalizations.of(context)!.clientName,
                       client.name,
-                      valueColor: AppColors.primaryBlue,
+                      valueColor: Theme.of(context).primaryColor,
                     ),
                     const SizedBox(height: 10),
                     _buildInfo(
@@ -57,7 +57,7 @@ class ClientCard extends StatelessWidget {
                       context,
                       "${AppLocalizations.of(context)!.country}: ",
                       client.country.name ?? '',
-                      valueColor: AppColors.primaryBlue,
+                      valueColor: Theme.of(context).primaryColor,
                     ),
                   ],
                 ),

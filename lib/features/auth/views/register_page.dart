@@ -319,7 +319,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             _agreedToTerms = value ?? false;
                           });
                         },
-                        activeColor: AppColors.primaryBlue,
+                        activeColor: Theme.of(context).primaryColor,
                       ),
                       Expanded(
                         child: Text.rich(

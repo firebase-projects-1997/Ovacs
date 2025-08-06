@@ -83,7 +83,7 @@ class _EditClientPageState extends State<EditClientPage> {
                 decoration: BoxDecoration(
                   color: AppColors.pureWhite,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.primaryBlue),
+                  border: Border.all(color: Theme.of(context).primaryColor),
                 ),
                 padding: const EdgeInsets.all(16),
                 child: Form(
@@ -100,7 +100,7 @@ class _EditClientPageState extends State<EditClientPage> {
 
                       LabeledTextField(
                         filled: true,
-                        fillColor: AppColors.mediumGrey.withValues(alpha:0.1),
+                        fillColor: AppColors.mediumGrey.withValues(alpha: 0.1),
                         labelColor: AppColors.charcoalGrey,
                         label: 'Client Name',
                         hint: 'Enter client name',
@@ -135,7 +135,7 @@ class _EditClientPageState extends State<EditClientPage> {
 
                       LabeledTextField(
                         filled: true,
-                        fillColor: AppColors.mediumGrey.withValues(alpha:0.1),
+                        fillColor: AppColors.mediumGrey.withValues(alpha: 0.1),
                         labelColor: AppColors.charcoalGrey,
                         label: 'Country',
                         hint: 'Country will appear here',
@@ -151,7 +151,7 @@ class _EditClientPageState extends State<EditClientPage> {
 
                       LabeledTextField(
                         filled: true,
-                        fillColor: AppColors.mediumGrey.withValues(alpha:0.1),
+                        fillColor: AppColors.mediumGrey.withValues(alpha: 0.1),
                         labelColor: AppColors.charcoalGrey,
                         label: 'Email',
                         hint: 'Enter your email',
@@ -221,7 +221,7 @@ class _EditClientPageState extends State<EditClientPage> {
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 12,
                                 ),
-                                backgroundColor: AppColors.primaryBlue,
+                                backgroundColor: Theme.of(context).primaryColor,
                                 foregroundColor: Colors.white,
                               ),
                               child: isLoading
@@ -268,7 +268,7 @@ class _PhoneInputRow extends StatelessWidget {
     final countryProvider = context.watch<CountryProvider>();
     final OutlineInputBorder border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.primaryBlue),
+      borderSide:  BorderSide(color: Theme.of(context).primaryColor),
     );
 
     return Column(

@@ -360,6 +360,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseSelectYourCountryCode": MessageLookupByLibrary.simpleMessage(
       "يرجى اختيار رمز الدولة.",
     ),
+    "primaryColor": MessageLookupByLibrary.simpleMessage("لون التطبيق"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("سياسة الخصوصية"),
     "received": MessageLookupByLibrary.simpleMessage("المستلمة"),
     "recordingCancelled": MessageLookupByLibrary.simpleMessage(

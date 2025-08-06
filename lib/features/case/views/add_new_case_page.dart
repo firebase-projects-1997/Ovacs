@@ -59,14 +59,14 @@ class _AddNewCasePageState extends State<AddNewCasePage> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primaryBlue,
+            colorScheme:  ColorScheme.light(
+              primary: Theme.of(context).primaryColor,
               onPrimary: AppColors.pureWhite,
               onSurface: AppColors.black,
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: AppColors.primaryBlue,
+                foregroundColor: Theme.of(context).primaryColor,
               ),
             ),
           ),
@@ -260,13 +260,13 @@ class _AddNewCasePageState extends State<AddNewCasePage> {
               icon: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: AppColors.primaryBlue),
+                  border: Border.all(color: Theme.of(context).primaryColor),
                 ),
                 padding: const EdgeInsets.all(2),
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: AppColors.primaryBlue,
+                    color: Theme.of(context).primaryColor,
                   ),
                   child: Icon(Iconsax.add, color: AppColors.mediumGrey),
                 ),
@@ -291,10 +291,10 @@ class _AddNewCasePageState extends State<AddNewCasePage> {
               width: 113,
               height: 44,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  colors: [AppColors.primaryBlue, AppColors.tealGreen],
+                  colors: [Theme.of(context).primaryColor, AppColors.tealGreen],
                 ),
                 borderRadius: BorderRadius.circular(8),
               ),

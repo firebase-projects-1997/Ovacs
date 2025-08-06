@@ -259,11 +259,11 @@ class _EditSessionPageState extends State<EditSessionPage> {
                             width: 113,
                             height: 44,
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
+                              gradient: LinearGradient(
                                 begin: Alignment.bottomCenter,
                                 end: Alignment.topCenter,
                                 colors: [
-                                  AppColors.primaryBlue,
+                                  Theme.of(context).primaryColor,
                                   AppColors.tealGreen,
                                 ],
                               ),

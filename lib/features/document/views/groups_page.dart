@@ -235,11 +235,11 @@ class _GroupsPageState extends State<GroupsPage> {
                           PopupMenuItem(
                             value: 'edit',
                             child: Row(
-                              children: const [
+                              children:  [
                                 Icon(
                                   Iconsax.edit,
                                   size: 18,
-                                  color: AppColors.primaryBlue,
+                                  color: Theme.of(context).primaryColor,
                                 ),
                                 SizedBox(width: 8),
                                 Text('Edit'),

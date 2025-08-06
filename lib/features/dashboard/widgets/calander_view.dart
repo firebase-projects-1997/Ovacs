@@ -74,7 +74,7 @@ class _CalendarViewState extends State<CalendarView> {
         },
         calendarStyle: CalendarStyle(
           todayDecoration: BoxDecoration(
-            color: AppColors.primaryBlue,
+            color: Theme.of(context).primaryColor,
             shape: BoxShape.circle,
           ),
           todayTextStyle: textTheme.bodySmall!.copyWith(

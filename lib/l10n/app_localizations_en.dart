@@ -769,4 +769,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String idWithValue(Object id) {
     return 'ID: $id';
   }
+
+  @override
+  String get primaryColor => 'App Color';
 }

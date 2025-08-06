@@ -69,7 +69,7 @@ class SettingsPage extends StatelessWidget {
                               key: ValueKey<bool>(themeProvider.isDarkMode),
                               size: 32,
                               color: themeProvider.isDarkMode
-                                  ? AppColors.primaryBlue
+                                  ? Theme.of(context).primaryColor
                                   : Colors.orangeAccent,
                             ),
                           ),
@@ -113,7 +113,7 @@ class SettingsPage extends StatelessWidget {
                                   localeProvider.locale.languageCode == 'en'
                                       ? Iconsax.global
                                       : Iconsax.global,
-                                  color: AppColors.primaryBlue,
+                                  color: Theme.of(context).primaryColor,
                                   size: 28,
                                 ),
                                 const SizedBox(width: 8),
@@ -124,12 +124,35 @@ class SettingsPage extends StatelessWidget {
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.primaryBlue,
+                                        color: Theme.of(context).primaryColor,
                                       ),
                                 ),
                               ],
                             ),
                           ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+                  RoundedContainer(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.primaryColor,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            _buildColorDot(context, Colors.blue),
+                            _buildColorDot(context, Colors.red),
+                            _buildColorDot(context, Colors.green),
+                            _buildColorDot(context, Colors.purple),
+                            _buildColorDot(context, Colors.teal),
+                          ],
                         ),
                       ],
                     ),
@@ -208,6 +231,29 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildColorDot(BuildContext context, Color color) {
+    final themeProvider = context.read<ThemeProvider>();
+    final isSelected = themeProvider.primaryColor == color;
+
+    return GestureDetector(
+      onTap: () => themeProvider.setPrimaryColor(color),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        margin: const EdgeInsets.only(right: 8),
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: color,
+          border: isSelected ? Border.all(color: Colors.black, width: 2) : null,
+        ),
+        child: isSelected
+            ? const Icon(Icons.check, color: Colors.white, size: 20)
+            : null,
+      ),
     );
   }
 }

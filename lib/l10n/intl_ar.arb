@@ -242,5 +242,6 @@
   "accept": "قبول",
   "reject": "رفض",
   "pending": "قيد الانتظار",
-  "idWithValue": "المعرف: {id}"
+  "idWithValue": "المعرف: {id}",
+  "primaryColor": "لون التطبيق"
 }

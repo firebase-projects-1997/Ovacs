@@ -1543,6 +1543,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ID: {id}'**
   String idWithValue(Object id);
+
+  /// No description provided for @primaryColor.
+  ///
+  /// In en, this message translates to:
+  /// **'App Color'**
+  String get primaryColor;
 }
 
 class _AppLocalizationsDelegate

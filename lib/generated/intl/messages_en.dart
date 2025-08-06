@@ -366,6 +366,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseSelectYourCountryCode": MessageLookupByLibrary.simpleMessage(
       "Please select your country code.",
     ),
+    "primaryColor": MessageLookupByLibrary.simpleMessage("App Color"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "received": MessageLookupByLibrary.simpleMessage("Received"),
     "recordingCancelled": MessageLookupByLibrary.simpleMessage(

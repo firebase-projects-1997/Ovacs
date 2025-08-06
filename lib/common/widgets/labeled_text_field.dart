@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 
-import '../../core/constants/app_colors.dart';
-
 class LabeledTextField extends StatelessWidget {
   final String label;
   final Color? labelColor;
@@ -87,13 +85,13 @@ class LabeledTextField extends StatelessWidget {
             filled: filled,
             fillColor: fillColor,
             prefixIcon: icon != null
-                ? Icon(icon, color: AppColors.primaryBlue)
+                ? Icon(icon, color: Theme.of(context).primaryColor)
                 : null,
             suffixIcon: isPassword
                 ? IconButton(
                     icon: Icon(
                       obscureText ? Iconsax.eye_slash : Iconsax.eye,
-                      color: AppColors.primaryBlue,
+                      color: Theme.of(context).primaryColor,
                     ),
                     onPressed: toggleObscure,
                   )

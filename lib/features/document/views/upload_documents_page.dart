@@ -4,7 +4,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/features/document/providers/documents_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/constants/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../providers/upload_documents_provider.dart';
 
@@ -229,7 +228,7 @@ class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
                 margin: const EdgeInsets.only(top: 8),
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.primaryBlue),
+                  border: Border.all(color: Theme.of(context).primaryColor),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(

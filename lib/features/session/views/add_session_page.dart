@@ -84,7 +84,7 @@ class _AddSessionPageState extends State<AddSessionPage> {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: AppColors.charcoalGrey.withValues(alpha:0.04),
+            color: AppColors.charcoalGrey.withValues(alpha: 0.04),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -222,11 +222,11 @@ class _AddSessionPageState extends State<AddSessionPage> {
                                 width: 113,
                                 height: 44,
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
+                                  gradient:  LinearGradient(
                                     begin: Alignment.bottomCenter,
                                     end: Alignment.topCenter,
                                     colors: [
-                                      AppColors.primaryBlue,
+                                      Theme.of(context).primaryColor,
                                       AppColors.tealGreen,
                                     ],
                                   ),

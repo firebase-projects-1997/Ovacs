@@ -122,9 +122,9 @@ class _WelcomePageState extends State<WelcomePage> {
                     spacing: 20,
                     children: [
                       RoundedContainer(
-                        backgroundColor: AppColors.primaryBlue.withValues(
-                          alpha: .2,
-                        ),
+                        backgroundColor: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: .2),
                         child: Text(
                           AppLocalizations.of(
                             context,

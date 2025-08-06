@@ -2,17 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:new_ovacs/core/constants/app_colors.dart';
 
 class AppTheme {
-  static ThemeData lightTheme({String fontFamily = 'Poppins'}) {
+  static ThemeData lightTheme(
+    BuildContext context, {
+    String fontFamily = 'Poppins',
+    Color primaryColor = AppColors.primaryBlue,
+  }) {
     final textTheme = _buildTextTheme(fontFamily, AppColors.titleText);
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
       scaffoldBackgroundColor: AppColors.lightBackground,
-      primaryColor: AppColors.primaryBlue,
+      primaryColor: primaryColor,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primaryBlue,
+        seedColor: primaryColor,
         brightness: Brightness.light,
-        primary: AppColors.primaryBlue,
+        primary: primaryColor,
         onPrimary: AppColors.pureWhite,
         surface: AppColors.pureWhite,
         onSurface: AppColors.charcoalGrey,
@@ -22,28 +26,36 @@ class AppTheme {
       textTheme: textTheme,
       elevatedButtonTheme: _buttonTheme(
         textTheme,
-        AppColors.primaryBlue,
+        primaryColor,
         AppColors.pureWhite,
       ),
-      inputDecorationTheme: _inputTheme(textTheme, AppColors.pureWhite),
+      inputDecorationTheme: _inputTheme(
+        context,
+        textTheme,
+        AppColors.pureWhite,
+      ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primaryBlue,
+        backgroundColor: primaryColor,
         foregroundColor: AppColors.pureWhite,
       ),
     );
   }
 
-  static ThemeData darkTheme({String fontFamily = 'Poppins'}) {
+  static ThemeData darkTheme(
+    BuildContext context, {
+    String fontFamily = 'Poppins',
+    Color primaryColor = AppColors.primaryBlue,
+  }) {
     final textTheme = _buildTextTheme(fontFamily, AppColors.pureWhite);
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: const Color(0xFF121212),
-      primaryColor: AppColors.primaryBlue,
+      primaryColor: primaryColor,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primaryBlue,
+        seedColor: primaryColor,
         brightness: Brightness.dark,
-        primary: AppColors.primaryBlue,
+        primary: primaryColor,
         onPrimary: AppColors.pureWhite,
         surface: const Color(0xFF1E1E1E),
         onSurface: AppColors.pureWhite,
@@ -53,10 +65,14 @@ class AppTheme {
       textTheme: textTheme,
       elevatedButtonTheme: _buttonTheme(
         textTheme,
-        AppColors.primaryBlue,
+        primaryColor,
         AppColors.pureWhite,
       ),
-      inputDecorationTheme: _inputTheme(textTheme, const Color(0xFF1E1E1E)),
+      inputDecorationTheme: _inputTheme(
+        context,
+        textTheme,
+        const Color(0xFF1E1E1E),
+      ),
     );
   }
 
@@ -98,6 +114,7 @@ class AppTheme {
   }
 
   static InputDecorationTheme _inputTheme(
+    BuildContext context,
     TextTheme textTheme,
     Color fillColor,
   ) {

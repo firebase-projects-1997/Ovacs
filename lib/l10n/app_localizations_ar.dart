@@ -763,4 +763,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String idWithValue(Object id) {
     return 'المعرف: $id';
   }
+
+  @override
+  String get primaryColor => 'لون التطبيق';
 }

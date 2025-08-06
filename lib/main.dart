@@ -203,14 +203,18 @@ class _MainAppState extends State<MainApp> {
                 ],
                 theme: themeProvider.isDarkMode
                     ? AppTheme.darkTheme(
+                        context,
                         fontFamily: localeProvider.locale.languageCode == 'en'
                             ? 'Poppins'
                             : 'Fustat',
+                        primaryColor: themeProvider.primaryColor,
                       )
                     : AppTheme.lightTheme(
+                        context,
                         fontFamily: localeProvider.locale.languageCode == 'en'
                             ? 'Poppins'
                             : 'Fustat',
+                        primaryColor: themeProvider.primaryColor,
                       ),
                 initialRoute: '/',
                 routes: {
