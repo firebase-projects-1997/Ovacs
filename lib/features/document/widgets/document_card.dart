@@ -157,14 +157,34 @@ class DocumentCard extends StatelessWidget {
                 },
               ),
               IconButton(
-                icon: const Icon(Iconsax.arrow_circle_down),
+                icon: provider.isDocumentDownloading(document.id)
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Iconsax.arrow_circle_down),
                 tooltip: AppLocalizations.of(context)!.download,
-                onPressed: () {
-                  provider.downloadFile(
-                    'https://ovacs.com/backend${document.secureDownloadUrl}',
-                    document.fileName,
-                  );
-                },
+                onPressed: provider.isDocumentDownloading(document.id)
+                    ? null
+                    : () async {
+                        final success = await provider.downloadFile(
+                          'https://ovacs.com/backend${document.secureViewUrl}',
+                          document.fileName,
+                          document.id, // ✅ Pass document ID
+                        );
+
+                        final message = success
+                            ? "Download complete"
+                            : provider.downloadViewErrorMessage ??
+                                  "Download failed";
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(message)));
+                        }
+                      },
               ),
             ],
           ),

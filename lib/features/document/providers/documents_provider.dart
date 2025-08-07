@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../data/models/document_model.dart';
 import '../../../data/repositories/document_repository.dart';
@@ -29,7 +30,10 @@ class DocumentsProvider extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  bool _isDownloading = false;
   String? _downloadViewErrorMessage;
+
+  bool get isDownloading => _isDownloading;
   String? get downloadViewErrorMessage => _downloadViewErrorMessage;
 
   String? _editErrorMessage;
@@ -94,8 +98,84 @@ class DocumentsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Download file from signed URL and return its path
-  Future<String?> downloadFile(String signedUrl, String fileName) async {
+  final Set<int> _downloadingDocumentIds = {};
+
+  bool isDocumentDownloading(int id) => _downloadingDocumentIds.contains(id);
+
+  Future<bool> downloadFile(
+    String signedUrl,
+    String fileName,
+    int documentId,
+  ) async {
+    _downloadingDocumentIds.add(documentId);
+    notifyListeners();
+
+    try {
+      final status = await Permission.storage.request();
+      final status2 = await Permission.videos.request();
+      final status3 = await Permission.photos.request();
+      final status4 = await Permission.audio.request();
+
+      if (status.isGranted ||
+          status2.isGranted ||
+          status3.isGranted ||
+          status4.isGranted) {
+        final result = await _repository.getFileBySignedUrl(signedUrl);
+
+        return await result.fold(
+          (failure) {
+            _downloadViewErrorMessage = failure.message;
+            _downloadingDocumentIds.remove(documentId);
+            notifyListeners();
+            return Future.value(false);
+          },
+          (response) async {
+            Directory? downloadsDir;
+
+            if (Platform.isAndroid) {
+              downloadsDir = Directory('/storage/emulated/0/Download/Ovacs');
+            } else {
+              downloadsDir = await getDownloadsDirectory();
+              downloadsDir = Directory(path.join(downloadsDir!.path, 'Ovacs'));
+            }
+
+            if (!(await downloadsDir.exists())) {
+              await downloadsDir.create(recursive: true);
+            }
+
+            final filePath = path.join(downloadsDir.path, fileName);
+            final file = File(filePath);
+            await file.writeAsBytes(response.data as Uint8List);
+
+            _downloadingDocumentIds.remove(documentId);
+            notifyListeners();
+
+            return true;
+          },
+        );
+      } else {
+        _downloadViewErrorMessage = "Storage permission denied";
+        _downloadingDocumentIds.remove(documentId);
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      _downloadViewErrorMessage = e.toString();
+      _downloadingDocumentIds.remove(documentId);
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Download and open file using platform default app
+  Future<void> viewFile(String signedUrl, String fileName) async {
+    final filePath = await viewingFile(signedUrl, fileName);
+    if (filePath != null) {
+      await OpenFilex.open(filePath);
+    }
+  }
+
+  Future<String?> viewingFile(String signedUrl, String fileName) async {
     final result = await _repository.getFileBySignedUrl(signedUrl);
 
     return await result.fold(
@@ -113,14 +193,6 @@ class DocumentsProvider extends ChangeNotifier {
         return filePath;
       },
     );
-  }
-
-  /// Download and open file using platform default app
-  Future<void> viewFile(String signedUrl, String fileName) async {
-    final filePath = await downloadFile(signedUrl, fileName);
-    if (filePath != null) {
-      await OpenFilex.open(filePath);
-    }
   }
 
   Future<void> deleteDocument(int id) async {

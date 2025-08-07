@@ -66,7 +66,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        SvgPicture.asset(AppImages.logo,),
+                        SvgPicture.asset(AppImages.logo),
                         const SizedBox(height: 20),
                         Text(
                           AppLocalizations.of(context)!.dashboard,
