@@ -1897,6 +1897,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete Failed'**
   String get deleteFailed;
+
+  /// No description provided for @moveToGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to Group'**
+  String get moveToGroup;
+
+  /// No description provided for @selectGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Group'**
+  String get selectGroup;
+
+  /// No description provided for @moveSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Document moved successfully'**
+  String get moveSuccessful;
+
+  /// No description provided for @moveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to move document'**
+  String get moveFailed;
+
+  /// No description provided for @noGroupsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No groups available'**
+  String get noGroupsAvailable;
 }
 
 class _AppLocalizationsDelegate

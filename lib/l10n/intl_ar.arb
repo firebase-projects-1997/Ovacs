@@ -306,5 +306,10 @@
   "updateSuccessful": "تم التحديث بنجاح",
   "updateFailed": "فشل التحديث",
   "deleteSuccessful": "تم الحذف بنجاح",
-  "deleteFailed": "فشل الحذف"
+  "deleteFailed": "فشل الحذف",
+  "moveToGroup": "نقل إلى مجموعة",
+  "selectGroup": "اختر مجموعة",
+  "moveSuccessful": "تم نقل المستند بنجاح",
+  "moveFailed": "فشل في نقل المستند",
+  "noGroupsAvailable": "لا توجد مجموعات متاحة"
 }

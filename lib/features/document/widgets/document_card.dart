@@ -8,6 +8,8 @@ import '../../../common/widgets/rounded_container.dart';
 import '../../../features/document/providers/documents_provider.dart';
 import '../../../data/models/document_model.dart';
 import '../../../l10n/app_localizations.dart';
+import '../providers/document_detail_provider.dart';
+import '../providers/groups_provider.dart';
 import '../views/document_details_page.dart';
 
 class DocumentCard extends StatelessWidget {
@@ -82,11 +84,44 @@ class DocumentCard extends StatelessWidget {
                     _showEditDialog(context, document, provider);
                   } else if (value == 'delete') {
                     _showDeleteDialog(context, document, provider);
+                  } else if (value == 'move') {
+                    _showMoveToGroupDialog(context, document);
                   }
                 },
                 itemBuilder: (context) => [
-                  PopupMenuItem(value: 'edit', child: Text(locale.edit)),
-                  PopupMenuItem(value: 'delete', child: Text(locale.delete)),
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        const Icon(Iconsax.edit),
+                        const SizedBox(width: 8),
+                        Text(locale.edit),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'move',
+                    child: Row(
+                      children: [
+                        const Icon(Iconsax.folder_2),
+                        const SizedBox(width: 8),
+                        Text(locale.moveToGroup),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        const Icon(Iconsax.trash, color: Colors.red),
+                        const SizedBox(width: 8),
+                        Text(
+                          locale.delete,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
                 icon: const Icon(Iconsax.more_circle),
               ),
@@ -278,6 +313,107 @@ class DocumentCard extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: Text(AppLocalizations.of(context)!.delete),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showMoveToGroupDialog(BuildContext context, DocumentModel document) {
+    final l10n = AppLocalizations.of(context)!;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.moveToGroup),
+        content: Consumer<GroupsProvider>(
+          builder: (context, groupsProvider, child) {
+            // Fetch groups when dialog opens
+            if (groupsProvider.groups.isEmpty &&
+                groupsProvider.status != GroupsStatus.loading) {
+              Future.microtask(() {
+                if (document.session != null) {
+                  groupsProvider.fetchGroupsBySession(document.session!);
+                }
+              });
+            }
+
+            if (groupsProvider.status == GroupsStatus.loading) {
+              return const SizedBox(
+                height: 100,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (groupsProvider.groups.isEmpty) {
+              return SizedBox(
+                height: 100,
+                child: Center(child: Text(l10n.noGroupsAvailable)),
+              );
+            }
+
+            return SizedBox(
+              width: double.maxFinite,
+              height: 200,
+              child: ListView.builder(
+                itemCount: groupsProvider.groups.length,
+                itemBuilder: (context, index) {
+                  final group = groupsProvider.groups[index];
+                  final isCurrentGroup = document.group == group.id;
+
+                  return ListTile(
+                    title: Text(group.name),
+                    subtitle: Text(group.description),
+                    trailing: isCurrentGroup
+                        ? Icon(
+                            Iconsax.tick_circle,
+                            color: Theme.of(context).primaryColor,
+                          )
+                        : null,
+                    onTap: isCurrentGroup
+                        ? null
+                        : () async {
+                            Navigator.pop(context);
+
+                            // Use DocumentDetailProvider to move the document
+                            final detailProvider = context
+                                .read<DocumentDetailProvider>();
+                            final success = await detailProvider
+                                .moveDocumentToGroup(document.id, group.id);
+
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    success
+                                        ? l10n.moveSuccessful
+                                        : l10n.moveFailed,
+                                  ),
+                                ),
+                              );
+
+                              // Refresh the documents list if successful
+                              if (success && document.session != null) {
+                                context
+                                    .read<DocumentsProvider>()
+                                    .fetchDocumentsBySession(
+                                      extraParams: {
+                                        'session_id': document.session,
+                                      },
+                                    );
+                              }
+                            }
+                          },
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
           ),
         ],
       ),

@@ -306,5 +306,10 @@
   "updateSuccessful": "Update Successful",
   "updateFailed": "Update Failed",
   "deleteSuccessful": "Delete Successful",
-  "deleteFailed": "Delete Failed"
+  "deleteFailed": "Delete Failed",
+  "moveToGroup": "Move to Group",
+  "selectGroup": "Select Group",
+  "moveSuccessful": "Document moved successfully",
+  "moveFailed": "Failed to move document",
+  "noGroupsAvailable": "No groups available"
 }

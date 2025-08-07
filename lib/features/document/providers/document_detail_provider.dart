@@ -3,12 +3,7 @@ import '../../../core/error/failure.dart';
 import '../../../data/models/document_model.dart';
 import '../../../data/repositories/document_repository.dart';
 
-enum DocumentDetailStatus {
-  initial,
-  loading,
-  loaded,
-  error,
-}
+enum DocumentDetailStatus { initial, loading, loaded, error }
 
 class DocumentDetailProvider extends ChangeNotifier {
   final DocumentRepository repository;
@@ -49,7 +44,10 @@ class DocumentDetailProvider extends ChangeNotifier {
   }
 
   /// Update document details
-  Future<bool> updateDocument(int documentId, Map<String, dynamic> updatedFields) async {
+  Future<bool> updateDocument(
+    int documentId,
+    Map<String, dynamic> updatedFields,
+  ) async {
     if (_document == null) return false;
 
     _status = DocumentDetailStatus.loading;
@@ -89,6 +87,31 @@ class DocumentDetailProvider extends ChangeNotifier {
       },
       (_) {
         // Document deleted successfully
+        _status = DocumentDetailStatus.loaded;
+        notifyListeners();
+        return true;
+      },
+    );
+  }
+
+  /// Move document to group
+  Future<bool> moveDocumentToGroup(int documentId, int groupId) async {
+    if (_document == null) return false;
+
+    _status = DocumentDetailStatus.loading;
+    notifyListeners();
+
+    final result = await repository.moveDocumentToGroup(documentId, groupId);
+
+    return result.fold(
+      (failure) {
+        _failure = failure;
+        _status = DocumentDetailStatus.error;
+        notifyListeners();
+        return false;
+      },
+      (updatedDocument) {
+        _document = updatedDocument;
         _status = DocumentDetailStatus.loaded;
         notifyListeners();
         return true;

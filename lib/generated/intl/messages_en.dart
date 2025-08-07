@@ -370,6 +370,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "mobileNumberIsRequired": MessageLookupByLibrary.simpleMessage(
       "Mobile number is required",
     ),
+    "moveFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to move document",
+    ),
+    "moveSuccessful": MessageLookupByLibrary.simpleMessage(
+      "Document moved successfully",
+    ),
+    "moveToGroup": MessageLookupByLibrary.simpleMessage("Move to Group"),
     "mySchedule": MessageLookupByLibrary.simpleMessage("My Schedule"),
     "nA": MessageLookupByLibrary.simpleMessage("N/A"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
@@ -383,6 +390,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noFollowersMatchSearch": MessageLookupByLibrary.simpleMessage(
       "No followers match your search",
+    ),
+    "noGroupsAvailable": MessageLookupByLibrary.simpleMessage(
+      "No groups available",
     ),
     "noName": MessageLookupByLibrary.simpleMessage("No Name"),
     "noSessionsAvailable": MessageLookupByLibrary.simpleMessage(
@@ -483,6 +493,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "securityLevel": MessageLookupByLibrary.simpleMessage("Security Level"),
     "selectDate": MessageLookupByLibrary.simpleMessage("Select date"),
     "selectFiles": MessageLookupByLibrary.simpleMessage("Select Files"),
+    "selectGroup": MessageLookupByLibrary.simpleMessage("Select Group"),
     "selectedFilesCount": m6,
     "send": MessageLookupByLibrary.simpleMessage("Send"),
     "sendFailed": MessageLookupByLibrary.simpleMessage("Send failed"),

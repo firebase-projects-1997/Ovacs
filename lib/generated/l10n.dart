@@ -2493,6 +2493,56 @@ class S {
       args: [],
     );
   }
+
+  /// `Move to Group`
+  String get moveToGroup {
+    return Intl.message(
+      'Move to Group',
+      name: 'moveToGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Group`
+  String get selectGroup {
+    return Intl.message(
+      'Select Group',
+      name: 'selectGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Document moved successfully`
+  String get moveSuccessful {
+    return Intl.message(
+      'Document moved successfully',
+      name: 'moveSuccessful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to move document`
+  String get moveFailed {
+    return Intl.message(
+      'Failed to move document',
+      name: 'moveFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No groups available`
+  String get noGroupsAvailable {
+    return Intl.message(
+      'No groups available',
+      name: 'noGroupsAvailable',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

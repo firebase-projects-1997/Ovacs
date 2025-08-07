@@ -61,16 +61,19 @@ class DocumentRepository {
     return res.fold((f) => Left(f), (_) => const Right(unit));
   }
 
-  // PATCH: Move document to group or remove from group
-  Future<Either<Failure, Unit>> moveDocumentToGroup(
+  // POST: Move document to group
+  Future<Either<Failure, DocumentModel>> moveDocumentToGroup(
     int documentId,
-    int? groupId,
+    int groupId,
   ) async {
-    final res = await _dio.patch(
+    final res = await _dio.post(
       '${AppUrls.documents}$documentId/move-to-group/',
       data: {'group_id': groupId},
     );
-    return res.fold((f) => Left(f), (_) => const Right(unit));
+    return res.fold(
+      (f) => Left(f),
+      (res) => Right(DocumentModel.fromJson(res.data as Map<String, dynamic>)),
+    );
   }
 
   // POST: Upload documents (grouped or not)

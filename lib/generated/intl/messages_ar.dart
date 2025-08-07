@@ -361,6 +361,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "mobileNumberIsRequired": MessageLookupByLibrary.simpleMessage(
       "رقم الهاتف مطلوب",
     ),
+    "moveFailed": MessageLookupByLibrary.simpleMessage("فشل في نقل المستند"),
+    "moveSuccessful": MessageLookupByLibrary.simpleMessage(
+      "تم نقل المستند بنجاح",
+    ),
+    "moveToGroup": MessageLookupByLibrary.simpleMessage("نقل إلى مجموعة"),
     "mySchedule": MessageLookupByLibrary.simpleMessage("جدولي"),
     "nA": MessageLookupByLibrary.simpleMessage("غير متوفر"),
     "name": MessageLookupByLibrary.simpleMessage("الاسم"),
@@ -374,6 +379,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noFollowersMatchSearch": MessageLookupByLibrary.simpleMessage(
       "لا يوجد متابعون يطابقون بحثك",
+    ),
+    "noGroupsAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا توجد مجموعات متاحة",
     ),
     "noName": MessageLookupByLibrary.simpleMessage("بدون اسم"),
     "noSessionsAvailable": MessageLookupByLibrary.simpleMessage(
@@ -472,6 +480,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "securityLevel": MessageLookupByLibrary.simpleMessage("مستوى الأمان"),
     "selectDate": MessageLookupByLibrary.simpleMessage("اختر التاريخ"),
     "selectFiles": MessageLookupByLibrary.simpleMessage("اختر الملفات"),
+    "selectGroup": MessageLookupByLibrary.simpleMessage("اختر مجموعة"),
     "selectedFilesCount": m6,
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),
     "sendFailed": MessageLookupByLibrary.simpleMessage("فشل في الإرسال"),

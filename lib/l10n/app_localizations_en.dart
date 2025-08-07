@@ -956,4 +956,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteFailed => 'Delete Failed';
+
+  @override
+  String get moveToGroup => 'Move to Group';
+
+  @override
+  String get selectGroup => 'Select Group';
+
+  @override
+  String get moveSuccessful => 'Document moved successfully';
+
+  @override
+  String get moveFailed => 'Failed to move document';
+
+  @override
+  String get noGroupsAvailable => 'No groups available';
 }

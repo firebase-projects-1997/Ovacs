@@ -948,4 +948,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get deleteFailed => 'فشل الحذف';
+
+  @override
+  String get moveToGroup => 'نقل إلى مجموعة';
+
+  @override
+  String get selectGroup => 'اختر مجموعة';
+
+  @override
+  String get moveSuccessful => 'تم نقل المستند بنجاح';
+
+  @override
+  String get moveFailed => 'فشل في نقل المستند';
+
+  @override
+  String get noGroupsAvailable => 'لا توجد مجموعات متاحة';
 }
