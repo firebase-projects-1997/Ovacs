@@ -2358,6 +2358,141 @@ class S {
   String get silver {
     return Intl.message('Silver', name: 'silver', desc: '', args: []);
   }
+
+  /// `You are now viewing the workspace of {accountName}`
+  String viewingWorkspaceOf(Object accountName) {
+    return Intl.message(
+      'You are now viewing the workspace of $accountName',
+      name: 'viewingWorkspaceOf',
+      desc: '',
+      args: [accountName],
+    );
+  }
+
+  /// `Close`
+  String get close {
+    return Intl.message('Close', name: 'close', desc: '', args: []);
+  }
+
+  /// `Switch to Workspace`
+  String get switchToWorkspace {
+    return Intl.message(
+      'Switch to Workspace',
+      name: 'switchToWorkspace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Document Details`
+  String get documentDetails {
+    return Intl.message(
+      'Document Details',
+      name: 'documentDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `An error occurred`
+  String get errorOccurred {
+    return Intl.message(
+      'An error occurred',
+      name: 'errorOccurred',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `File Size`
+  String get fileSize {
+    return Intl.message('File Size', name: 'fileSize', desc: '', args: []);
+  }
+
+  /// `Uploaded At`
+  String get uploadedAt {
+    return Intl.message('Uploaded At', name: 'uploadedAt', desc: '', args: []);
+  }
+
+  /// `Context Information`
+  String get contextInformation {
+    return Intl.message(
+      'Context Information',
+      name: 'contextInformation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Case`
+  String get case_ {
+    return Intl.message('Case', name: 'case_', desc: '', args: []);
+  }
+
+  /// `Actions`
+  String get actions {
+    return Intl.message('Actions', name: 'actions', desc: '', args: []);
+  }
+
+  /// `Download Complete`
+  String get downloadComplete {
+    return Intl.message(
+      'Download Complete',
+      name: 'downloadComplete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download Failed`
+  String get downloadFailed {
+    return Intl.message(
+      'Download Failed',
+      name: 'downloadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Successful`
+  String get updateSuccessful {
+    return Intl.message(
+      'Update Successful',
+      name: 'updateSuccessful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Failed`
+  String get updateFailed {
+    return Intl.message(
+      'Update Failed',
+      name: 'updateFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Successful`
+  String get deleteSuccessful {
+    return Intl.message(
+      'Delete Successful',
+      name: 'deleteSuccessful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Failed`
+  String get deleteFailed {
+    return Intl.message(
+      'Delete Failed',
+      name: 'deleteFailed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

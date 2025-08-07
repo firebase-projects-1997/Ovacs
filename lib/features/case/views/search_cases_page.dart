@@ -195,7 +195,12 @@ class _SearchCasesPageState extends State<SearchCasesPage> {
             else if (casesProvider.cases.isEmpty)
               _buildEmptyState()
             else
-              ...casesProvider.cases.map((c) => CaseCard(caseModel: c)),
+              ...casesProvider.cases.map(
+                (c) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: CaseCard(caseModel: c),
+                ),
+              ),
           ],
         ),
       ),

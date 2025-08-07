@@ -213,7 +213,7 @@ class _GroupsPageState extends State<GroupsPage> {
                     children: [
                       Icon(
                         Iconsax.folder5,
-                        size: 75,
+                        size: 30,
                         color: Colors.orange.shade700,
                       ),
                       const SizedBox(width: 20),
@@ -235,7 +235,7 @@ class _GroupsPageState extends State<GroupsPage> {
                           PopupMenuItem(
                             value: 'edit',
                             child: Row(
-                              children:  [
+                              children: [
                                 Icon(
                                   Iconsax.edit,
                                   size: 18,

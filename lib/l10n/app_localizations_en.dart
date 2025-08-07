@@ -906,4 +906,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get silver => 'Silver';
+
+  @override
+  String viewingWorkspaceOf(Object accountName) {
+    return 'You are now viewing the workspace of $accountName';
+  }
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get switchToWorkspace => 'Switch to Workspace';
+
+  @override
+  String get documentDetails => 'Document Details';
+
+  @override
+  String get errorOccurred => 'An error occurred';
+
+  @override
+  String get fileSize => 'File Size';
+
+  @override
+  String get uploadedAt => 'Uploaded At';
+
+  @override
+  String get contextInformation => 'Context Information';
+
+  @override
+  String get case_ => 'Case';
+
+  @override
+  String get actions => 'Actions';
+
+  @override
+  String get downloadComplete => 'Download Complete';
+
+  @override
+  String get downloadFailed => 'Download Failed';
+
+  @override
+  String get updateSuccessful => 'Update Successful';
+
+  @override
+  String get updateFailed => 'Update Failed';
+
+  @override
+  String get deleteSuccessful => 'Delete Successful';
+
+  @override
+  String get deleteFailed => 'Delete Failed';
 }

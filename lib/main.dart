@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:new_ovacs/features/document/providers/group_details_provider.dart';
 import 'package:new_ovacs/features/document/providers/upload_documents_provider.dart';
 import 'common/providers/country_provider.dart';
+import 'common/providers/workspace_provider.dart';
 import 'core/constants/app_routes.dart';
 import 'core/utils/app_theme.dart';
 import 'features/auth/views/login_page.dart';
@@ -23,6 +24,7 @@ import 'features/connection/providers/connection_provider.dart';
 import 'features/connection/providers/send_invitation_provider.dart';
 import 'features/dashboard/providers/dashboard_provider.dart';
 import 'features/dashboard/views/navigation_menu.dart';
+import 'features/document/providers/document_detail_provider.dart';
 import 'features/document/providers/documents_provider.dart';
 import 'features/document/providers/groups_provider.dart';
 import 'features/session/providers/add_session_provider.dart';
@@ -94,12 +96,14 @@ class _MainAppState extends State<MainApp> {
 
         final themeProvider = getIt<ThemeProvider>()..init();
         final localeProvider = getIt<LocaleProvider>()..init();
+        final workspaceProvider = getIt<WorkspaceProvider>()..init();
 
         return MultiProvider(
           providers: [
             // settings
             ChangeNotifierProvider(create: (_) => themeProvider),
             ChangeNotifierProvider(create: (_) => localeProvider),
+            ChangeNotifierProvider(create: (_) => workspaceProvider),
             // auth
             ChangeNotifierProvider(create: (_) => widget.authProvider),
             ChangeNotifierProvider(
@@ -166,6 +170,9 @@ class _MainAppState extends State<MainApp> {
             // documents
             ChangeNotifierProvider(
               create: (context) => getIt<DocumentsProvider>(),
+            ),
+            ChangeNotifierProvider(
+              create: (context) => getIt<DocumentDetailProvider>(),
             ),
             ChangeNotifierProvider(
               create: (context) => getIt<UploadDocumentsProvider>(),

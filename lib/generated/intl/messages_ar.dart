@@ -43,6 +43,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m10(count) => "تم رفع ${count} مستند بنجاح!";
 
+  static String m11(accountName) => "أنت تشاهد الآن مساحة عمل ${accountName}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "aLawFirmThatHelps": MessageLookupByLibrary.simpleMessage(
@@ -59,6 +61,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "accountRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم إزالة الحساب بنجاح",
     ),
+    "actions": MessageLookupByLibrary.simpleMessage("الإجراءات"),
     "active": MessageLookupByLibrary.simpleMessage("نشط؟"),
     "add": MessageLookupByLibrary.simpleMessage("إضافة"),
     "addClient": MessageLookupByLibrary.simpleMessage("إضافة عميل"),
@@ -126,6 +129,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "caseNameLabel": MessageLookupByLibrary.simpleMessage("اسم القضية"),
     "caseTitle": MessageLookupByLibrary.simpleMessage("عنوان القضية"),
     "caseWord": MessageLookupByLibrary.simpleMessage("القضية"),
+    "case_": MessageLookupByLibrary.simpleMessage("القضية"),
     "cases": MessageLookupByLibrary.simpleMessage("القضايا"),
     "checkYourEmailForConfirmation": MessageLookupByLibrary.simpleMessage(
       "تحقق من بريدك الإلكتروني للحصول على رمز التأكيد",
@@ -144,6 +148,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "clientNameLabel": MessageLookupByLibrary.simpleMessage("اسم العميل"),
     "clientNotFound": MessageLookupByLibrary.simpleMessage("العميل غير موجود."),
     "clients": MessageLookupByLibrary.simpleMessage("العملاء"),
+    "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
     "code": MessageLookupByLibrary.simpleMessage("الرمز"),
     "companyInformation": MessageLookupByLibrary.simpleMessage(
       "معلومات الشركة",
@@ -169,6 +174,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "اقتراحات الاتصال",
     ),
     "connections": MessageLookupByLibrary.simpleMessage("الاتصالات"),
+    "contextInformation": MessageLookupByLibrary.simpleMessage(
+      "معلومات السياق",
+    ),
     "country": MessageLookupByLibrary.simpleMessage("الدولة"),
     "countryIsRequired": MessageLookupByLibrary.simpleMessage("الدولة مطلوبة"),
     "countryWillAppearHere": MessageLookupByLibrary.simpleMessage(
@@ -194,6 +202,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "dateDesc": MessageLookupByLibrary.simpleMessage("التاريخ تنازلي"),
     "dateFormatHint": MessageLookupByLibrary.simpleMessage("ي-ش-س"),
     "delete": MessageLookupByLibrary.simpleMessage("حذف"),
+    "deleteFailed": MessageLookupByLibrary.simpleMessage("فشل الحذف"),
+    "deleteSuccessful": MessageLookupByLibrary.simpleMessage("تم الحذف بنجاح"),
     "description": MessageLookupByLibrary.simpleMessage("الوصف: "),
     "descriptionIsRequired": MessageLookupByLibrary.simpleMessage(
       "الوصف مطلوب",
@@ -201,11 +211,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "descriptionLabel": MessageLookupByLibrary.simpleMessage("الوصف"),
     "diamond": MessageLookupByLibrary.simpleMessage("ماسي"),
     "didntReceiveOTP": MessageLookupByLibrary.simpleMessage("لم تستلم الرمز؟ "),
+    "documentDetails": MessageLookupByLibrary.simpleMessage("تفاصيل المستند"),
     "documents": MessageLookupByLibrary.simpleMessage("الملفات"),
     "dontHaveAnAccount": MessageLookupByLibrary.simpleMessage(
       "ليس لديك حساب؟ ",
     ),
     "download": MessageLookupByLibrary.simpleMessage("تحميل"),
+    "downloadComplete": MessageLookupByLibrary.simpleMessage("اكتمل التحميل"),
+    "downloadFailed": MessageLookupByLibrary.simpleMessage("فشل التحميل"),
     "edit": MessageLookupByLibrary.simpleMessage("تعديل"),
     "editCase": MessageLookupByLibrary.simpleMessage("تعديل القضية"),
     "editClient": MessageLookupByLibrary.simpleMessage("تعديل العميل"),
@@ -271,6 +284,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorLoadingMessages": MessageLookupByLibrary.simpleMessage(
       "خطأ في تحميل الرسائل",
     ),
+    "errorOccurred": MessageLookupByLibrary.simpleMessage("حدث خطأ"),
     "experienceTheFuture": MessageLookupByLibrary.simpleMessage(
       "اختبر المستقبل",
     ),
@@ -307,6 +321,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fileName": MessageLookupByLibrary.simpleMessage("اسم الملف: "),
     "fileNotFound": MessageLookupByLibrary.simpleMessage("الملف غير موجود."),
+    "fileSize": MessageLookupByLibrary.simpleMessage("حجم الملف"),
     "followers": m3,
     "following": m4,
     "forgetPassword": MessageLookupByLibrary.simpleMessage(
@@ -478,6 +493,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "skip": MessageLookupByLibrary.simpleMessage("تخطي"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage("حدث خطأ ما"),
     "storeAsGroup": MessageLookupByLibrary.simpleMessage("تخزين كمجموعة"),
+    "switchToWorkspace": MessageLookupByLibrary.simpleMessage(
+      "التبديل إلى مساحة العمل",
+    ),
     "tenMillionPlusPeople": MessageLookupByLibrary.simpleMessage(
       "أكثر من 10 ملايين شخص لديهم الكثير من الملفات التي يرغبون في الاحتفاظ بها، مثل قضاياهم القانونية.",
     ),
@@ -503,11 +521,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "unknownError": MessageLookupByLibrary.simpleMessage("خطأ غير معروف"),
     "upcomingSessions": MessageLookupByLibrary.simpleMessage("الجلسات القادمة"),
     "update": MessageLookupByLibrary.simpleMessage("تحديث"),
+    "updateFailed": MessageLookupByLibrary.simpleMessage("فشل التحديث"),
     "updateRole": MessageLookupByLibrary.simpleMessage("تحديث الدور"),
     "updateRoleFor": m8,
+    "updateSuccessful": MessageLookupByLibrary.simpleMessage(
+      "تم التحديث بنجاح",
+    ),
     "uploadDocuments": MessageLookupByLibrary.simpleMessage("رفع المستندات"),
     "uploadFailed": m9,
     "uploadSuccessMessage": m10,
+    "uploadedAt": MessageLookupByLibrary.simpleMessage("تم الرفع في"),
     "uploading": MessageLookupByLibrary.simpleMessage("جاري الرفع..."),
     "userName": MessageLookupByLibrary.simpleMessage("اسم المستخدم"),
     "usernameIsRequired": MessageLookupByLibrary.simpleMessage(
@@ -516,6 +539,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "verify": MessageLookupByLibrary.simpleMessage("تحقق"),
     "view": MessageLookupByLibrary.simpleMessage("عرض"),
     "viewGroups": MessageLookupByLibrary.simpleMessage("عرض المجموعات"),
+    "viewingWorkspaceOf": m11,
     "voiceError": MessageLookupByLibrary.simpleMessage("خطأ في الصوت"),
     "weAre": MessageLookupByLibrary.simpleMessage("نحن"),
     "welcome": MessageLookupByLibrary.simpleMessage("مرحبًا"),

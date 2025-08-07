@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/providers/workspace_provider.dart';
 import '../../../common/widgets/rounded_container.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
@@ -28,7 +29,27 @@ class _CasesPageState extends State<CasesPage> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      Provider.of<CasesProvider>(context, listen: false).fetchCases();
+      if (mounted) {
+        final workspaceProvider = Provider.of<WorkspaceProvider>(
+          context,
+          listen: false,
+        );
+        final casesProvider = Provider.of<CasesProvider>(
+          context,
+          listen: false,
+        );
+
+        // Add account_id filter if in connection workspace mode
+        final filters = <String, dynamic>{};
+        if (workspaceProvider.isConnectionMode) {
+          final accountId = workspaceProvider.getAccountIdForCases();
+          if (accountId != null) {
+            filters['account_id'] = accountId;
+          }
+        }
+
+        casesProvider.fetchCases(filters: filters.isNotEmpty ? filters : null);
+      }
     });
 
     _scrollController = ScrollController();
@@ -47,7 +68,24 @@ class _CasesPageState extends State<CasesPage> {
   }
 
   Future<void> _onRefresh() async {
-    await Provider.of<CasesProvider>(context, listen: false).fetchCases();
+    final workspaceProvider = Provider.of<WorkspaceProvider>(
+      context,
+      listen: false,
+    );
+    final casesProvider = Provider.of<CasesProvider>(context, listen: false);
+
+    // Add account_id filter if in connection workspace mode
+    final filters = <String, dynamic>{};
+    if (workspaceProvider.isConnectionMode) {
+      final accountId = workspaceProvider.getAccountIdForCases();
+      if (accountId != null) {
+        filters['account_id'] = accountId;
+      }
+    }
+
+    await casesProvider.fetchCases(
+      filters: filters.isNotEmpty ? filters : null,
+    );
   }
 
   @override
@@ -161,7 +199,12 @@ class _CasesPageState extends State<CasesPage> {
                 );
               },
 
-              child: Icon(Iconsax.add, color: isDarkMode(context) ? AppColors.pureWhite :AppColors.charcoalGrey),
+              child: Icon(
+                Iconsax.add,
+                color: isDarkMode(context)
+                    ? AppColors.pureWhite
+                    : AppColors.charcoalGrey,
+              ),
             ),
           ],
         ),

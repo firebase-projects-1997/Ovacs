@@ -1801,6 +1801,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Silver'**
   String get silver;
+
+  /// No description provided for @viewingWorkspaceOf.
+  ///
+  /// In en, this message translates to:
+  /// **'You are now viewing the workspace of {accountName}'**
+  String viewingWorkspaceOf(Object accountName);
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @switchToWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to Workspace'**
+  String get switchToWorkspace;
+
+  /// No description provided for @documentDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Details'**
+  String get documentDetails;
+
+  /// No description provided for @errorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get errorOccurred;
+
+  /// No description provided for @fileSize.
+  ///
+  /// In en, this message translates to:
+  /// **'File Size'**
+  String get fileSize;
+
+  /// No description provided for @uploadedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded At'**
+  String get uploadedAt;
+
+  /// No description provided for @contextInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Context Information'**
+  String get contextInformation;
+
+  /// No description provided for @case_.
+  ///
+  /// In en, this message translates to:
+  /// **'Case'**
+  String get case_;
+
+  /// No description provided for @actions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get actions;
+
+  /// No description provided for @downloadComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Complete'**
+  String get downloadComplete;
+
+  /// No description provided for @downloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Failed'**
+  String get downloadFailed;
+
+  /// No description provided for @updateSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Successful'**
+  String get updateSuccessful;
+
+  /// No description provided for @updateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Failed'**
+  String get updateFailed;
+
+  /// No description provided for @deleteSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Successful'**
+  String get deleteSuccessful;
+
+  /// No description provided for @deleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Failed'**
+  String get deleteFailed;
 }
 
 class _AppLocalizationsDelegate

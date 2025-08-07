@@ -11,6 +11,8 @@ import 'package:new_ovacs/features/session/views/add_session_page.dart';
 import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/providers/workspace_provider.dart';
+
 import '../../../common/widgets/rounded_container.dart';
 import '../../../core/functions/is_dark_mode.dart';
 import '../../client/views/client_info_page.dart';
@@ -35,8 +37,16 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      context.read<CaseDetailProvider>().fetchCaseDetail(widget.caseId);
-      context.read<SessionsProvider>().fetchSessions(widget.caseId);
+      if (mounted) {
+        final workspaceProvider = context.read<WorkspaceProvider>();
+        final filters = workspaceProvider.getWorkspaceQueryParams();
+
+        context.read<CaseDetailProvider>().fetchCaseDetail(widget.caseId);
+        context.read<SessionsProvider>().fetchSessions(
+          widget.caseId,
+          filters: filters.isNotEmpty ? filters : null,
+        );
+      }
     });
     _scrollController = ScrollController();
     _scrollController.addListener(() {

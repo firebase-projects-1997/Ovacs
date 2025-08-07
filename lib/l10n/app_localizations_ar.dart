@@ -898,4 +898,54 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get silver => 'فضي';
+
+  @override
+  String viewingWorkspaceOf(Object accountName) {
+    return 'أنت تشاهد الآن مساحة عمل $accountName';
+  }
+
+  @override
+  String get close => 'إغلاق';
+
+  @override
+  String get switchToWorkspace => 'التبديل إلى مساحة العمل';
+
+  @override
+  String get documentDetails => 'تفاصيل المستند';
+
+  @override
+  String get errorOccurred => 'حدث خطأ';
+
+  @override
+  String get fileSize => 'حجم الملف';
+
+  @override
+  String get uploadedAt => 'تم الرفع في';
+
+  @override
+  String get contextInformation => 'معلومات السياق';
+
+  @override
+  String get case_ => 'القضية';
+
+  @override
+  String get actions => 'الإجراءات';
+
+  @override
+  String get downloadComplete => 'اكتمل التحميل';
+
+  @override
+  String get downloadFailed => 'فشل التحميل';
+
+  @override
+  String get updateSuccessful => 'تم التحديث بنجاح';
+
+  @override
+  String get updateFailed => 'فشل التحديث';
+
+  @override
+  String get deleteSuccessful => 'تم الحذف بنجاح';
+
+  @override
+  String get deleteFailed => 'فشل الحذف';
 }

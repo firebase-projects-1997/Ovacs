@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:new_ovacs/services/storage_service.dart';
 
+import '../../../common/providers/workspace_provider.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../data/models/login_response.dart';
 import '../../../data/models/user_model.dart';
@@ -234,6 +236,15 @@ class AuthProvider extends ChangeNotifier {
     _accessToken = null;
     _refreshToken = null;
     await _storageService.remove(StorageKeys.loginResponse);
+
+    // Reset workspace state on logout
+    try {
+      final workspaceProvider = GetIt.instance<WorkspaceProvider>();
+      await workspaceProvider.reset();
+    } catch (e) {
+      // Workspace provider might not be available during app shutdown
+    }
+
     notifyListeners();
   }
 }

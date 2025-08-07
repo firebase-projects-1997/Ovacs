@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:new_ovacs/common/providers/country_provider.dart';
+import 'package:new_ovacs/common/providers/workspace_provider.dart';
 import 'package:new_ovacs/core/network/dio_client.dart';
 import 'package:new_ovacs/core/network/app_interceptors.dart';
 import 'package:new_ovacs/data/repositories/auth_repository.dart';
@@ -19,6 +20,7 @@ import 'package:new_ovacs/features/client/providers/client_details_provider.dart
 import 'package:new_ovacs/features/client/providers/clients_provider.dart';
 import 'package:new_ovacs/features/client/providers/update_client_provider.dart';
 import 'package:new_ovacs/features/dashboard/providers/dashboard_provider.dart';
+import 'package:new_ovacs/features/document/providers/document_detail_provider.dart';
 import 'package:new_ovacs/features/document/providers/documents_provider.dart';
 import 'package:new_ovacs/features/document/providers/group_details_provider.dart';
 import 'package:new_ovacs/features/document/providers/groups_provider.dart';
@@ -51,6 +53,7 @@ Future<void> setupLocator() async {
   // theme & locale
   getIt.registerLazySingleton(() => ThemeProvider(getIt<StorageService>()));
   getIt.registerLazySingleton(() => LocaleProvider(getIt<StorageService>()));
+  getIt.registerLazySingleton(() => WorkspaceProvider(getIt<StorageService>()));
 
   // networking and authentication
   getIt.registerLazySingleton(() => DioClient());
@@ -135,6 +138,9 @@ Future<void> setupLocator() async {
   // documents
   getIt.registerLazySingleton(
     () => DocumentsProvider(getIt<DocumentRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => DocumentDetailProvider(getIt<DocumentRepository>()),
   );
   getIt.registerLazySingleton(
     () => UploadDocumentsProvider(getIt<DocumentRepository>()),

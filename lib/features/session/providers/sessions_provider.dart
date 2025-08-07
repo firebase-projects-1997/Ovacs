@@ -52,20 +52,29 @@ class SessionsProvider extends ChangeNotifier
   bool _hasMore = true;
 
   int? _caseId;
+  Map<String, dynamic>? _filters;
   int _totalCount = 0;
   bool get hasMoreData => _sessions.length < _totalCount;
 
-  Future<void> fetchSessions(int caseId) async {
+  Future<void> fetchSessions(
+    int caseId, {
+    Map<String, dynamic>? filters,
+  }) async {
     _isLoading = true;
     _errorMessage = null;
     _currentPage = 1;
     _hasMore = true;
     _sessions.clear();
     _caseId = caseId;
+    _filters = filters;
     notifyListeners();
 
     final Either<Failure, SessionsWithPaginationResponse> result =
-        await sessionRepository.getSessions(caseId, page: _currentPage);
+        await sessionRepository.getSessions(
+          caseId,
+          page: _currentPage,
+          filters: filters,
+        );
 
     result.fold(
       (failure) {
@@ -91,7 +100,11 @@ class SessionsProvider extends ChangeNotifier
     _currentPage++;
 
     final Either<Failure, SessionsWithPaginationResponse> result =
-        await sessionRepository.getSessions(_caseId!, page: _currentPage);
+        await sessionRepository.getSessions(
+          _caseId!,
+          page: _currentPage,
+          filters: _filters,
+        );
 
     result.fold(
       (failure) {
@@ -111,7 +124,7 @@ class SessionsProvider extends ChangeNotifier
 
   Future<void> refresh() async {
     if (_caseId != null) {
-      await fetchSessions(_caseId!);
+      await fetchSessions(_caseId!, filters: _filters);
     }
   }
 

@@ -43,6 +43,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m10(count) => "Uploaded ${count} documents successfully!";
 
+  static String m11(accountName) =>
+      "You are now viewing the workspace of ${accountName}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "aLawFirmThatHelps": MessageLookupByLibrary.simpleMessage(
@@ -59,6 +62,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "accountRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Account removed successfully",
     ),
+    "actions": MessageLookupByLibrary.simpleMessage("Actions"),
     "active": MessageLookupByLibrary.simpleMessage("Active?"),
     "add": MessageLookupByLibrary.simpleMessage("Add"),
     "addClient": MessageLookupByLibrary.simpleMessage("Add Client"),
@@ -126,6 +130,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "caseNameLabel": MessageLookupByLibrary.simpleMessage("Case name"),
     "caseTitle": MessageLookupByLibrary.simpleMessage("Case Title"),
     "caseWord": MessageLookupByLibrary.simpleMessage("Case"),
+    "case_": MessageLookupByLibrary.simpleMessage("Case"),
     "cases": MessageLookupByLibrary.simpleMessage("Cases"),
     "checkYourEmailForConfirmation": MessageLookupByLibrary.simpleMessage(
       "Check your E-mail for confirmation code",
@@ -146,6 +151,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "clientNameLabel": MessageLookupByLibrary.simpleMessage("Client name"),
     "clientNotFound": MessageLookupByLibrary.simpleMessage("Client not found."),
     "clients": MessageLookupByLibrary.simpleMessage("Clients"),
+    "close": MessageLookupByLibrary.simpleMessage("Close"),
     "code": MessageLookupByLibrary.simpleMessage("Code"),
     "companyInformation": MessageLookupByLibrary.simpleMessage(
       "Company Information",
@@ -171,6 +177,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Connection Suggestions",
     ),
     "connections": MessageLookupByLibrary.simpleMessage("Connections"),
+    "contextInformation": MessageLookupByLibrary.simpleMessage(
+      "Context Information",
+    ),
     "country": MessageLookupByLibrary.simpleMessage("Country"),
     "countryIsRequired": MessageLookupByLibrary.simpleMessage(
       "Country is required",
@@ -194,6 +203,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "dateDesc": MessageLookupByLibrary.simpleMessage("Date Desc"),
     "dateFormatHint": MessageLookupByLibrary.simpleMessage("d-m-y"),
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "deleteFailed": MessageLookupByLibrary.simpleMessage("Delete Failed"),
+    "deleteSuccessful": MessageLookupByLibrary.simpleMessage(
+      "Delete Successful",
+    ),
     "description": MessageLookupByLibrary.simpleMessage("Description: "),
     "descriptionIsRequired": MessageLookupByLibrary.simpleMessage(
       "Description is required",
@@ -203,11 +216,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "didntReceiveOTP": MessageLookupByLibrary.simpleMessage(
       "Didn\'t receive OTP? ",
     ),
+    "documentDetails": MessageLookupByLibrary.simpleMessage("Document Details"),
     "documents": MessageLookupByLibrary.simpleMessage("Documents"),
     "dontHaveAnAccount": MessageLookupByLibrary.simpleMessage(
       "Don\'t have an account? ",
     ),
     "download": MessageLookupByLibrary.simpleMessage("Download"),
+    "downloadComplete": MessageLookupByLibrary.simpleMessage(
+      "Download Complete",
+    ),
+    "downloadFailed": MessageLookupByLibrary.simpleMessage("Download Failed"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editCase": MessageLookupByLibrary.simpleMessage("Edit Case"),
     "editClient": MessageLookupByLibrary.simpleMessage("Edit Client"),
@@ -273,6 +291,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorLoadingMessages": MessageLookupByLibrary.simpleMessage(
       "Error loading messages",
     ),
+    "errorOccurred": MessageLookupByLibrary.simpleMessage("An error occurred"),
     "experienceTheFuture": MessageLookupByLibrary.simpleMessage(
       "Experience the future",
     ),
@@ -309,6 +328,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fileName": MessageLookupByLibrary.simpleMessage("File name: "),
     "fileNotFound": MessageLookupByLibrary.simpleMessage("File not found."),
+    "fileSize": MessageLookupByLibrary.simpleMessage("File Size"),
     "followers": m3,
     "following": m4,
     "forgetPassword": MessageLookupByLibrary.simpleMessage("Forget password?"),
@@ -486,6 +506,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Something went wrong",
     ),
     "storeAsGroup": MessageLookupByLibrary.simpleMessage("Store as Group"),
+    "switchToWorkspace": MessageLookupByLibrary.simpleMessage(
+      "Switch to Workspace",
+    ),
     "tenMillionPlusPeople": MessageLookupByLibrary.simpleMessage(
       "10 Million+ people have a lot of files they want to keep, such as their court cases.",
     ),
@@ -513,11 +536,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Upcoming Sessions",
     ),
     "update": MessageLookupByLibrary.simpleMessage("Update"),
+    "updateFailed": MessageLookupByLibrary.simpleMessage("Update Failed"),
     "updateRole": MessageLookupByLibrary.simpleMessage("Update Role"),
     "updateRoleFor": m8,
+    "updateSuccessful": MessageLookupByLibrary.simpleMessage(
+      "Update Successful",
+    ),
     "uploadDocuments": MessageLookupByLibrary.simpleMessage("Upload Documents"),
     "uploadFailed": m9,
     "uploadSuccessMessage": m10,
+    "uploadedAt": MessageLookupByLibrary.simpleMessage("Uploaded At"),
     "uploading": MessageLookupByLibrary.simpleMessage("Uploading..."),
     "userName": MessageLookupByLibrary.simpleMessage("User name"),
     "usernameIsRequired": MessageLookupByLibrary.simpleMessage(
@@ -526,6 +554,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "verify": MessageLookupByLibrary.simpleMessage("Verify"),
     "view": MessageLookupByLibrary.simpleMessage("View"),
     "viewGroups": MessageLookupByLibrary.simpleMessage("view groups"),
+    "viewingWorkspaceOf": m11,
     "voiceError": MessageLookupByLibrary.simpleMessage("voice error"),
     "weAre": MessageLookupByLibrary.simpleMessage("We are"),
     "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),

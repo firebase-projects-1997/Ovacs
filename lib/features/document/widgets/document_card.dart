@@ -8,6 +8,7 @@ import '../../../common/widgets/rounded_container.dart';
 import '../../../features/document/providers/documents_provider.dart';
 import '../../../data/models/document_model.dart';
 import '../../../l10n/app_localizations.dart';
+import '../views/document_details_page.dart';
 
 class DocumentCard extends StatelessWidget {
   final DocumentModel document;
@@ -45,6 +46,14 @@ class DocumentCard extends StatelessWidget {
     final locale = AppLocalizations.of(context)!;
 
     return RoundedContainer(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DocumentDetailsPage(documentId: document.id),
+          ),
+        );
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
