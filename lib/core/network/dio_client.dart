@@ -132,12 +132,25 @@ class DioClient {
     // Safely extract message
     String extractMessage() {
       try {
-        if (error.response?.data is Map<String, dynamic>) {
-          final data = error.response!.data as Map<String, dynamic>;
-          if (data.containsKey('message')) return data['message'].toString();
-          if (data.containsKey('non_field_errors') &&
-              data['non_field_errors'] is List) {
-            return (data['non_field_errors'] as List).join(', ');
+        final responseData = error.response?.data;
+        if (responseData is Map<String, dynamic>) {
+          // Try to get nested non_field_errors from data["data"]
+          if (responseData.containsKey('data')) {
+            final innerData = responseData['data'];
+            if (innerData is Map<String, dynamic> &&
+                innerData['non_field_errors'] is List) {
+              return (innerData['non_field_errors'] as List).join(', ');
+            }
+          }
+
+          // Try top-level non_field_errors
+          if (responseData['non_field_errors'] is List) {
+            return (responseData['non_field_errors'] as List).join(', ');
+          }
+
+          // Try top-level message
+          if (responseData.containsKey('message')) {
+            return responseData['message'].toString();
           }
         }
         return "Something went wrong.";

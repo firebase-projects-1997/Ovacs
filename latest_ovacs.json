@@ -1,0 +1,2391 @@
+{
+	"info": {
+		"_postman_id": "4e17d1e5-5156-4f32-ac3d-69aa6ab13b7e",
+		"name": "ovacs Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30020814",
+		"_collection_link": "https://ovacs-team.postman.co/workspace/Ovacs-Team-Workspace~c6f0357b-bcf7-4a85-8b55-ed0e7fc89f8c/collection/30020814-4e17d1e5-5156-4f32-ac3d-69aa6ab13b7e?action=share&source=collection_link&creator=30020814"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test_user 27\",\r\n    \"email\": \"test_user27@example.com\",\r\n    \"mobile\": \"1431155027\",\r\n    \"password\": \"SecurePassword123\",\r\n    \"country_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/register/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"register",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "confirm-account",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test_user27@example.com\",\r\n    \"confirmation_code\": \"721412\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/confirm-account/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"confirm-account",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test_user25@example.com\",\r\n    \"password\": \"SecurePassword123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "account-info",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account-info",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account-info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "countries",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/api/countries",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"countries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "token-refresh",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refresh\": \"your_refresh_token_here\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/token/refresh/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"token",
+								"refresh",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "password-reset-request",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test_user12@example.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/password-reset-request/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"password-reset-request",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "password-reset-confirm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"test_user1@example.com\",\r\n  \"token\": \"749441\",\r\n  \"new_password\": \"New_SecurePassword123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/password-reset-confirm/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"password-reset-confirm",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "resend-confirmation-code",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test_user26@example.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/resend-confirmation-code/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resend-confirmation-code",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Connections & Spaces",
+			"item": [
+				{
+					"name": "send-connection-request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiver_account_id\": 38,\r\n  \"receiver_account_name\": \"test_user 26's Account\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/send-connection-request/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"send-connection-request",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "connection-requests-received",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzNzc0NDgyLCJpYXQiOjE3NTMxNjk2ODIsImp0aSI6ImJkMjdmOTA5YWE5ZDQyZWQ5ZTA3YWNkMmU3M2U4NzY5IiwidXNlcl9pZCI6Mzl9.NqX1F_h5Ytwbwq7LbWakRyWXzm7wi1c-FVM0-L4vHjA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/connection-requests/received/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"connection-requests",
+								"received",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "connection-requests-sent",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/connection-requests/sent/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"connection-requests",
+								"sent",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "respond-connection-request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzNzc0NDgyLCJpYXQiOjE3NTMxNjk2ODIsImp0aSI6ImJkMjdmOTA5YWE5ZDQyZWQ5ZTA3YWNkMmU3M2U4NzY5IiwidXNlcl9pZCI6Mzl9.NqX1F_h5Ytwbwq7LbWakRyWXzm7wi1c-FVM0-L4vHjA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 32, // sender_account_id\r\n    \"status\": \"accepted\",  // or \"rejected\"\r\n    \"request_id\": 26,\r\n    \"action\": \"accept\"  // or \"reject\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/respond-connection-request/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"respond-connection-request",
+								""
+							]
+						},
+						"description": "Status options: \"accepted\" or \"rejected\""
+					},
+					"response": []
+				},
+				{
+					"name": "connections (all)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/connections/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"connections",
+								""
+							]
+						},
+						"description": "Returns both following and followers with relationship details"
+					},
+					"response": []
+				},
+				{
+					"name": "my-following (accounts I can switch to)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/my-following/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"my-following",
+								""
+							]
+						},
+						"description": "NEW: Accounts I sent requests to (can switch to their space)"
+					},
+					"response": []
+				},
+				{
+					"name": "my-followers (accounts following me)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/my-followers/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"my-followers",
+								""
+							]
+						},
+						"description": "NEW: Accounts that sent requests to me (they can switch to my space)"
+					},
+					"response": []
+				},
+				{
+					"name": "connection-assigned-cases",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/connection/29/assigned-cases/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"connection",
+								"29",
+								"assigned-cases",
+								""
+							]
+						},
+						"description": "Get cases where I'm assigned in a specific account"
+					},
+					"response": []
+				},
+				{
+					"name": "non-connections (available accounts)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/non-connections/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"non-connections",
+								""
+							]
+						},
+						"description": "Accounts that are not connected with me (can send requests to)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Email Invitation",
+			"item": [
+				{
+					"name": "send invitation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"emails\": [\"ghaisaudi2001@gmail.com\"],\r\n    \"invited_names\": [\"Ghaith Audi 2001\"],\r\n    \"message\": \"Join me on this platform! (OVACS) \"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/send-invitation/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"send-invitation",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invitation detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/invitation-details/53abf147-d2e7-4411-9acb-75ed5434baa7/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"invitation-details",
+								"53abf147-d2e7-4411-9acb-75ed5434baa7",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "accept invitation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU1MDg4NDg3LCJpYXQiOjE3NTQ0ODM2ODcsImp0aSI6IjlmM2YyODg0NTE0OTRmNTZiODEzMTMzYmI5MDA2MjUyIiwidXNlcl9pZCI6NTV9.6sRErFqHDJ6vcA1PkRioHYymyqI-O3lkn6gVHpmu9hY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"53abf147-d2e7-4411-9acb-75ed5434baa7\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/accept-invitation/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"accept-invitation",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list sent invitations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/invitations/sent/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"invitations",
+								"sent",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "resend invitation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/resend-invitation/2c78054c-58d6-4fa4-8081-3a33988c4fc4/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resend-invitation",
+								"2c78054c-58d6-4fa4-8081-3a33988c4fc4",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Direct Email Invitation",
+			"item": [
+				{
+					"name": "send direct invitation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"emails\": [\"qosor332025@gmail.com\"],\r\n    \"invited_names\": [\"John Doe\"],\r\n    \"message\": \"Let's connect instantly on OVACS!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/send-direct-invitation/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"send-direct-invitation",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Sent Invitations",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/api/direct-invitations/sent/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"direct-invitations",
+								"sent",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Clients",
+			"item": [
+				{
+					"name": "create-client",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"muneer client 20\",\r\n    \"email\": \"cli88888@example.com\",\r\n    \"mobile\": \"0087654999\",\r\n    \"country_id\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clients/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list-clients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clients/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "page_size",
+									"value": "10",
+									"description": "Items per page",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "all",
+									"description": "Get all data without pagination",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "john",
+									"description": "Search in name, email, mobile",
+									"disabled": true
+								},
+								{
+									"key": "ordering",
+									"value": "-created_at",
+									"description": "Sort by: name, created_at, -name, -created_at",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "smith",
+									"description": "Filter by name (contains)",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "@example.com",
+									"description": "Filter by email (contains)",
+									"disabled": true
+								},
+								{
+									"key": "mobile",
+									"value": "123",
+									"description": "Filter by mobile (contains)",
+									"disabled": true
+								},
+								{
+									"key": "country",
+									"value": "Syria",
+									"description": "Filter by country name",
+									"disabled": true
+								}
+							]
+						},
+						"description": "**All Available Parameters:**\n- `page`: Page number (or 'all' for no pagination)\n- `page_size`: Items per page\n- `search`: Search in name/email/mobile\n- `ordering`: Sort by name, created_at (add - for desc)\n- `name`: Filter by name (contains)\n- `email`: Filter by email (contains)\n- `mobile`: Filter by mobile (contains)\n- `country`: Filter by country name"
+					},
+					"response": []
+				},
+				{
+					"name": "get-client-detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clients/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-client",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Client2_Updated\",\r\n    \"email\": \"updated_client@example.com\",\r\n    \"mobile\": \"1231231234\",\r\n    \"country_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clients/2/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"2",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-client",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clients/2/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"2",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cases",
+			"item": [
+				{
+					"name": "create-case",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"client_id_input\": 66,\r\n    \"title\": \"Case 2 for muneer\",\r\n    \"description\": \"Case Description\",\r\n    \"date\": \"2025-10-01\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cases/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list-cases",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/cases/?client=muneer",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "page_size",
+									"value": "10",
+									"description": "Items per page",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "all",
+									"description": "Get all data without pagination",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "contract",
+									"description": "Search in title, description",
+									"disabled": true
+								},
+								{
+									"key": "ordering",
+									"value": "-date",
+									"description": "Sort by: date, created_at, -date, -created_at",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "dispute",
+									"description": "Filter by title (contains)",
+									"disabled": true
+								},
+								{
+									"key": "client",
+									"value": "muneer",
+									"description": "Filter by client name (contains)"
+								},
+								{
+									"key": "date_after",
+									"value": "2025-01-01",
+									"description": "Filter cases after this date",
+									"disabled": true
+								},
+								{
+									"key": "date_before",
+									"value": "2025-12-31",
+									"description": "Filter cases before this date",
+									"disabled": true
+								},
+								{
+									"key": "account_id",
+									"value": "28",
+									"description": "SPACE SWITCHING: Get cases from specific account",
+									"disabled": true
+								}
+							]
+						},
+						"description": "**All Available Parameters:**\n- `page`: Page number (or 'all' for no pagination)\n- `page_size`: Items per page  \n- `search`: Search in title, description\n- `ordering`: Sort by date, created_at (add - for desc)\n- `title`: Filter by title (contains)\n- `client`: Filter by client name (contains)\n- `date_after`: Filter cases after date (YYYY-MM-DD)\n- `date_before`: Filter cases before date (YYYY-MM-DD)\n- `account_id`: **SPACE SWITCHING** - Get cases from specific account you're following"
+					},
+					"response": []
+				},
+				{
+					"name": "get-case-detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/cases/47/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								"47",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-case",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"client_id_input\": 43,\r\n    \"title\": \"Updated Case Title\",\r\n    \"description\": \"Updated Description\",\r\n    \"date\": \"2025-11-01\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cases/52/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								"52",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-case",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/cases/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "assign-account-to-case",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"case\": 47,\r\n  \"account\": 39,\r\n  \"role\": \"gold\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cases/assign-user/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								"assign-user",
+								""
+							]
+						},
+						"description": "Role options: admin, diamond, gold, silver"
+					},
+					"response": []
+				},
+				{
+					"name": "get-assigned-accounts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/cases/46/assigned-accounts/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								"46",
+								"assigned-accounts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-account-role",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"role\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cases/47/assigned-accounts/39/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								"47",
+								"assigned-accounts",
+								"39",
+								""
+							]
+						},
+						"description": "Role options: admin, diamond, gold, silver"
+					},
+					"response": []
+				},
+				{
+					"name": "deassign-account",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/cases/46/assigned-accounts/28/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								"46",
+								"assigned-accounts",
+								"28",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Messages",
+			"item": [
+				{
+					"name": "list-case-messages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/cases/55/messages/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								"55",
+								"messages",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "page_size",
+									"value": "10",
+									"description": "Items per page",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "all",
+									"description": "Get all messages without pagination",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "discuss",
+									"description": "Search in content and sender name",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "text",
+									"description": "Filter by message type: text or voice",
+									"disabled": true
+								},
+								{
+									"key": "sender",
+									"value": "test",
+									"description": "Filter by sender name (contains)",
+									"disabled": true
+								},
+								{
+									"key": "content",
+									"value": "first",
+									"description": "Filter by content (contains)",
+									"disabled": true
+								},
+								{
+									"key": "ordering",
+									"value": "-created_at",
+									"description": "Sort by created_at (add - for desc)",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-text-message",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"type\": \"text\",\r\n  \"content\": \"First test message for case discussion\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cases/55/messages/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								"55",
+								"messages",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-voice-message",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "type",
+									"value": "voice",
+									"type": "text"
+								},
+								{
+									"key": "voice_file",
+									"description": "Upload an audio file .mp3/.wav/.m4a",
+									"type": "file",
+									"src": "postman-cloud:///1f068559-1905-46f0-840a-2696250a9170"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cases/55/messages/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cases",
+								"55",
+								"messages",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-message-detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/messages/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"messages",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit-text-message",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"type\": \"text\",\r\n  \"content\": \"Updated message content\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/messages/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"messages",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-message",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/api/messages/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"messages",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sessions",
+			"item": [
+				{
+					"name": "create-session",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Session1ff\",\r\n  \"description\": \"Discussed case details\",\r\n  \"date\": \"2025-06-16T12:00:00Z\",\r\n  \"case_id\": 47\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/sessions/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"sessions",
+								""
+							]
+						},
+						"description": "NEW: client_id is now optional - will be derived from case_id"
+					},
+					"response": []
+				},
+				{
+					"name": "list-sessions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/sessions/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"sessions",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "page_size",
+									"value": "10",
+									"description": "Items per page",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "all",
+									"description": "Get all data without pagination",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "meeting",
+									"description": "Search in title, description",
+									"disabled": true
+								},
+								{
+									"key": "ordering",
+									"value": "-date",
+									"description": "Sort by: date, title, created_by__id (add - for desc)",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "important",
+									"description": "Filter by title (contains)",
+									"disabled": true
+								},
+								{
+									"key": "description",
+									"value": "notes",
+									"description": "Filter by description (contains)",
+									"disabled": true
+								},
+								{
+									"key": "date_after",
+									"value": "2025-06-01",
+									"description": "Filter sessions after this date",
+									"disabled": true
+								},
+								{
+									"key": "date_before",
+									"value": "2025-06-30",
+									"description": "Filter sessions before this date",
+									"disabled": true
+								},
+								{
+									"key": "case",
+									"value": "3",
+									"description": "Filter by case ID",
+									"disabled": true
+								},
+								{
+									"key": "client",
+									"value": "5",
+									"description": "Filter by client ID",
+									"disabled": true
+								},
+								{
+									"key": "is_active",
+									"value": "true",
+									"description": "Filter by active status",
+									"disabled": true
+								},
+								{
+									"key": "space_id",
+									"value": "28",
+									"description": "NEW: SPACE SWITCHING - Get sessions from specific account",
+									"disabled": true
+								}
+							]
+						},
+						"description": "**All Available Parameters:**\n- `page`: Page number (or 'all' for no pagination)\n- `page_size`: Items per page\n- `search`: Search in title, description\n- `ordering`: Sort by date, title, created_by__id (add - for desc)\n- `title`: Filter by title (contains)\n- `description`: Filter by description (contains)\n- `date_after`: Filter sessions after date (YYYY-MM-DD)\n- `date_before`: Filter sessions before date (YYYY-MM-DD)\n- `case`: Filter by case ID\n- `client`: Filter by client ID\n- `is_active`: Filter by active status (true/false)\n- `space_id`: **NEW - SPACE SWITCHING** - Get sessions from cases you're assigned to in specific account"
+					},
+					"response": []
+				},
+				{
+					"name": "get-session-detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/sessions/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"sessions",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-session",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Session1_title_updated\",\r\n  \"description\": \"Updated content\",\r\n  \"date\": \"2025-06-10T15:30:00Z\",\r\n  \"case_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/sessions/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"sessions",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-session",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/sessions/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"sessions",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Documents",
+			"item": [
+				{
+					"name": "Document Access",
+					"item": [
+						{
+							"name": "Download",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzOTY2MTg4LCJpYXQiOjE3NTMzNjEzODgsImp0aSI6IjRmYmFkZGYxZGNhMjQyODg4OWZhYzNlN2FmZThmMWU2IiwidXNlcl9pZCI6NDB9.eEGu8Ocxip0ZJ3-3xYPvKXrZD3kXRnd3k-MLy0pieJc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/documents/secure/9cdefe7001cf4f3ab6192ad390663c59_ec6d450b51de35a8/download/?expires=1753362079&signature=ca8e007403bdda5702c3a3fd85c5729693e91e8233ea847c30650dea0dee31ef",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"documents",
+										"secure",
+										"9cdefe7001cf4f3ab6192ad390663c59_ec6d450b51de35a8",
+										"download",
+										""
+									],
+									"query": [
+										{
+											"key": "expires",
+											"value": "1753362079"
+										},
+										{
+											"key": "signature",
+											"value": "ca8e007403bdda5702c3a3fd85c5729693e91e8233ea847c30650dea0dee31ef"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "View",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/documents/secure/b9a2ddc34a67442dabbbf3002f35e7b6_6e8ddf42809d7cb1/view/?expires=1753355281&signature=ff762799f2ace09806532872bc63c53b3736f40a434a3c677da3a5cd82b7a1d8",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"documents",
+										"secure",
+										"b9a2ddc34a67442dabbbf3002f35e7b6_6e8ddf42809d7cb1",
+										"view",
+										""
+									],
+									"query": [
+										{
+											"key": "expires",
+											"value": "1753355281"
+										},
+										{
+											"key": "signature",
+											"value": "ff762799f2ace09806532872bc63c53b3736f40a434a3c677da3a5cd82b7a1d8"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "upload-as-group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": [
+										"postman-cloud:///1f0653fc-e6cd-47b0-9a53-e9a944aecdc4",
+										"postman-cloud:///1f0653fc-e592-48a0-b1fc-e015dad856e3"
+									]
+								},
+								{
+									"key": "store_as_group",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "group_name",
+									"value": "group test 1",
+									"type": "text"
+								},
+								{
+									"key": "group_description",
+									"value": "Uploaded files for case",
+									"type": "text"
+								},
+								{
+									"key": "security_level",
+									"value": "red",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "1",
+									"description": "Optional - can derive from session_id",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "case_id",
+									"value": "1",
+									"description": "Optional - can derive from session_id",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "session_id",
+									"value": "61",
+									"description": "Optional - will derive client_id and case_id if not provided",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/documents/upload/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"upload",
+								""
+							]
+						},
+						"description": "NEW: client_id and case_id are optional when session_id is provided"
+					},
+					"response": []
+				},
+				{
+					"name": "upload-with-session-only",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "postman-cloud:///1eeb9751-48f1-4e60-9260-a5cd810a1202"
+								},
+								{
+									"key": "store_as_group",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "security_level",
+									"value": "red",
+									"type": "text"
+								},
+								{
+									"key": "session_id",
+									"value": "61",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/documents/upload/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"upload",
+								""
+							]
+						},
+						"description": "NEW: Upload with only session_id - client_id and case_id auto-derived"
+					},
+					"response": []
+				},
+				{
+					"name": "upload-to-existing-group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "postman-cloud:///1eeb8425-68ae-46c0-bd5d-1eff5b203436"
+								},
+								{
+									"key": "store_as_group",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "security_level",
+									"value": "green",
+									"type": "text"
+								},
+								{
+									"key": "session_id",
+									"value": "52",
+									"type": "text"
+								},
+								{
+									"key": "group_id",
+									"value": "11",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/documents/upload/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"upload",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list-documents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/documents/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "page_size",
+									"value": "10",
+									"description": "Items per page",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "all",
+									"description": "Get all data without pagination",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "invoice",
+									"description": "Search in file_name",
+									"disabled": true
+								},
+								{
+									"key": "ordering",
+									"value": "-created_at",
+									"description": "Sort by: created_at, file_size, security_level (add - for desc)",
+									"disabled": true
+								},
+								{
+									"key": "file_name",
+									"value": "contract",
+									"description": "Filter by file name (contains)",
+									"disabled": true
+								},
+								{
+									"key": "case",
+									"value": "73",
+									"description": "Filter by case ID",
+									"disabled": true
+								},
+								{
+									"key": "client",
+									"value": "5",
+									"description": "Filter by client ID",
+									"disabled": true
+								},
+								{
+									"key": "security_level",
+									"value": "red",
+									"description": "Filter by security level: red, yellow, green",
+									"disabled": true
+								},
+								{
+									"key": "group",
+									"value": "",
+									"description": "Filter by document group ID",
+									"disabled": true
+								},
+								{
+									"key": "session_id",
+									"value": "10",
+									"description": "Filter by session ID",
+									"disabled": true
+								},
+								{
+									"key": "space_id",
+									"value": "28",
+									"description": "NEW: SPACE SWITCHING - Get documents from specific account",
+									"disabled": true
+								}
+							]
+						},
+						"description": "**All Available Parameters:**\n- `page`: Page number (or 'all' for no pagination)\n- `page_size`: Items per page\n- `search`: Search in file_name\n- `ordering`: Sort by created_at, file_size, security_level (add - for desc)\n- `file_name`: Filter by file name (contains)\n- `case`: Filter by case ID\n- `client`: Filter by client ID  \n- `security_level`: Filter by security level (red/yellow/green)\n- `group`: Filter by document group ID\n- `session_id`: Filter by session ID\n- `space_id`: **NEW - SPACE SWITCHING** - Get documents from cases you're assigned to in specific account"
+					},
+					"response": []
+				},
+				{
+					"name": "get-document-detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/documents/72/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"72",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-document",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"client\": 1,\r\n  \"case_id\": 1,\r\n  \"session_id\": 2,\r\n  \"security_level\": \"yellow\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/documents/2/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"2",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-document",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/documents/2/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"2",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list-document-groups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/document-groups/?session_id=61",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"document-groups",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "page_size",
+									"value": "10",
+									"description": "Items per page",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "all",
+									"description": "Get all data without pagination",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "contract",
+									"description": "Search in group name",
+									"disabled": true
+								},
+								{
+									"key": "ordering",
+									"value": "-created_at",
+									"description": "Sort by name, created_at (add - for desc)",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "important",
+									"description": "Filter by group name (contains)",
+									"disabled": true
+								},
+								{
+									"key": "space_id",
+									"value": "28",
+									"description": "NEW: SPACE SWITCHING - Get document groups from specific account",
+									"disabled": true
+								},
+								{
+									"key": "session_id",
+									"value": "61"
+								}
+							]
+						},
+						"description": "**All Available Parameters:**\n- `page`: Page number (or 'all' for no pagination)\n- `page_size`: Items per page\n- `search`: Search in group name\n- `ordering`: Sort by name (add - for desc)\n- `name`: Filter by group name (contains)\n- `session_id`: Filter groups that have documents from specific session\n- `space_id`: **NEW - SPACE SWITCHING** - Get document groups from cases you're assigned to in specific account"
+					},
+					"response": []
+				},
+				{
+					"name": "create-document-group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"session_id\": 61,\r\n  \"name\": \"doc_group_2\",\r\n  \"description\": \"All client-related legal documents\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/document-groups/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"document-groups",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-document-group-detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/document-groups/11/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"document-groups",
+								"11",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-document-group",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"group__2_____Updated\",\r\n  \"description\": \"All client-related legal documents\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/document-groups/2/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"document-groups",
+								"2",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-document-group",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/document-groups/2/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"document-groups",
+								"2",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "move-document-between-groups",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"group_id\": 12\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/documents/36/move-to-group/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"36",
+								"move-to-group",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove-document-from-any-group",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"group_id\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/documents/36/move-to-group/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"36",
+								"move-to-group",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dashboard & Search",
+			"item": [
+				{
+					"name": "dashboard-summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/dashboard/summary/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"dashboard",
+								"summary",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "session-dates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/dashboard/session-dates/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"dashboard",
+								"session-dates",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upcoming-sessions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/dashboard/upcoming-sessions/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"dashboard",
+								"upcoming-sessions",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "page_size",
+									"value": "10",
+									"description": "Items per page",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "all",
+									"description": "Get all upcoming sessions without pagination",
+									"disabled": true
+								}
+							]
+						},
+						"description": "**Available Parameters:**\n- `page`: Page number (or 'all' for no pagination)\n- `page_size`: Items per page"
+					},
+					"response": []
+				},
+				{
+					"name": "search-client-case",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/search-client-case/?q=contract",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"search-client-case",
+								""
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "contract",
+									"description": "REQUIRED: Search term for clients and cases"
+								}
+							]
+						},
+						"description": "**Required Parameter:**\n- `q`: Search term (searches in client names and case titles)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "domain",
+			"value": "http://147.93.120.205/backend/",
+			"type": "string"
+		},
+		{
+			"key": "base_url",
+			"value": "https://ovacs.com/backend",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzNTM1MTQ2LCJpYXQiOjE3NTI5MzAzNDYsImp0aSI6IjViNjA3MDc2YjcxODRiMzI5ZWQxNjk0YTM0MGFiZDdjIiwidXNlcl9pZCI6MzJ9.20bWwCZ2pcgvf6uvv17orul9iR1uVmgcUfFMQOqM_Fk",
+			"type": "string"
+		}
+	]
+}

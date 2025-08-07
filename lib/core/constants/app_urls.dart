@@ -27,14 +27,7 @@ class AppUrls {
   static const documentGroups = '/document-groups/';
   static const uploadDocument = '/documents/upload/';
   // connections
-  static const String sendConnectionRequest = '/send-connection-request/';
-  static const String connectionRequestsReceived =
-      '/connection-requests/received/';
-  static const String connectionRequestsSent = '/connection-requests/sent/';
-  static const String respondConnectionRequest = '/respond-connection-request/';
-  static const String allConnections = '/connections/';
   static const String myFollowing = '/my-following/';
   static const String myFollowers = '/my-followers/';
-  static const String connectionAssignedCases = '/connection/';
-  static const String nonConnections = '/non-connections/';
+  static const String sendDirectInvitation = '/send-direct-invitation/';
 }

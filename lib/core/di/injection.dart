@@ -33,6 +33,7 @@ import '../../features/auth/providers/auth_provider.dart';
 import '../../features/case/provider/cases_search_provider.dart';
 import '../../features/client/providers/client_search_provider.dart';
 import '../../features/connection/providers/connection_provider.dart';
+import '../../features/connection/providers/send_invitation_provider.dart';
 import '../../features/document/providers/upload_documents_provider.dart';
 import '../../features/message/providers/edit_delete_message_provider.dart';
 import '../../features/message/providers/message_details_provider.dart';
@@ -143,5 +144,8 @@ Future<void> setupLocator() async {
   // connections
   getIt.registerLazySingleton(
     () => ConnectionProvider(getIt<ConnectionsRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => SendInvitationProvider(getIt<ConnectionsRepository>()),
   );
 }

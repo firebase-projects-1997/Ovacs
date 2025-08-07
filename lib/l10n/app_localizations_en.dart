@@ -772,4 +772,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get primaryColor => 'App Color';
+
+  @override
+  String get peopleMustFollowYouToSeeThemHere =>
+      'People must follow you to see them here';
+
+  @override
+  String get sendInvitations => 'Send Invitations';
+
+  @override
+  String get invitation => 'Invitation';
+
+  @override
+  String get addMore => 'Add More';
+
+  @override
+  String get instructions => 'Instructions';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get clearAll => 'Clear All';
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get invitationInstructions =>
+      'Enter email addresses and names of people you want to invite to connect with you.';
+
+  @override
+  String get customMessageOptional => 'Custom Message (Optional)';
+
+  @override
+  String get addPersonalMessage =>
+      'Add a personal message to your invitation...';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get failedToSendInvitations => 'Failed to send invitations';
 }

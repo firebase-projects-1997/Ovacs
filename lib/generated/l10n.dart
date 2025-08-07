@@ -2008,6 +2008,106 @@ class S {
   String get primaryColor {
     return Intl.message('App Color', name: 'primaryColor', desc: '', args: []);
   }
+
+  /// `People must follow you to see them here`
+  String get peopleMustFollowYouToSeeThemHere {
+    return Intl.message(
+      'People must follow you to see them here',
+      name: 'peopleMustFollowYouToSeeThemHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send Invitations`
+  String get sendInvitations {
+    return Intl.message(
+      'Send Invitations',
+      name: 'sendInvitations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invitation`
+  String get invitation {
+    return Intl.message('Invitation', name: 'invitation', desc: '', args: []);
+  }
+
+  /// `Add More`
+  String get addMore {
+    return Intl.message('Add More', name: 'addMore', desc: '', args: []);
+  }
+
+  /// `Instructions`
+  String get instructions {
+    return Intl.message(
+      'Instructions',
+      name: 'instructions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send`
+  String get send {
+    return Intl.message('Send', name: 'send', desc: '', args: []);
+  }
+
+  /// `Clear All`
+  String get clearAll {
+    return Intl.message('Clear All', name: 'clearAll', desc: '', args: []);
+  }
+
+  /// `Remove`
+  String get remove {
+    return Intl.message('Remove', name: 'remove', desc: '', args: []);
+  }
+
+  /// `Enter email addresses and names of people you want to invite to connect with you.`
+  String get invitationInstructions {
+    return Intl.message(
+      'Enter email addresses and names of people you want to invite to connect with you.',
+      name: 'invitationInstructions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Custom Message (Optional)`
+  String get customMessageOptional {
+    return Intl.message(
+      'Custom Message (Optional)',
+      name: 'customMessageOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a personal message to your invitation...`
+  String get addPersonalMessage {
+    return Intl.message(
+      'Add a personal message to your invitation...',
+      name: 'addPersonalMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Full Name`
+  String get fullName {
+    return Intl.message('Full Name', name: 'fullName', desc: '', args: []);
+  }
+
+  /// `Failed to send invitations`
+  String get failedToSendInvitations {
+    return Intl.message(
+      'Failed to send invitations',
+      name: 'failedToSendInvitations',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

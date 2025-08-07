@@ -8,25 +8,43 @@ class ConnectionProvider with ChangeNotifier {
   ConnectionProvider(this._repository);
 
   List<SpaceAccountModel> following = [];
-  int totalFollowing = 0;
   List<SpaceAccountModel> followers = [];
-  int totalFollowers = 0;
-  bool isLoading = false;
-  Failure? failure;
 
-  Future<void> fetchConnections() async {
-    isLoading = true;
+  int totalFollowing = 0;
+  int totalFollowers = 0;
+
+  bool isLoadingFollowing = false;
+  bool isLoadingFollowers = false;
+  Failure? followingFailure;
+  Failure? followersfailure;
+
+  Future<void> fetchFollowing() async {
+    isLoadingFollowing = true;
+    followingFailure = null;
     notifyListeners();
 
-    final result = await _repository.getAllConnections();
-    result.fold((f) => failure = f, (list) {
-      following = list.following;
-      followers = list.followers;
-      totalFollowing = list.totalFollowing;
-      totalFollowers = list.totalFollowers;
+    final result = await _repository.getMyFollowing();
+    result.fold((f) => followingFailure = f, (list) {
+      following = list;
+      totalFollowing = list.length;
     });
 
-    isLoading = false;
+    isLoadingFollowing = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchFollowers() async {
+    isLoadingFollowers = true;
+    followersfailure = null;
+    notifyListeners();
+
+    final result = await _repository.getMyFollowers();
+    result.fold((f) => followersfailure = f, (list) {
+      followers = list;
+      totalFollowers = list.length;
+    });
+
+    isLoadingFollowers = false;
     notifyListeners();
   }
 }

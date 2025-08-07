@@ -766,4 +766,45 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get primaryColor => 'لون التطبيق';
+
+  @override
+  String get peopleMustFollowYouToSeeThemHere =>
+      'يجب على الأشخاص متابعتك لكي يظهروا هنا';
+
+  @override
+  String get sendInvitations => 'إرسال دعوات';
+
+  @override
+  String get invitation => 'دعوة';
+
+  @override
+  String get addMore => 'إضافة المزيد';
+
+  @override
+  String get instructions => 'التعليمات';
+
+  @override
+  String get send => 'إرسال';
+
+  @override
+  String get clearAll => 'مسح الكل';
+
+  @override
+  String get remove => 'إزالة';
+
+  @override
+  String get invitationInstructions =>
+      'أدخل عناوين البريد الإلكتروني وأسماء الأشخاص الذين تريد دعوتهم للاتصال بك.';
+
+  @override
+  String get customMessageOptional => 'رسالة مخصصة (اختيارية)';
+
+  @override
+  String get addPersonalMessage => 'أضف رسالة شخصية إلى دعوتك...';
+
+  @override
+  String get fullName => 'الاسم الكامل';
+
+  @override
+  String get failedToSendInvitations => 'فشل في إرسال الدعوات';
 }

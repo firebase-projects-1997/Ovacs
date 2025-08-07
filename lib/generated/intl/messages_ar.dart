@@ -51,8 +51,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "active": MessageLookupByLibrary.simpleMessage("نشط؟"),
     "add": MessageLookupByLibrary.simpleMessage("إضافة"),
     "addClient": MessageLookupByLibrary.simpleMessage("إضافة عميل"),
+    "addMore": MessageLookupByLibrary.simpleMessage("إضافة المزيد"),
     "addNewCase": MessageLookupByLibrary.simpleMessage("إضافة قضية جديدة"),
     "addNewClient": MessageLookupByLibrary.simpleMessage("إضافة عميل جديد"),
+    "addPersonalMessage": MessageLookupByLibrary.simpleMessage(
+      "أضف رسالة شخصية إلى دعوتك...",
+    ),
     "after": MessageLookupByLibrary.simpleMessage("بعد"),
     "allCases": MessageLookupByLibrary.simpleMessage("جميع القضايا"),
     "allClients": MessageLookupByLibrary.simpleMessage("جميع العملاء"),
@@ -108,6 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "chooseYourClient": MessageLookupByLibrary.simpleMessage("اختر عميلك"),
     "clear": MessageLookupByLibrary.simpleMessage("مسح"),
+    "clearAll": MessageLookupByLibrary.simpleMessage("مسح الكل"),
     "clientAddedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تمت إضافة العميل بنجاح!",
     ),
@@ -157,6 +162,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "createdAtDesc": MessageLookupByLibrary.simpleMessage(
       "تاريخ الإنشاء تنازلي",
+    ),
+    "customMessageOptional": MessageLookupByLibrary.simpleMessage(
+      "رسالة مخصصة (اختيارية)",
     ),
     "darkMode": MessageLookupByLibrary.simpleMessage("الوضع الليلي"),
     "dashboard": MessageLookupByLibrary.simpleMessage("لوحة التحكم"),
@@ -253,6 +261,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "failedToEditMessage": MessageLookupByLibrary.simpleMessage(
       "فشل في تعديل الرسالة",
     ),
+    "failedToSendInvitations": MessageLookupByLibrary.simpleMessage(
+      "فشل في إرسال الدعوات",
+    ),
     "failedToStartRecording": MessageLookupByLibrary.simpleMessage(
       "فشل في بدء التسجيل.",
     ),
@@ -269,6 +280,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "forgetPasswordTitle": MessageLookupByLibrary.simpleMessage(
       "نسيت كلمة المرور",
     ),
+    "fullName": MessageLookupByLibrary.simpleMessage("الاسم الكامل"),
     "groupDescription": MessageLookupByLibrary.simpleMessage("وصف المجموعة"),
     "groupName": MessageLookupByLibrary.simpleMessage("عنوان المجموعة: "),
     "home": MessageLookupByLibrary.simpleMessage("الرئيسية"),
@@ -277,6 +289,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "id": MessageLookupByLibrary.simpleMessage("المعرف"),
     "idWithValue": m4,
+    "instructions": MessageLookupByLibrary.simpleMessage("التعليمات"),
+    "invitation": MessageLookupByLibrary.simpleMessage("دعوة"),
+    "invitationInstructions": MessageLookupByLibrary.simpleMessage(
+      "أدخل عناوين البريد الإلكتروني وأسماء الأشخاص الذين تريد دعوتهم للاتصال بك.",
+    ),
     "joinUsIn": MessageLookupByLibrary.simpleMessage("انضم إلينا في"),
     "language": MessageLookupByLibrary.simpleMessage("اللغة"),
     "lawyers": MessageLookupByLibrary.simpleMessage("المحامون: "),
@@ -327,6 +344,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "كلمتا المرور غير متطابقتين",
     ),
     "pending": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
+    "peopleMustFollowYouToSeeThemHere": MessageLookupByLibrary.simpleMessage(
+      "يجب على الأشخاص متابعتك لكي يظهروا هنا",
+    ),
     "phone": MessageLookupByLibrary.simpleMessage("الهاتف"),
     "phoneIsRequired": MessageLookupByLibrary.simpleMessage("رقم الهاتف مطلوب"),
     "pickDateAfter": MessageLookupByLibrary.simpleMessage("اختر تاريخ بعد"),
@@ -369,6 +389,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "recordingError": MessageLookupByLibrary.simpleMessage("خطأ في التسجيل"),
     "register": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
     "reject": MessageLookupByLibrary.simpleMessage("رفض"),
+    "remove": MessageLookupByLibrary.simpleMessage("إزالة"),
     "removeFile": MessageLookupByLibrary.simpleMessage("إزالة الملف"),
     "resendCode": MessageLookupByLibrary.simpleMessage("إعادة إرسال الرمز"),
     "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
@@ -385,7 +406,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectDate": MessageLookupByLibrary.simpleMessage("اختر التاريخ"),
     "selectFiles": MessageLookupByLibrary.simpleMessage("اختر الملفات"),
     "selectedFilesCount": m5,
+    "send": MessageLookupByLibrary.simpleMessage("إرسال"),
     "sendFailed": MessageLookupByLibrary.simpleMessage("فشل في الإرسال"),
+    "sendInvitations": MessageLookupByLibrary.simpleMessage("إرسال دعوات"),
     "sent": MessageLookupByLibrary.simpleMessage("المرسلة"),
     "session": MessageLookupByLibrary.simpleMessage("الجلسة"),
     "sessionInformation": m6,

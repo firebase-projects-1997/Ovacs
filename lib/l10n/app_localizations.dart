@@ -1549,6 +1549,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'App Color'**
   String get primaryColor;
+
+  /// No description provided for @peopleMustFollowYouToSeeThemHere.
+  ///
+  /// In en, this message translates to:
+  /// **'People must follow you to see them here'**
+  String get peopleMustFollowYouToSeeThemHere;
+
+  /// No description provided for @sendInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Invitations'**
+  String get sendInvitations;
+
+  /// No description provided for @invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation'**
+  String get invitation;
+
+  /// No description provided for @addMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Add More'**
+  String get addMore;
+
+  /// No description provided for @instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions'**
+  String get instructions;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All'**
+  String get clearAll;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @invitationInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter email addresses and names of people you want to invite to connect with you.'**
+  String get invitationInstructions;
+
+  /// No description provided for @customMessageOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Message (Optional)'**
+  String get customMessageOptional;
+
+  /// No description provided for @addPersonalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a personal message to your invitation...'**
+  String get addPersonalMessage;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @failedToSendInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send invitations'**
+  String get failedToSendInvitations;
 }
 
 class _AppLocalizationsDelegate

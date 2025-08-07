@@ -51,8 +51,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "active": MessageLookupByLibrary.simpleMessage("Active?"),
     "add": MessageLookupByLibrary.simpleMessage("Add"),
     "addClient": MessageLookupByLibrary.simpleMessage("Add Client"),
+    "addMore": MessageLookupByLibrary.simpleMessage("Add More"),
     "addNewCase": MessageLookupByLibrary.simpleMessage("Add New Case"),
     "addNewClient": MessageLookupByLibrary.simpleMessage("Add New Client"),
+    "addPersonalMessage": MessageLookupByLibrary.simpleMessage(
+      "Add a personal message to your invitation...",
+    ),
     "after": MessageLookupByLibrary.simpleMessage("After"),
     "allCases": MessageLookupByLibrary.simpleMessage("All Cases"),
     "allClients": MessageLookupByLibrary.simpleMessage("All Clients"),
@@ -110,6 +114,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Choose your client",
     ),
     "clear": MessageLookupByLibrary.simpleMessage("Clear"),
+    "clearAll": MessageLookupByLibrary.simpleMessage("Clear All"),
     "clientAddedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Client added successfully!",
     ),
@@ -158,6 +163,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "createdAt": MessageLookupByLibrary.simpleMessage("Created At"),
     "createdAtAsc": MessageLookupByLibrary.simpleMessage("Created At Asc"),
     "createdAtDesc": MessageLookupByLibrary.simpleMessage("Created At Desc"),
+    "customMessageOptional": MessageLookupByLibrary.simpleMessage(
+      "Custom Message (Optional)",
+    ),
     "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
     "dashboard": MessageLookupByLibrary.simpleMessage("Dashboard"),
     "date": MessageLookupByLibrary.simpleMessage("Date: "),
@@ -255,6 +263,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "failedToEditMessage": MessageLookupByLibrary.simpleMessage(
       "Failed to edit message",
     ),
+    "failedToSendInvitations": MessageLookupByLibrary.simpleMessage(
+      "Failed to send invitations",
+    ),
     "failedToStartRecording": MessageLookupByLibrary.simpleMessage(
       "Failed to start recording.",
     ),
@@ -269,6 +280,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "forgetPasswordTitle": MessageLookupByLibrary.simpleMessage(
       "Forget Password",
     ),
+    "fullName": MessageLookupByLibrary.simpleMessage("Full Name"),
     "groupDescription": MessageLookupByLibrary.simpleMessage(
       "Group Description",
     ),
@@ -279,6 +291,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "id": MessageLookupByLibrary.simpleMessage("ID"),
     "idWithValue": m4,
+    "instructions": MessageLookupByLibrary.simpleMessage("Instructions"),
+    "invitation": MessageLookupByLibrary.simpleMessage("Invitation"),
+    "invitationInstructions": MessageLookupByLibrary.simpleMessage(
+      "Enter email addresses and names of people you want to invite to connect with you.",
+    ),
     "joinUsIn": MessageLookupByLibrary.simpleMessage("Join us in"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "lawyers": MessageLookupByLibrary.simpleMessage("Lawyers: "),
@@ -331,6 +348,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Passwords do not match",
     ),
     "pending": MessageLookupByLibrary.simpleMessage("Pending"),
+    "peopleMustFollowYouToSeeThemHere": MessageLookupByLibrary.simpleMessage(
+      "People must follow you to see them here",
+    ),
     "phone": MessageLookupByLibrary.simpleMessage("Phone"),
     "phoneIsRequired": MessageLookupByLibrary.simpleMessage(
       "Phone is required",
@@ -375,6 +395,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "recordingError": MessageLookupByLibrary.simpleMessage("Recording error"),
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "reject": MessageLookupByLibrary.simpleMessage("Reject"),
+    "remove": MessageLookupByLibrary.simpleMessage("Remove"),
     "removeFile": MessageLookupByLibrary.simpleMessage("Remove File"),
     "resendCode": MessageLookupByLibrary.simpleMessage("Resend Code"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
@@ -391,7 +412,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectDate": MessageLookupByLibrary.simpleMessage("Select date"),
     "selectFiles": MessageLookupByLibrary.simpleMessage("Select Files"),
     "selectedFilesCount": m5,
+    "send": MessageLookupByLibrary.simpleMessage("Send"),
     "sendFailed": MessageLookupByLibrary.simpleMessage("Send failed"),
+    "sendInvitations": MessageLookupByLibrary.simpleMessage("Send Invitations"),
     "sent": MessageLookupByLibrary.simpleMessage("Sent"),
     "session": MessageLookupByLibrary.simpleMessage("Session"),
     "sessionInformation": m6,

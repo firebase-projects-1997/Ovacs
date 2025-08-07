@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:new_ovacs/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import '../../../core/di/injection.dart';
+import '../../../data/repositories/connection_repository.dart';
 import '../providers/connection_provider.dart';
+import '../providers/send_invitation_provider.dart';
 import '../widgets/connections_list_view.dart';
+import 'send_invitation_page.dart';
 
 class ConnectionsPage extends StatefulWidget {
   const ConnectionsPage({super.key});
@@ -11,55 +15,74 @@ class ConnectionsPage extends StatefulWidget {
   State<ConnectionsPage> createState() => _ConnectionsPageState();
 }
 
-class _ConnectionsPageState extends State<ConnectionsPage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
+class _ConnectionsPageState extends State<ConnectionsPage> {
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
-      context.read<ConnectionProvider>().fetchConnections();
+      context.read<ConnectionProvider>().fetchFollowing();
     });
-
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
     return Consumer<ConnectionProvider>(
       builder: (context, provider, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(AppLocalizations.of(context)!.connections),
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: [
-                Tab(text: l10n.following(provider.totalFollowing.toString())),
-                Tab(text: l10n.followers(provider.totalFollowers.toString())),
-              ],
-            ),
+            title: Text(l10n.connections),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                        create: (context) => SendInvitationProvider(
+                          getIt<ConnectionsRepository>(),
+                        ),
+                        child: const SendInvitationPage(),
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.share_outlined),
+                tooltip: l10n.sendInvitations,
+              ),
+            ],
           ),
-          body: provider.isLoading
+          body: provider.isLoadingFollowing
               ? const Center(child: CircularProgressIndicator())
-              : provider.failure != null
-              ? Center(child: Text(provider.failure!.message))
-              : TabBarView(
-                  controller: _tabController,
-                  children: [
-                    ConnectionsListView(connections: provider.following),
-                    ConnectionsListView(connections: provider.followers),
-                  ],
-                ),
+              : provider.followingFailure != null
+              ? Center(child: Text(provider.followingFailure!.message))
+              : provider.following.isEmpty
+              ? _buildEmptyState(context)
+              : ConnectionsListView(connections: provider.following),
         );
       },
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+          Text(
+            l10n.nothingToDisplayHere,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.peopleMustFollowYouToSeeThemHere,
+            style: Theme.of(context).textTheme.bodySmall,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

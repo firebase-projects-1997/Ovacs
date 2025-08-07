@@ -6,7 +6,7 @@ class LabeledTextField extends StatelessWidget {
   final String label;
   final Color? labelColor;
   final String hint;
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final bool isPassword;
   final IconData? icon;
   final bool obscureText;
@@ -32,7 +32,7 @@ class LabeledTextField extends StatelessWidget {
     required this.label,
     this.labelColor,
     required this.hint,
-    required this.controller,
+    this.controller,
     this.isPassword = false,
     this.icon,
     this.obscureText = false,
