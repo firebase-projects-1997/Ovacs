@@ -1,22 +1,49 @@
 import 'package:flutter/material.dart';
+import '../../../core/mixins/optimistic_update_mixin.dart';
 import '../../../data/models/message_model.dart';
 import '../../../data/repositories/message_repository.dart';
 
 enum AllMessagesStatus { initial, loading, loaded, error }
 
-class AllMessagesProvider with ChangeNotifier {
+class AllMessagesProvider
+    with ChangeNotifier, OptimisticUpdateMixin<MessageModel> {
   final MessageRepository _repository;
 
   AllMessagesProvider(this._repository);
 
   final List<MessageModel> _messages = [];
+
+  @override
+  List<MessageModel> get items => _messages;
+
+  @override
+  set items(List<MessageModel> value) {
+    _messages.clear();
+    _messages.addAll(value);
+  }
+
   List<MessageModel> get messages => _messages;
 
   AllMessagesStatus _status = AllMessagesStatus.initial;
   AllMessagesStatus get status => _status;
 
   String? _errorMessage;
+
+  @override
   String? get errorMessage => _errorMessage;
+
+  @override
+  set errorMessage(String? value) {
+    _errorMessage = value;
+  }
+
+  @override
+  bool get isLoading => _status == AllMessagesStatus.loading;
+
+  @override
+  set isLoading(bool value) {
+    _status = value ? AllMessagesStatus.loading : AllMessagesStatus.loaded;
+  }
 
   bool _isLoadingMore = false;
   bool get isLoadingMore => _isLoadingMore;
@@ -97,6 +124,34 @@ class AllMessagesProvider with ChangeNotifier {
   void removeMessage(int messageId) {
     _messages.removeWhere((m) => m.id == messageId);
     notifyListeners();
+  }
+
+  /// Optimistically updates a message
+  Future<bool> updateMessageOptimistic({
+    required int id,
+    required String content,
+  }) async {
+    // Find the existing message to preserve other fields
+    final existingMessage = _messages.firstWhere((m) => m.id == id);
+
+    final updatedMessage = existingMessage.copyWith(content: content);
+
+    return await optimisticUpdate<MessageModel>(
+      updatedItem: updatedMessage,
+      operation: () => _repository.editTextMessage(id, content),
+      getId: (message) => message.id,
+      mapResult: (response) =>
+          response, // The response is already a MessageModel
+    );
+  }
+
+  /// Optimistically deletes a message
+  Future<bool> deleteMessageOptimistic(int messageId) async {
+    return await optimisticDelete(
+      itemId: messageId,
+      operation: () => _repository.deleteMessage(messageId),
+      getId: (message) => message.id,
+    );
   }
 
   void reset() {

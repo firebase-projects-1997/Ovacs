@@ -33,9 +33,6 @@ import '../../features/auth/providers/auth_provider.dart';
 import '../../features/case/provider/cases_search_provider.dart';
 import '../../features/client/providers/client_search_provider.dart';
 import '../../features/connection/providers/connection_provider.dart';
-import '../../features/connection/providers/non_connections_provider.dart';
-import '../../features/connection/providers/received_requests_provider.dart';
-import '../../features/connection/providers/sent_requests_provider.dart';
 import '../../features/document/providers/upload_documents_provider.dart';
 import '../../features/message/providers/edit_delete_message_provider.dart';
 import '../../features/message/providers/message_details_provider.dart';
@@ -146,14 +143,5 @@ Future<void> setupLocator() async {
   // connections
   getIt.registerLazySingleton(
     () => ConnectionProvider(getIt<ConnectionsRepository>()),
-  );
-  getIt.registerLazySingleton(
-    () => NonConnectionsProvider(getIt<ConnectionsRepository>()),
-  );
-  getIt.registerLazySingleton(
-    () => ReceivedRequestsProvider(getIt<ConnectionsRepository>()),
-  );
-  getIt.registerLazySingleton(
-    () => SentRequestsProvider(getIt<ConnectionsRepository>()),
   );
 }

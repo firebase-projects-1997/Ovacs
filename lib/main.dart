@@ -19,9 +19,6 @@ import 'features/client/providers/clients_provider.dart';
 import 'features/client/providers/update_client_provider.dart';
 import 'features/client/views/add_client_page.dart';
 import 'features/connection/providers/connection_provider.dart';
-import 'features/connection/providers/non_connections_provider.dart';
-import 'features/connection/providers/received_requests_provider.dart';
-import 'features/connection/providers/sent_requests_provider.dart';
 import 'features/dashboard/providers/dashboard_provider.dart';
 import 'features/dashboard/views/navigation_menu.dart';
 import 'features/document/providers/documents_provider.dart';
@@ -177,15 +174,6 @@ class _MainAppState extends State<MainApp> {
             // connections
             ChangeNotifierProvider(
               create: (context) => getIt<ConnectionProvider>(),
-            ),
-            ChangeNotifierProvider(
-              create: (context) => getIt<NonConnectionsProvider>(),
-            ),
-            ChangeNotifierProvider(
-              create: (context) => getIt<ReceivedRequestsProvider>(),
-            ),
-            ChangeNotifierProvider(
-              create: (context) => getIt<SentRequestsProvider>(),
             ),
           ],
           child: Consumer2<ThemeProvider, LocaleProvider>(

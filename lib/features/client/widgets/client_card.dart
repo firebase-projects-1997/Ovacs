@@ -146,25 +146,37 @@ class ClientCard extends StatelessWidget {
                   onPressed: isLoading
                       ? null
                       : () async {
-                          // Call the delete function
-                          await provider.deleteClient(client.id);
+                          // Store context references before async operation
+                          final navigator = Navigator.of(dialogContext);
+                          final clientsProvider = context
+                              .read<ClientsProvider>();
+                          final localizations = AppLocalizations.of(context)!;
 
-                          // After the deletion is complete, check the status
-                          if (provider.status == UpdateClientStatus.success) {
-                            // Close the dialog and refresh the list
-                            Navigator.of(dialogContext).pop();
-                            context.read<ClientsProvider>().fetchClients();
-                            showAppSnackBar(
-                              context,
-                              AppLocalizations.of(
+                          // Use optimistic delete - UI updates immediately
+                          final success = await clientsProvider
+                              .deleteClientOptimistic(client.id);
+
+                          // Close the dialog regardless of success/failure
+                          navigator.pop();
+
+                          if (success) {
+                            if (context.mounted) {
+                              showAppSnackBar(
                                 context,
-                              )!.clientAddedSuccessfully,
-                              type: SnackBarType.success,
-                            );
-                          } else if (provider.status ==
-                              UpdateClientStatus.error) {
-                            // If there's an error, just show the snackbar
-                            showAppSnackBar(context, provider.errorMessage);
+                                localizations
+                                    .clientAddedSuccessfully, // Reusing existing localization
+                                type: SnackBarType.success,
+                              );
+                            }
+                          } else {
+                            // Error message is already set in the provider
+                            if (context.mounted) {
+                              showAppSnackBar(
+                                context,
+                                clientsProvider.errorMessage ??
+                                    'Failed to delete client',
+                              );
+                            }
                           }
                         },
                   child: isLoading

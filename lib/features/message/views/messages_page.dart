@@ -482,7 +482,7 @@ class _MessagesPageState extends State<MessagesPage> {
               iconSize: 30,
               icon: Icon(
                 isPlaying ? Iconsax.pause_circle : Iconsax.play_circle,
-                color: Colors.blueAccent,
+                color: Theme.of(context).primaryColor,
               ),
               onPressed: () async {
                 if (isPlaying) {
@@ -508,7 +508,7 @@ class _MessagesPageState extends State<MessagesPage> {
                     ),
                     onChanged: (v) =>
                         _audioPlayer.seek(Duration(milliseconds: v.toInt())),
-                    activeColor: Colors.blueAccent,
+                    activeColor: Theme.of(context).primaryColor,
                     inactiveColor: Colors.grey.shade300,
                   ),
                   Row(

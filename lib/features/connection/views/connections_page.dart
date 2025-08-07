@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:new_ovacs/core/constants/app_colors.dart';
-import 'package:new_ovacs/features/connection/views/non_connections_page.dart';
 import 'package:new_ovacs/l10n/app_localizations.dart';
-import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 import '../providers/connection_provider.dart';
 import '../widgets/connections_list_view.dart';
-import 'connection_requests_page.dart';
 
 class ConnectionsPage extends StatefulWidget {
   const ConnectionsPage({super.key});
@@ -51,19 +46,6 @@ class _ConnectionsPageState extends State<ConnectionsPage>
                 Tab(text: l10n.followers(provider.totalFollowers.toString())),
               ],
             ),
-            actions: [
-              IconButton(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                onPressed: () {
-                  navigatorKey.currentState!.push(
-                    MaterialPageRoute(
-                      builder: (context) => ConnectionRequestsPage(),
-                    ),
-                  );
-                },
-                icon: Icon(Iconsax.profile_2user),
-              ),
-            ],
           ),
           body: provider.isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -76,14 +58,6 @@ class _ConnectionsPageState extends State<ConnectionsPage>
                     ConnectionsListView(connections: provider.followers),
                   ],
                 ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              navigatorKey.currentState!.push(
-                MaterialPageRoute(builder: (context) => NonConnectionsPage()),
-              );
-            },
-            child: Icon(Iconsax.add, color: AppColors.pureWhite,),
-          ),
         );
       },
     );

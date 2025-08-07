@@ -7,19 +7,37 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../core/mixins/optimistic_update_mixin.dart';
 import '../../../data/models/document_model.dart';
 import '../../../data/repositories/document_repository.dart';
 
-class DocumentsProvider extends ChangeNotifier {
+class DocumentsProvider extends ChangeNotifier
+    with OptimisticUpdateMixin<DocumentModel> {
   final DocumentRepository _repository;
 
   DocumentsProvider(this._repository);
 
   List<DocumentModel> _documents = [];
+
+  @override
+  List<DocumentModel> get items => _documents;
+
+  @override
+  set items(List<DocumentModel> value) {
+    _documents = value;
+  }
+
   List<DocumentModel> get documents => _documents;
 
   bool _isLoading = false;
+
+  @override
   bool get isLoading => _isLoading;
+
+  @override
+  set isLoading(bool value) {
+    _isLoading = value;
+  }
 
   bool _isLoadingMore = false;
   bool get isLoadingMore => _isLoadingMore;
@@ -28,7 +46,14 @@ class DocumentsProvider extends ChangeNotifier {
   bool _hasMore = true;
 
   String? _errorMessage;
+
+  @override
   String? get errorMessage => _errorMessage;
+
+  @override
+  set errorMessage(String? value) {
+    _errorMessage = value;
+  }
 
   bool _isDownloading = false;
   String? _downloadViewErrorMessage;
@@ -231,5 +256,64 @@ class DocumentsProvider extends ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  /// Optimistically updates a document
+  Future<bool> updateDocumentOptimistic({
+    required int id,
+    required Map<String, dynamic> updatedFields,
+  }) async {
+    // Find the existing document to preserve other fields
+    final existingDoc = _documents.firstWhere((doc) => doc.id == id);
+
+    // Create updated document with new fields
+    final updatedDoc = DocumentModel(
+      id: id,
+      account: existingDoc.account,
+      client: existingDoc.client,
+      clientName: existingDoc.clientName,
+      securityLevel:
+          updatedFields['security_level'] ?? existingDoc.securityLevel,
+      fileName: updatedFields['file_name'] ?? existingDoc.fileName,
+      fileSize: existingDoc.fileSize,
+      secureViewUrl: existingDoc.secureViewUrl,
+      secureDownloadUrl: existingDoc.secureDownloadUrl,
+      uploadedBy: existingDoc.uploadedBy,
+      createdAt: existingDoc.createdAt,
+      isActive: existingDoc.isActive,
+      caseId: existingDoc.caseId,
+      session: existingDoc.session,
+      group: existingDoc.group,
+      caseTitle: existingDoc.caseTitle,
+      sessionTitle: existingDoc.sessionTitle,
+      orderInGroup: existingDoc.orderInGroup,
+      groupName: existingDoc.groupName,
+    );
+
+    return await optimisticUpdate<DocumentModel>(
+      updatedItem: updatedDoc,
+      operation: () => _repository.updateDocument(id, updatedFields),
+      getId: (doc) => doc.id,
+      onSuccess: () async {
+        // Fetch the updated document details from server
+        final detailResult = await _repository.getDocumentDetail(id);
+        detailResult.fold((_) => null, (serverDoc) {
+          final index = _documents.indexWhere((doc) => doc.id == id);
+          if (index != -1) {
+            _documents[index] = serverDoc;
+            notifyListeners();
+          }
+        });
+      },
+    );
+  }
+
+  /// Optimistically deletes a document
+  Future<bool> deleteDocumentOptimistic(int documentId) async {
+    return await optimisticDelete(
+      itemId: documentId,
+      operation: () => _repository.deleteDocument(documentId),
+      getId: (doc) => doc.id,
+    );
   }
 }

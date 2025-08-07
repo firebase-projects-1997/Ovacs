@@ -4,6 +4,7 @@ import 'package:new_ovacs/common/widgets/rounded_container.dart';
 import 'package:new_ovacs/core/constants/app_colors.dart';
 import 'package:new_ovacs/core/constants/app_routes.dart';
 import 'package:new_ovacs/core/constants/app_sizes.dart';
+import 'package:new_ovacs/core/utils/color_utils.dart';
 import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 
@@ -145,14 +146,20 @@ class SettingsPage extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            _buildColorDot(context, Colors.blue),
-                            _buildColorDot(context, Colors.red),
-                            _buildColorDot(context, Colors.green),
-                            _buildColorDot(context, Colors.purple),
-                            _buildColorDot(context, Colors.teal),
-                          ],
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: ColorUtils.themeColors
+                              .asMap()
+                              .entries
+                              .map(
+                                (entry) => _buildColorDot(
+                                  context,
+                                  entry.value,
+                                  ColorUtils.themeColorNames[entry.key],
+                                ),
+                              )
+                              .toList(),
                         ),
                       ],
                     ),
@@ -160,7 +167,6 @@ class SettingsPage extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // 👤 Account Info
                   RoundedContainer(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,7 +220,6 @@ class SettingsPage extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // 🚪 Logout
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.red,
@@ -234,25 +239,42 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildColorDot(BuildContext context, Color color) {
+  Widget _buildColorDot(BuildContext context, Color color, String colorName) {
     final themeProvider = context.read<ThemeProvider>();
     final isSelected = themeProvider.primaryColor == color;
 
-    return GestureDetector(
-      onTap: () => themeProvider.setPrimaryColor(color),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        margin: const EdgeInsets.only(right: 8),
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: color,
-          border: isSelected ? Border.all(color: Colors.black, width: 2) : null,
+    return Tooltip(
+      message: colorName,
+      child: GestureDetector(
+        onTap: () => themeProvider.setPrimaryColor(color),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          margin: const EdgeInsets.only(right: 8),
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+            border: isSelected
+                ? Border.all(color: Colors.black, width: 3)
+                : Border.all(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: color.withValues(alpha: 0.4),
+                      blurRadius: 8,
+                      spreadRadius: 2,
+                    ),
+                  ]
+                : null,
+          ),
+          child: isSelected
+              ? const Icon(Icons.check, color: Colors.white, size: 20)
+              : null,
         ),
-        child: isSelected
-            ? const Icon(Icons.check, color: Colors.white, size: 20)
-            : null,
       ),
     );
   }
