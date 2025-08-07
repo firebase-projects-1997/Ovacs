@@ -48,90 +48,93 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
               : 'Group Details',
         ),
       ),
-      body: switch (provider.status) {
-        GroupDetailsStatus.loading => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        GroupDetailsStatus.error => Center(
-          child: Text(provider.failure?.message ?? 'Error'),
-        ),
-        GroupDetailsStatus.loaded => Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              RoundedContainer(
-                child: Text(
-                  provider.group!.description,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.documents,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  RoundedContainer(
-                    onTap: () {
-                      navigatorKey.currentState!.push(
-                        MaterialPageRoute(
-                          builder: (context) => UploadDocumentsPage(
-                            id: widget.sessionId,
-                            groupId: provider.group!.id,
-                            groupName: provider.group!.name,
-                            groupDescription: provider.group!.description,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Icon(
-                      Iconsax.add,
-                      color: isDarkMode(context)
-                          ? AppColors.pureWhite
-                          : AppColors.charcoalGrey,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Consumer<DocumentsProvider>(
-                builder: (context, value, child) {
-                  if (value.isLoading) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (value.errorMessage != null) {
-                    return Center(child: Text(value.errorMessage ?? ''));
-                  } else if (value.documents.isEmpty) {
-                    _buildEmptyState();
-                  }
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount:
-                        value.documents.length + (value.isLoadingMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == value.documents.length) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-                      final document = value.documents[index];
-                      return DocumentCard(document: document);
-                    },
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 10),
-                  );
-                },
-              ),
-            ],
+      body: SingleChildScrollView(
+        child: switch (provider.status) {
+          GroupDetailsStatus.loading => const Center(
+            child: CircularProgressIndicator(),
           ),
-        ),
-        _ => const SizedBox.shrink(),
-      },
+          GroupDetailsStatus.error => Center(
+            child: Text(provider.failure?.message ?? 'Error'),
+          ),
+          GroupDetailsStatus.loaded => Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                RoundedContainer(
+                  child: Text(
+                    provider.group!.description,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.documents,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    RoundedContainer(
+                      onTap: () {
+                        navigatorKey.currentState!.push(
+                          MaterialPageRoute(
+                            builder: (context) => UploadDocumentsPage(
+                              id: widget.sessionId,
+                              groupId: provider.group!.id,
+                              groupName: provider.group!.name,
+                              groupDescription: provider.group!.description,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        Iconsax.add,
+                        color: isDarkMode(context)
+                            ? AppColors.pureWhite
+                            : AppColors.charcoalGrey,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Consumer<DocumentsProvider>(
+                  builder: (context, value, child) {
+                    if (value.isLoading) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (value.errorMessage != null) {
+                      return Center(child: Text(value.errorMessage ?? ''));
+                    } else if (value.documents.isEmpty) {
+                      _buildEmptyState();
+                    }
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount:
+                          value.documents.length +
+                          (value.isLoadingMore ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == value.documents.length) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        final document = value.documents[index];
+                        return DocumentCard(document: document);
+                      },
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 10),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          _ => const SizedBox.shrink(),
+        },
+      ),
     );
   }
 

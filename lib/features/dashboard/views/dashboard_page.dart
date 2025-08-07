@@ -4,6 +4,8 @@ import 'package:new_ovacs/core/constants/app_images.dart';
 import 'package:new_ovacs/core/constants/app_sizes.dart';
 import 'package:provider/provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../main.dart';
+import '../../session/views/session_details_page.dart';
 import '../../session/widgets/session_card.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/calander_view.dart';
@@ -64,7 +66,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        SvgPicture.asset(AppImages.logo),
+                        SvgPicture.asset(AppImages.logo,),
                         const SizedBox(height: 20),
                         Text(
                           AppLocalizations.of(context)!.dashboard,
@@ -88,7 +90,6 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                         const SizedBox(height: 10),
 
-                        // Display sessions or empty state
                         if (provider.sessions.isEmpty)
                           _buildEmptyState()
                         else
@@ -97,6 +98,16 @@ class _DashboardPageState extends State<DashboardPage> {
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemBuilder: (context, index) => SessionCard(
+                              onTap: () {
+                                navigatorKey.currentState!.push(
+                                  MaterialPageRoute(
+                                    builder: (context) => SessionDetailsPage(
+                                      sessionId: provider.sessions[index].id,
+                                      caseId: provider.sessions[index].caseId!,
+                                    ),
+                                  ),
+                                );
+                              },
                               sessionModel: provider.sessions[index],
                             ),
                             separatorBuilder: (context, index) =>

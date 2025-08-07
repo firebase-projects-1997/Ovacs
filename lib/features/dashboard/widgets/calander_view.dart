@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/common/providers/locale_provider.dart';
+import 'package:new_ovacs/features/session/views/session_details_page.dart';
+import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -45,93 +47,95 @@ class _CalendarViewState extends State<CalendarView> {
 
     return RoundedContainer(
       blur: true,
-      child: TableCalendar(
-        firstDay: DateTime.utc(2000, 1, 1),
-        lastDay: DateTime.utc(3000, 12, 31),
-        focusedDay: _focusedDay,
-        selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-        onDaySelected: (selectedDay, focusedDay) {
-          setState(() {
-            _selectedDay = selectedDay;
-            _focusedDay = focusedDay;
-          });
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: TableCalendar(
+          firstDay: DateTime.utc(2000, 1, 1),
+          lastDay: DateTime.utc(3000, 12, 31),
+          focusedDay: _focusedDay,
+          selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+          onDaySelected: (selectedDay, focusedDay) {
+            setState(() {
+              _selectedDay = selectedDay;
+              _focusedDay = focusedDay;
+            });
 
-          final normalized = DateTime(
-            selectedDay.year,
-            selectedDay.month,
-            selectedDay.day,
-          );
+            final normalized = DateTime(
+              selectedDay.year,
+              selectedDay.month,
+              selectedDay.day,
+            );
 
-          final session = _markedSessions[normalized];
-
-          if (session != null) {
-            // navigatorKey.currentState!.push(
-            //   MaterialPageRoute(
-            //     builder: (context) => SessionDetailsPage(sessionId: session.id),
-            //   ),
-            // );
-          }
-        },
-        calendarStyle: CalendarStyle(
-          todayDecoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-            shape: BoxShape.circle,
-          ),
-          todayTextStyle: textTheme.bodySmall!.copyWith(
-            color: AppColors.pureWhite,
-          ),
-          selectedDecoration: BoxDecoration(
-            color: AppColors.gold,
-            shape: BoxShape.circle,
-          ),
-          selectedTextStyle: textTheme.bodySmall!.copyWith(
-            color: AppColors.pureWhite,
-          ),
-          defaultTextStyle: textTheme.bodySmall!,
-          outsideTextStyle: textTheme.bodySmall!,
-          weekendTextStyle: textTheme.bodySmall!,
-          weekNumberTextStyle: textTheme.bodySmall!,
-          holidayTextStyle: textTheme.bodySmall!,
-          withinRangeTextStyle: textTheme.bodySmall!,
-          rangeEndTextStyle: textTheme.bodySmall!,
-          rangeStartTextStyle: textTheme.bodySmall!,
-          disabledTextStyle: textTheme.bodySmall!,
-        ),
-        headerStyle: HeaderStyle(
-          titleTextStyle: textTheme.bodyMedium!,
-          formatButtonVisible: false,
-          leftChevronIcon: Icon(
-            Provider.of<LocaleProvider>(context).locale == Locale('ar')
-                ? Iconsax.arrow_right
-                : Iconsax.arrow_square_left,
-          ),
-          rightChevronIcon: Icon(
-            Provider.of<LocaleProvider>(context).locale == Locale('ar')
-                ? Iconsax.arrow_square_left
-                : Iconsax.arrow_right,
-          ),
-        ),
-        daysOfWeekStyle: DaysOfWeekStyle(
-          weekdayStyle: textTheme.bodySmall!,
-          weekendStyle: textTheme.bodySmall!,
-        ),
-        calendarBuilders: CalendarBuilders(
-          markerBuilder: (context, day, events) {
-            if (_isMarked(day)) {
-              return Positioned(
-                bottom: 1,
-                child: Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: AppColors.red,
-                    shape: BoxShape.circle,
+            final session = _markedSessions[normalized];
+            if (session != null) {
+              navigatorKey.currentState!.push(
+                MaterialPageRoute(
+                  builder: (context) => SessionDetailsPage(
+                    sessionId: session.id,
+                    caseId: session.caseId!,
                   ),
                 ),
               );
             }
-            return const SizedBox.shrink();
           },
+          calendarFormat: CalendarFormat.month,
+          availableCalendarFormats: const {CalendarFormat.month: ''},
+          pageJumpingEnabled: true,
+          calendarStyle: CalendarStyle(
+            todayDecoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              shape: BoxShape.circle,
+            ),
+            todayTextStyle: textTheme.bodySmall!.copyWith(
+              color: AppColors.pureWhite,
+            ),
+            selectedDecoration: BoxDecoration(
+              color: AppColors.gold,
+              shape: BoxShape.circle,
+            ),
+            selectedTextStyle: textTheme.bodySmall!.copyWith(
+              color: AppColors.pureWhite,
+            ),
+            defaultTextStyle: textTheme.bodySmall!,
+            outsideTextStyle: textTheme.bodySmall!,
+            weekendTextStyle: textTheme.bodySmall!,
+          ),
+          headerStyle: HeaderStyle(
+            titleTextStyle: textTheme.bodyMedium!,
+            formatButtonVisible: false,
+            leftChevronIcon: Icon(
+              Provider.of<LocaleProvider>(context).locale == Locale('ar')
+                  ? Iconsax.arrow_right
+                  : Iconsax.arrow_square_left,
+            ),
+            rightChevronIcon: Icon(
+              Provider.of<LocaleProvider>(context).locale == Locale('ar')
+                  ? Iconsax.arrow_square_left
+                  : Iconsax.arrow_right,
+            ),
+          ),
+          daysOfWeekStyle: DaysOfWeekStyle(
+            weekdayStyle: textTheme.bodySmall!,
+            weekendStyle: textTheme.bodySmall!,
+          ),
+          calendarBuilders: CalendarBuilders(
+            markerBuilder: (context, day, events) {
+              if (_isMarked(day)) {
+                return Positioned(
+                  bottom: 1,
+                  child: Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: AppColors.red,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
         ),
       ),
     );

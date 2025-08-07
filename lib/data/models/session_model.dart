@@ -8,6 +8,8 @@ class SessionModel {
   final bool? isActive;
   final String? caseTitle;
   final String? clientName;
+  final int? clientId;
+  final int? caseId;
 
   const SessionModel({
     required this.id,
@@ -19,6 +21,8 @@ class SessionModel {
     this.isActive,
     this.caseTitle,
     this.clientName,
+    this.clientId,
+    this.caseId,
   });
 
   factory SessionModel.fromJson(Map<String, dynamic> json) {
@@ -36,8 +40,16 @@ class SessionModel {
       isActive: json.containsKey('is_active')
           ? json['is_active'] as bool?
           : null,
-      caseTitle: json['case_title'] as String?,
-      clientName: json['client_name'] as String?,
+      caseTitle: json.containsKey('case_title')
+          ? json['case_title'] as String?
+          : null,
+      clientName: json.containsKey('client_name')
+          ? json['client_name'] as String?
+          : null,
+      clientId: json.containsKey('client_id')
+          ? json['client_id'] as int?
+          : null,
+      caseId: json.containsKey('case_id') ? json['case_id'] as int? : null,
     );
   }
 
@@ -52,6 +64,8 @@ class SessionModel {
       'is_active': isActive,
       'case_title': caseTitle,
       'client_name': clientName,
+      'client_id': clientId,
+      'case_id': caseId,
     };
   }
 }
