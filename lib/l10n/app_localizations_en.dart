@@ -814,4 +814,96 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get failedToSendInvitations => 'Failed to send invitations';
+
+  @override
+  String get assignedAccounts => 'Assigned Accounts';
+
+  @override
+  String get assignAccount => 'Assign Account';
+
+  @override
+  String get searchFollowers => 'Search followers';
+
+  @override
+  String get typeToSearch => 'Type to search...';
+
+  @override
+  String get failedToLoadFollowers => 'Failed to load followers';
+
+  @override
+  String get noFollowersAvailable => 'No followers available';
+
+  @override
+  String get allFollowersAlreadyAssigned =>
+      'All followers are already assigned';
+
+  @override
+  String get noFollowersMatchSearch => 'No followers match your search';
+
+  @override
+  String get assign => 'Assign';
+
+  @override
+  String get accountAssignedSuccessfully => 'Account assigned successfully';
+
+  @override
+  String get failedToAssignAccount => 'Failed to assign account';
+
+  @override
+  String get failedToLoad => 'Failed to load';
+
+  @override
+  String get noAccountsAssigned => 'No accounts assigned';
+
+  @override
+  String get unknown => 'Unknown';
+
+  @override
+  String get unknownAccount => 'Unknown Account';
+
+  @override
+  String get updateRole => 'Update Role';
+
+  @override
+  String updateRoleFor(Object accountName) {
+    return 'Update role for $accountName';
+  }
+
+  @override
+  String get roleUpdatedSuccessfully => 'Role updated successfully';
+
+  @override
+  String get failedToUpdateRole => 'Failed to update role';
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get removeAssignment => 'Remove Assignment';
+
+  @override
+  String confirmRemoveAccount(Object accountName) {
+    return 'Are you sure you want to remove $accountName from this case?';
+  }
+
+  @override
+  String get thisAccount => 'this account';
+
+  @override
+  String get accountRemovedSuccessfully => 'Account removed successfully';
+
+  @override
+  String get failedToRemoveAccount => 'Failed to remove account';
+
+  @override
+  String get admin => 'Admin';
+
+  @override
+  String get diamond => 'Diamond';
+
+  @override
+  String get gold => 'Gold';
+
+  @override
+  String get silver => 'Silver';
 }

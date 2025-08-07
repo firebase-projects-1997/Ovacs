@@ -1627,6 +1627,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to send invitations'**
   String get failedToSendInvitations;
+
+  /// No description provided for @assignedAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned Accounts'**
+  String get assignedAccounts;
+
+  /// No description provided for @assignAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Account'**
+  String get assignAccount;
+
+  /// No description provided for @searchFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'Search followers'**
+  String get searchFollowers;
+
+  /// No description provided for @typeToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Type to search...'**
+  String get typeToSearch;
+
+  /// No description provided for @failedToLoadFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load followers'**
+  String get failedToLoadFollowers;
+
+  /// No description provided for @noFollowersAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No followers available'**
+  String get noFollowersAvailable;
+
+  /// No description provided for @allFollowersAlreadyAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'All followers are already assigned'**
+  String get allFollowersAlreadyAssigned;
+
+  /// No description provided for @noFollowersMatchSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'No followers match your search'**
+  String get noFollowersMatchSearch;
+
+  /// No description provided for @assign.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign'**
+  String get assign;
+
+  /// No description provided for @accountAssignedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Account assigned successfully'**
+  String get accountAssignedSuccessfully;
+
+  /// No description provided for @failedToAssignAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to assign account'**
+  String get failedToAssignAccount;
+
+  /// No description provided for @failedToLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load'**
+  String get failedToLoad;
+
+  /// No description provided for @noAccountsAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts assigned'**
+  String get noAccountsAssigned;
+
+  /// No description provided for @unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknown;
+
+  /// No description provided for @unknownAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Account'**
+  String get unknownAccount;
+
+  /// No description provided for @updateRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Role'**
+  String get updateRole;
+
+  /// No description provided for @updateRoleFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Update role for {accountName}'**
+  String updateRoleFor(Object accountName);
+
+  /// No description provided for @roleUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Role updated successfully'**
+  String get roleUpdatedSuccessfully;
+
+  /// No description provided for @failedToUpdateRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update role'**
+  String get failedToUpdateRole;
+
+  /// No description provided for @update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// No description provided for @removeAssignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Assignment'**
+  String get removeAssignment;
+
+  /// No description provided for @confirmRemoveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove {accountName} from this case?'**
+  String confirmRemoveAccount(Object accountName);
+
+  /// No description provided for @thisAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'this account'**
+  String get thisAccount;
+
+  /// No description provided for @accountRemovedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Account removed successfully'**
+  String get accountRemovedSuccessfully;
+
+  /// No description provided for @failedToRemoveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to remove account'**
+  String get failedToRemoveAccount;
+
+  /// No description provided for @admin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get admin;
+
+  /// No description provided for @diamond.
+  ///
+  /// In en, this message translates to:
+  /// **'Diamond'**
+  String get diamond;
+
+  /// No description provided for @gold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold'**
+  String get gold;
+
+  /// No description provided for @silver.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver'**
+  String get silver;
 }
 
 class _AppLocalizationsDelegate

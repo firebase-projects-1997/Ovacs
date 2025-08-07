@@ -59,6 +59,8 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -253,7 +255,7 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Assigned Accounts',
+                        localizations.assignedAccounts,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       RoundedContainer(
@@ -446,12 +448,14 @@ class _AssignAccountDialogState extends State<_AssignAccountDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return AlertDialog(
-      title: const Row(
+      title: Row(
         children: [
-          Icon(Iconsax.user_add),
-          SizedBox(width: 8),
-          Text('Assign Account'),
+          const Icon(Iconsax.user_add),
+          const SizedBox(width: 8),
+          Text(localizations.assignAccount),
         ],
       ),
       content: SizedBox(
@@ -460,16 +464,16 @@ class _AssignAccountDialogState extends State<_AssignAccountDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Select a follower to assign to this case:'),
+            Text('Select a follower to assign to this case:'),
             const SizedBox(height: 16),
 
             // Search field
             TextField(
-              decoration: const InputDecoration(
-                labelText: 'Search followers',
-                hintText: 'Type to search...',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Iconsax.search_normal),
+              decoration: InputDecoration(
+                labelText: localizations.searchFollowers,
+                hintText: localizations.typeToSearch,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Iconsax.search_normal),
               ),
               onChanged: (value) {
                 setState(() {
@@ -483,10 +487,10 @@ class _AssignAccountDialogState extends State<_AssignAccountDialog> {
             // Role selection
             DropdownButtonFormField<String>(
               value: selectedRole,
-              decoration: const InputDecoration(
-                labelText: 'Role',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Iconsax.crown),
+              decoration: InputDecoration(
+                labelText: localizations.role,
+                // border: OutlineInputBorder(),
+                prefixIcon: const Icon(Iconsax.crown),
               ),
               items: widget.assignedProvider.availableRoles.map((role) {
                 return DropdownMenuItem(
@@ -526,10 +530,10 @@ class _AssignAccountDialogState extends State<_AssignAccountDialog> {
                         children: [
                           const Icon(Iconsax.warning_2, color: Colors.red),
                           const SizedBox(height: 8),
-                          Text('Failed to load followers'),
+                          Text(localizations.failedToLoadFollowers),
                           TextButton(
                             onPressed: () => provider.fetchFollowers(),
-                            child: const Text('Retry'),
+                            child: Text(localizations.retry),
                           ),
                         ],
                       ),
@@ -537,13 +541,16 @@ class _AssignAccountDialogState extends State<_AssignAccountDialog> {
                   }
 
                   if (provider.followers.isEmpty) {
-                    return const Center(
+                    return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Iconsax.user_minus, color: AppColors.mediumGrey),
-                          SizedBox(height: 8),
-                          Text('No followers available'),
+                          const Icon(
+                            Iconsax.user_minus,
+                            color: AppColors.mediumGrey,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(localizations.noFollowersAvailable),
                         ],
                       ),
                     );
@@ -573,8 +580,8 @@ class _AssignAccountDialogState extends State<_AssignAccountDialog> {
                           const SizedBox(height: 8),
                           Text(
                             searchQuery.isEmpty
-                                ? 'All followers are already assigned'
-                                : 'No followers match your search',
+                                ? localizations.allFollowersAlreadyAssigned
+                                : localizations.noFollowersMatchSearch,
                           ),
                         ],
                       ),
@@ -627,7 +634,7 @@ class _AssignAccountDialogState extends State<_AssignAccountDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(localizations.cancel),
         ),
         ElevatedButton(
           onPressed: selectedAccountId == null
@@ -645,14 +652,14 @@ class _AssignAccountDialogState extends State<_AssignAccountDialog> {
                     showAppSnackBar(
                       context,
                       success
-                          ? 'Account assigned successfully'
+                          ? localizations.accountAssignedSuccessfully
                           : widget.assignedProvider.errorMessage ??
-                                'Failed to assign account',
+                                localizations.failedToAssignAccount,
                       type: success ? SnackBarType.success : SnackBarType.error,
                     );
                   }
                 },
-          child: const Text('Assign'),
+          child: Text(localizations.assign),
         ),
       ],
     );

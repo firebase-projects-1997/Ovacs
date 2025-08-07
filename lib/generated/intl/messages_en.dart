@@ -22,21 +22,26 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(id) => "Case ${id} Information";
 
-  static String m1(error) => "Failed to send connection request: ${error}";
+  static String m1(accountName) =>
+      "Are you sure you want to remove ${accountName} from this case?";
 
-  static String m2(count) => "Followers (${count})";
+  static String m2(error) => "Failed to send connection request: ${error}";
 
-  static String m3(count) => "Following (${count})";
+  static String m3(count) => "Followers (${count})";
 
-  static String m4(id) => "ID: ${id}";
+  static String m4(count) => "Following (${count})";
 
-  static String m5(count) => "Selected Files: ${count}";
+  static String m5(id) => "ID: ${id}";
 
-  static String m6(id) => "Session ${id} Information";
+  static String m6(count) => "Selected Files: ${count}";
 
-  static String m7(error) => "Upload failed: ${error}";
+  static String m7(id) => "Session ${id} Information";
 
-  static String m8(count) => "Uploaded ${count} documents successfully!";
+  static String m8(accountName) => "Update role for ${accountName}";
+
+  static String m9(error) => "Upload failed: ${error}";
+
+  static String m10(count) => "Uploaded ${count} documents successfully!";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -44,10 +49,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "A Law Firm that helps",
     ),
     "accept": MessageLookupByLibrary.simpleMessage("Accept"),
+    "accountAssignedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Account assigned successfully",
+    ),
     "accountInformation": MessageLookupByLibrary.simpleMessage(
       "Account Information",
     ),
     "accountNumber": MessageLookupByLibrary.simpleMessage("Account Number"),
+    "accountRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Account removed successfully",
+    ),
     "active": MessageLookupByLibrary.simpleMessage("Active?"),
     "add": MessageLookupByLibrary.simpleMessage("Add"),
     "addClient": MessageLookupByLibrary.simpleMessage("Add Client"),
@@ -57,9 +68,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "addPersonalMessage": MessageLookupByLibrary.simpleMessage(
       "Add a personal message to your invitation...",
     ),
+    "admin": MessageLookupByLibrary.simpleMessage("Admin"),
     "after": MessageLookupByLibrary.simpleMessage("After"),
     "allCases": MessageLookupByLibrary.simpleMessage("All Cases"),
     "allClients": MessageLookupByLibrary.simpleMessage("All Clients"),
+    "allFollowersAlreadyAssigned": MessageLookupByLibrary.simpleMessage(
+      "All followers are already assigned",
+    ),
     "alreadyHaveAnAccount": MessageLookupByLibrary.simpleMessage(
       "Already have an account? ",
     ),
@@ -87,6 +102,11 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Are you sure you want to delete this session?",
         ),
+    "assign": MessageLookupByLibrary.simpleMessage("Assign"),
+    "assignAccount": MessageLookupByLibrary.simpleMessage("Assign Account"),
+    "assignedAccounts": MessageLookupByLibrary.simpleMessage(
+      "Assigned Accounts",
+    ),
     "audioUrlMissing": MessageLookupByLibrary.simpleMessage(
       "Audio URL is missing.",
     ),
@@ -139,7 +159,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmPasswordIsRequired": MessageLookupByLibrary.simpleMessage(
       "Confirm password is required",
     ),
-    "connectionRequestSentFailure": m1,
+    "confirmRemoveAccount": m1,
+    "connectionRequestSentFailure": m2,
     "connectionRequestSentSuccess": MessageLookupByLibrary.simpleMessage(
       "Connection request sent successfully",
     ),
@@ -178,6 +199,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Description is required",
     ),
     "descriptionLabel": MessageLookupByLibrary.simpleMessage("Description"),
+    "diamond": MessageLookupByLibrary.simpleMessage("Diamond"),
     "didntReceiveOTP": MessageLookupByLibrary.simpleMessage(
       "Didn\'t receive OTP? ",
     ),
@@ -254,6 +276,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "experienceTheFuture": MessageLookupByLibrary.simpleMessage(
       "Experience the future",
     ),
+    "failedToAssignAccount": MessageLookupByLibrary.simpleMessage(
+      "Failed to assign account",
+    ),
     "failedToConvertAudioToMp3": MessageLookupByLibrary.simpleMessage(
       "Failed to convert audio to mp3.",
     ),
@@ -262,6 +287,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "failedToEditMessage": MessageLookupByLibrary.simpleMessage(
       "Failed to edit message",
+    ),
+    "failedToLoad": MessageLookupByLibrary.simpleMessage("Failed to load"),
+    "failedToLoadFollowers": MessageLookupByLibrary.simpleMessage(
+      "Failed to load followers",
+    ),
+    "failedToRemoveAccount": MessageLookupByLibrary.simpleMessage(
+      "Failed to remove account",
     ),
     "failedToSendInvitations": MessageLookupByLibrary.simpleMessage(
       "Failed to send invitations",
@@ -272,15 +304,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "failedToUpdateCase": MessageLookupByLibrary.simpleMessage(
       "Failed to update case",
     ),
+    "failedToUpdateRole": MessageLookupByLibrary.simpleMessage(
+      "Failed to update role",
+    ),
     "fileName": MessageLookupByLibrary.simpleMessage("File name: "),
     "fileNotFound": MessageLookupByLibrary.simpleMessage("File not found."),
-    "followers": m2,
-    "following": m3,
+    "followers": m3,
+    "following": m4,
     "forgetPassword": MessageLookupByLibrary.simpleMessage("Forget password?"),
     "forgetPasswordTitle": MessageLookupByLibrary.simpleMessage(
       "Forget Password",
     ),
     "fullName": MessageLookupByLibrary.simpleMessage("Full Name"),
+    "gold": MessageLookupByLibrary.simpleMessage("Gold"),
     "groupDescription": MessageLookupByLibrary.simpleMessage(
       "Group Description",
     ),
@@ -290,7 +326,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "I have read and agree to the ",
     ),
     "id": MessageLookupByLibrary.simpleMessage("ID"),
-    "idWithValue": m4,
+    "idWithValue": m5,
     "instructions": MessageLookupByLibrary.simpleMessage("Instructions"),
     "invitation": MessageLookupByLibrary.simpleMessage("Invitation"),
     "invitationInstructions": MessageLookupByLibrary.simpleMessage(
@@ -319,6 +355,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "next": MessageLookupByLibrary.simpleMessage("Next"),
     "no": MessageLookupByLibrary.simpleMessage("No"),
+    "noAccountsAssigned": MessageLookupByLibrary.simpleMessage(
+      "No accounts assigned",
+    ),
+    "noFollowersAvailable": MessageLookupByLibrary.simpleMessage(
+      "No followers available",
+    ),
+    "noFollowersMatchSearch": MessageLookupByLibrary.simpleMessage(
+      "No followers match your search",
+    ),
     "noName": MessageLookupByLibrary.simpleMessage("No Name"),
     "noSessionsAvailable": MessageLookupByLibrary.simpleMessage(
       "No sessions available",
@@ -396,6 +441,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "reject": MessageLookupByLibrary.simpleMessage("Reject"),
     "remove": MessageLookupByLibrary.simpleMessage("Remove"),
+    "removeAssignment": MessageLookupByLibrary.simpleMessage(
+      "Remove Assignment",
+    ),
     "removeFile": MessageLookupByLibrary.simpleMessage("Remove File"),
     "resendCode": MessageLookupByLibrary.simpleMessage("Resend Code"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
@@ -403,21 +451,25 @@ class MessageLookup extends MessageLookupByLibrary {
       "Revolutionizing legal archiving",
     ),
     "role": MessageLookupByLibrary.simpleMessage("Role"),
+    "roleUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Role updated successfully",
+    ),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("Save Changes"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "searchCases": MessageLookupByLibrary.simpleMessage("Search Cases"),
     "searchClients": MessageLookupByLibrary.simpleMessage("Search Clients"),
+    "searchFollowers": MessageLookupByLibrary.simpleMessage("Search followers"),
     "securityLevel": MessageLookupByLibrary.simpleMessage("Security Level"),
     "selectDate": MessageLookupByLibrary.simpleMessage("Select date"),
     "selectFiles": MessageLookupByLibrary.simpleMessage("Select Files"),
-    "selectedFilesCount": m5,
+    "selectedFilesCount": m6,
     "send": MessageLookupByLibrary.simpleMessage("Send"),
     "sendFailed": MessageLookupByLibrary.simpleMessage("Send failed"),
     "sendInvitations": MessageLookupByLibrary.simpleMessage("Send Invitations"),
     "sent": MessageLookupByLibrary.simpleMessage("Sent"),
     "session": MessageLookupByLibrary.simpleMessage("Session"),
-    "sessionInformation": m6,
+    "sessionInformation": m7,
     "sessionName": MessageLookupByLibrary.simpleMessage("Session name: "),
     "sessionTitle": MessageLookupByLibrary.simpleMessage("Session title"),
     "sessions": MessageLookupByLibrary.simpleMessage("Sessions"),
@@ -428,6 +480,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "signIn": MessageLookupByLibrary.simpleMessage("Sign in"),
     "signin": MessageLookupByLibrary.simpleMessage("Signin"),
+    "silver": MessageLookupByLibrary.simpleMessage("Silver"),
     "skip": MessageLookupByLibrary.simpleMessage("skip"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
       "Something went wrong",
@@ -437,6 +490,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "10 Million+ people have a lot of files they want to keep, such as their court cases.",
     ),
     "termsOfService": MessageLookupByLibrary.simpleMessage("Terms of Service"),
+    "thisAccount": MessageLookupByLibrary.simpleMessage("this account"),
     "thisUrlCantLaunched": MessageLookupByLibrary.simpleMessage(
       "This Url Can\'t Launched",
     ),
@@ -451,13 +505,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "towardsWorldOfSpeedInArchiving": MessageLookupByLibrary.simpleMessage(
       "Towards the world of speed in archiving",
     ),
+    "typeToSearch": MessageLookupByLibrary.simpleMessage("Type to search..."),
+    "unknown": MessageLookupByLibrary.simpleMessage("Unknown"),
+    "unknownAccount": MessageLookupByLibrary.simpleMessage("Unknown Account"),
     "unknownError": MessageLookupByLibrary.simpleMessage("Unknown error"),
     "upcomingSessions": MessageLookupByLibrary.simpleMessage(
       "Upcoming Sessions",
     ),
+    "update": MessageLookupByLibrary.simpleMessage("Update"),
+    "updateRole": MessageLookupByLibrary.simpleMessage("Update Role"),
+    "updateRoleFor": m8,
     "uploadDocuments": MessageLookupByLibrary.simpleMessage("Upload Documents"),
-    "uploadFailed": m7,
-    "uploadSuccessMessage": m8,
+    "uploadFailed": m9,
+    "uploadSuccessMessage": m10,
     "uploading": MessageLookupByLibrary.simpleMessage("Uploading..."),
     "userName": MessageLookupByLibrary.simpleMessage("User name"),
     "usernameIsRequired": MessageLookupByLibrary.simpleMessage(

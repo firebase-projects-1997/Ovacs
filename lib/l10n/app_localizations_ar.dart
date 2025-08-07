@@ -807,4 +807,95 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get failedToSendInvitations => 'فشل في إرسال الدعوات';
+
+  @override
+  String get assignedAccounts => 'الحسابات المعينة';
+
+  @override
+  String get assignAccount => 'تعيين حساب';
+
+  @override
+  String get searchFollowers => 'البحث في المتابعين';
+
+  @override
+  String get typeToSearch => 'اكتب للبحث...';
+
+  @override
+  String get failedToLoadFollowers => 'فشل في تحميل المتابعين';
+
+  @override
+  String get noFollowersAvailable => 'لا يوجد متابعون متاحون';
+
+  @override
+  String get allFollowersAlreadyAssigned => 'جميع المتابعين معينون بالفعل';
+
+  @override
+  String get noFollowersMatchSearch => 'لا يوجد متابعون يطابقون بحثك';
+
+  @override
+  String get assign => 'تعيين';
+
+  @override
+  String get accountAssignedSuccessfully => 'تم تعيين الحساب بنجاح';
+
+  @override
+  String get failedToAssignAccount => 'فشل في تعيين الحساب';
+
+  @override
+  String get failedToLoad => 'فشل في التحميل';
+
+  @override
+  String get noAccountsAssigned => 'لا توجد حسابات معينة';
+
+  @override
+  String get unknown => 'غير معروف';
+
+  @override
+  String get unknownAccount => 'حساب غير معروف';
+
+  @override
+  String get updateRole => 'تحديث الدور';
+
+  @override
+  String updateRoleFor(Object accountName) {
+    return 'تحديث الدور لـ $accountName';
+  }
+
+  @override
+  String get roleUpdatedSuccessfully => 'تم تحديث الدور بنجاح';
+
+  @override
+  String get failedToUpdateRole => 'فشل في تحديث الدور';
+
+  @override
+  String get update => 'تحديث';
+
+  @override
+  String get removeAssignment => 'إزالة التعيين';
+
+  @override
+  String confirmRemoveAccount(Object accountName) {
+    return 'هل أنت متأكد من أنك تريد إزالة $accountName من هذه القضية؟';
+  }
+
+  @override
+  String get thisAccount => 'هذا الحساب';
+
+  @override
+  String get accountRemovedSuccessfully => 'تم إزالة الحساب بنجاح';
+
+  @override
+  String get failedToRemoveAccount => 'فشل في إزالة الحساب';
+
+  @override
+  String get admin => 'مدير';
+
+  @override
+  String get diamond => 'ماسي';
+
+  @override
+  String get gold => 'ذهبي';
+
+  @override
+  String get silver => 'فضي';
 }

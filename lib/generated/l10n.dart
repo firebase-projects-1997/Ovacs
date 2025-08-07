@@ -2108,6 +2108,256 @@ class S {
       args: [],
     );
   }
+
+  /// `Assigned Accounts`
+  String get assignedAccounts {
+    return Intl.message(
+      'Assigned Accounts',
+      name: 'assignedAccounts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Assign Account`
+  String get assignAccount {
+    return Intl.message(
+      'Assign Account',
+      name: 'assignAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search followers`
+  String get searchFollowers {
+    return Intl.message(
+      'Search followers',
+      name: 'searchFollowers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type to search...`
+  String get typeToSearch {
+    return Intl.message(
+      'Type to search...',
+      name: 'typeToSearch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load followers`
+  String get failedToLoadFollowers {
+    return Intl.message(
+      'Failed to load followers',
+      name: 'failedToLoadFollowers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No followers available`
+  String get noFollowersAvailable {
+    return Intl.message(
+      'No followers available',
+      name: 'noFollowersAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All followers are already assigned`
+  String get allFollowersAlreadyAssigned {
+    return Intl.message(
+      'All followers are already assigned',
+      name: 'allFollowersAlreadyAssigned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No followers match your search`
+  String get noFollowersMatchSearch {
+    return Intl.message(
+      'No followers match your search',
+      name: 'noFollowersMatchSearch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Assign`
+  String get assign {
+    return Intl.message('Assign', name: 'assign', desc: '', args: []);
+  }
+
+  /// `Account assigned successfully`
+  String get accountAssignedSuccessfully {
+    return Intl.message(
+      'Account assigned successfully',
+      name: 'accountAssignedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to assign account`
+  String get failedToAssignAccount {
+    return Intl.message(
+      'Failed to assign account',
+      name: 'failedToAssignAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load`
+  String get failedToLoad {
+    return Intl.message(
+      'Failed to load',
+      name: 'failedToLoad',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No accounts assigned`
+  String get noAccountsAssigned {
+    return Intl.message(
+      'No accounts assigned',
+      name: 'noAccountsAssigned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unknown`
+  String get unknown {
+    return Intl.message('Unknown', name: 'unknown', desc: '', args: []);
+  }
+
+  /// `Unknown Account`
+  String get unknownAccount {
+    return Intl.message(
+      'Unknown Account',
+      name: 'unknownAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Role`
+  String get updateRole {
+    return Intl.message('Update Role', name: 'updateRole', desc: '', args: []);
+  }
+
+  /// `Update role for {accountName}`
+  String updateRoleFor(Object accountName) {
+    return Intl.message(
+      'Update role for $accountName',
+      name: 'updateRoleFor',
+      desc: '',
+      args: [accountName],
+    );
+  }
+
+  /// `Role updated successfully`
+  String get roleUpdatedSuccessfully {
+    return Intl.message(
+      'Role updated successfully',
+      name: 'roleUpdatedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to update role`
+  String get failedToUpdateRole {
+    return Intl.message(
+      'Failed to update role',
+      name: 'failedToUpdateRole',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update`
+  String get update {
+    return Intl.message('Update', name: 'update', desc: '', args: []);
+  }
+
+  /// `Remove Assignment`
+  String get removeAssignment {
+    return Intl.message(
+      'Remove Assignment',
+      name: 'removeAssignment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to remove {accountName} from this case?`
+  String confirmRemoveAccount(Object accountName) {
+    return Intl.message(
+      'Are you sure you want to remove $accountName from this case?',
+      name: 'confirmRemoveAccount',
+      desc: '',
+      args: [accountName],
+    );
+  }
+
+  /// `this account`
+  String get thisAccount {
+    return Intl.message(
+      'this account',
+      name: 'thisAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account removed successfully`
+  String get accountRemovedSuccessfully {
+    return Intl.message(
+      'Account removed successfully',
+      name: 'accountRemovedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to remove account`
+  String get failedToRemoveAccount {
+    return Intl.message(
+      'Failed to remove account',
+      name: 'failedToRemoveAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Admin`
+  String get admin {
+    return Intl.message('Admin', name: 'admin', desc: '', args: []);
+  }
+
+  /// `Diamond`
+  String get diamond {
+    return Intl.message('Diamond', name: 'diamond', desc: '', args: []);
+  }
+
+  /// `Gold`
+  String get gold {
+    return Intl.message('Gold', name: 'gold', desc: '', args: []);
+  }
+
+  /// `Silver`
+  String get silver {
+    return Intl.message('Silver', name: 'silver', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

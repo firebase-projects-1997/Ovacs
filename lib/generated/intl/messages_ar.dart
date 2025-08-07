@@ -22,21 +22,26 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(id) => "معلومات القضية ${id}";
 
-  static String m1(error) => "فشل في إرسال طلب الاتصال: ${error}";
+  static String m1(accountName) =>
+      "هل أنت متأكد من أنك تريد إزالة ${accountName} من هذه القضية؟";
 
-  static String m2(count) => "المتابِعون (${count})";
+  static String m2(error) => "فشل في إرسال طلب الاتصال: ${error}";
 
-  static String m3(count) => "المتابَعون (${count})";
+  static String m3(count) => "المتابِعون (${count})";
 
-  static String m4(id) => "المعرف: ${id}";
+  static String m4(count) => "المتابَعون (${count})";
 
-  static String m5(count) => "عدد الملفات المحددة: ${count}";
+  static String m5(id) => "المعرف: ${id}";
 
-  static String m6(id) => "معلومات الجلسة ${id}";
+  static String m6(count) => "عدد الملفات المحددة: ${count}";
 
-  static String m7(error) => "فشل الرفع: ${error}";
+  static String m7(id) => "معلومات الجلسة ${id}";
 
-  static String m8(count) => "تم رفع ${count} مستند بنجاح!";
+  static String m8(accountName) => "تحديث الدور لـ ${accountName}";
+
+  static String m9(error) => "فشل الرفع: ${error}";
+
+  static String m10(count) => "تم رفع ${count} مستند بنجاح!";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -44,10 +49,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "شركة قانونية تساعد",
     ),
     "accept": MessageLookupByLibrary.simpleMessage("قبول"),
+    "accountAssignedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم تعيين الحساب بنجاح",
+    ),
     "accountInformation": MessageLookupByLibrary.simpleMessage(
       "معلومات الحساب",
     ),
     "accountNumber": MessageLookupByLibrary.simpleMessage("رقم الحساب"),
+    "accountRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم إزالة الحساب بنجاح",
+    ),
     "active": MessageLookupByLibrary.simpleMessage("نشط؟"),
     "add": MessageLookupByLibrary.simpleMessage("إضافة"),
     "addClient": MessageLookupByLibrary.simpleMessage("إضافة عميل"),
@@ -57,9 +68,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "addPersonalMessage": MessageLookupByLibrary.simpleMessage(
       "أضف رسالة شخصية إلى دعوتك...",
     ),
+    "admin": MessageLookupByLibrary.simpleMessage("مدير"),
     "after": MessageLookupByLibrary.simpleMessage("بعد"),
     "allCases": MessageLookupByLibrary.simpleMessage("جميع القضايا"),
     "allClients": MessageLookupByLibrary.simpleMessage("جميع العملاء"),
+    "allFollowersAlreadyAssigned": MessageLookupByLibrary.simpleMessage(
+      "جميع المتابعين معينون بالفعل",
+    ),
     "alreadyHaveAnAccount": MessageLookupByLibrary.simpleMessage(
       "لديك حساب بالفعل؟ ",
     ),
@@ -87,6 +102,11 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "هل أنت متأكد من أنك تريد حذف هذه الجلسة؟",
         ),
+    "assign": MessageLookupByLibrary.simpleMessage("تعيين"),
+    "assignAccount": MessageLookupByLibrary.simpleMessage("تعيين حساب"),
+    "assignedAccounts": MessageLookupByLibrary.simpleMessage(
+      "الحسابات المعينة",
+    ),
     "audioUrlMissing": MessageLookupByLibrary.simpleMessage(
       "رابط الصوت مفقود.",
     ),
@@ -139,7 +159,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmPasswordIsRequired": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور مطلوب",
     ),
-    "connectionRequestSentFailure": m1,
+    "confirmRemoveAccount": m1,
+    "connectionRequestSentFailure": m2,
     "connectionRequestSentSuccess": MessageLookupByLibrary.simpleMessage(
       "تم إرسال طلب الاتصال بنجاح",
     ),
@@ -178,6 +199,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "الوصف مطلوب",
     ),
     "descriptionLabel": MessageLookupByLibrary.simpleMessage("الوصف"),
+    "diamond": MessageLookupByLibrary.simpleMessage("ماسي"),
     "didntReceiveOTP": MessageLookupByLibrary.simpleMessage("لم تستلم الرمز؟ "),
     "documents": MessageLookupByLibrary.simpleMessage("الملفات"),
     "dontHaveAnAccount": MessageLookupByLibrary.simpleMessage(
@@ -252,6 +274,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "experienceTheFuture": MessageLookupByLibrary.simpleMessage(
       "اختبر المستقبل",
     ),
+    "failedToAssignAccount": MessageLookupByLibrary.simpleMessage(
+      "فشل في تعيين الحساب",
+    ),
     "failedToConvertAudioToMp3": MessageLookupByLibrary.simpleMessage(
       "فشل في تحويل الصوت إلى mp3.",
     ),
@@ -260,6 +285,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "failedToEditMessage": MessageLookupByLibrary.simpleMessage(
       "فشل في تعديل الرسالة",
+    ),
+    "failedToLoad": MessageLookupByLibrary.simpleMessage("فشل في التحميل"),
+    "failedToLoadFollowers": MessageLookupByLibrary.simpleMessage(
+      "فشل في تحميل المتابعين",
+    ),
+    "failedToRemoveAccount": MessageLookupByLibrary.simpleMessage(
+      "فشل في إزالة الحساب",
     ),
     "failedToSendInvitations": MessageLookupByLibrary.simpleMessage(
       "فشل في إرسال الدعوات",
@@ -270,10 +302,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "failedToUpdateCase": MessageLookupByLibrary.simpleMessage(
       "فشل في تحديث القضية",
     ),
+    "failedToUpdateRole": MessageLookupByLibrary.simpleMessage(
+      "فشل في تحديث الدور",
+    ),
     "fileName": MessageLookupByLibrary.simpleMessage("اسم الملف: "),
     "fileNotFound": MessageLookupByLibrary.simpleMessage("الملف غير موجود."),
-    "followers": m2,
-    "following": m3,
+    "followers": m3,
+    "following": m4,
     "forgetPassword": MessageLookupByLibrary.simpleMessage(
       "هل نسيت كلمة المرور؟",
     ),
@@ -281,6 +316,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "نسيت كلمة المرور",
     ),
     "fullName": MessageLookupByLibrary.simpleMessage("الاسم الكامل"),
+    "gold": MessageLookupByLibrary.simpleMessage("ذهبي"),
     "groupDescription": MessageLookupByLibrary.simpleMessage("وصف المجموعة"),
     "groupName": MessageLookupByLibrary.simpleMessage("عنوان المجموعة: "),
     "home": MessageLookupByLibrary.simpleMessage("الرئيسية"),
@@ -288,7 +324,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أقر بأنني قرأت ووافقت على ",
     ),
     "id": MessageLookupByLibrary.simpleMessage("المعرف"),
-    "idWithValue": m4,
+    "idWithValue": m5,
     "instructions": MessageLookupByLibrary.simpleMessage("التعليمات"),
     "invitation": MessageLookupByLibrary.simpleMessage("دعوة"),
     "invitationInstructions": MessageLookupByLibrary.simpleMessage(
@@ -315,6 +351,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "name": MessageLookupByLibrary.simpleMessage("الاسم"),
     "next": MessageLookupByLibrary.simpleMessage("التالي"),
     "no": MessageLookupByLibrary.simpleMessage("لا"),
+    "noAccountsAssigned": MessageLookupByLibrary.simpleMessage(
+      "لا توجد حسابات معينة",
+    ),
+    "noFollowersAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا يوجد متابعون متاحون",
+    ),
+    "noFollowersMatchSearch": MessageLookupByLibrary.simpleMessage(
+      "لا يوجد متابعون يطابقون بحثك",
+    ),
     "noName": MessageLookupByLibrary.simpleMessage("بدون اسم"),
     "noSessionsAvailable": MessageLookupByLibrary.simpleMessage(
       "لا توجد جلسات متاحة",
@@ -390,6 +435,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
     "reject": MessageLookupByLibrary.simpleMessage("رفض"),
     "remove": MessageLookupByLibrary.simpleMessage("إزالة"),
+    "removeAssignment": MessageLookupByLibrary.simpleMessage("إزالة التعيين"),
     "removeFile": MessageLookupByLibrary.simpleMessage("إزالة الملف"),
     "resendCode": MessageLookupByLibrary.simpleMessage("إعادة إرسال الرمز"),
     "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
@@ -397,21 +443,27 @@ class MessageLookup extends MessageLookupByLibrary {
       "ثورة الأرشفة القانونية",
     ),
     "role": MessageLookupByLibrary.simpleMessage("الدور"),
+    "roleUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث الدور بنجاح",
+    ),
     "save": MessageLookupByLibrary.simpleMessage("حفظ"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("حفظ التغييرات"),
     "search": MessageLookupByLibrary.simpleMessage("بحث"),
     "searchCases": MessageLookupByLibrary.simpleMessage("بحث القضايا"),
     "searchClients": MessageLookupByLibrary.simpleMessage("بحث العملاء"),
+    "searchFollowers": MessageLookupByLibrary.simpleMessage(
+      "البحث في المتابعين",
+    ),
     "securityLevel": MessageLookupByLibrary.simpleMessage("مستوى الأمان"),
     "selectDate": MessageLookupByLibrary.simpleMessage("اختر التاريخ"),
     "selectFiles": MessageLookupByLibrary.simpleMessage("اختر الملفات"),
-    "selectedFilesCount": m5,
+    "selectedFilesCount": m6,
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),
     "sendFailed": MessageLookupByLibrary.simpleMessage("فشل في الإرسال"),
     "sendInvitations": MessageLookupByLibrary.simpleMessage("إرسال دعوات"),
     "sent": MessageLookupByLibrary.simpleMessage("المرسلة"),
     "session": MessageLookupByLibrary.simpleMessage("الجلسة"),
-    "sessionInformation": m6,
+    "sessionInformation": m7,
     "sessionName": MessageLookupByLibrary.simpleMessage("اسم الجلسة: "),
     "sessionTitle": MessageLookupByLibrary.simpleMessage("عنوان الجلسة"),
     "sessions": MessageLookupByLibrary.simpleMessage("الجلسات"),
@@ -422,6 +474,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
     "signIn": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
     "signin": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
+    "silver": MessageLookupByLibrary.simpleMessage("فضي"),
     "skip": MessageLookupByLibrary.simpleMessage("تخطي"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage("حدث خطأ ما"),
     "storeAsGroup": MessageLookupByLibrary.simpleMessage("تخزين كمجموعة"),
@@ -429,6 +482,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أكثر من 10 ملايين شخص لديهم الكثير من الملفات التي يرغبون في الاحتفاظ بها، مثل قضاياهم القانونية.",
     ),
     "termsOfService": MessageLookupByLibrary.simpleMessage("شروط الخدمة"),
+    "thisAccount": MessageLookupByLibrary.simpleMessage("هذا الحساب"),
     "thisUrlCantLaunched": MessageLookupByLibrary.simpleMessage(
       "لا يمكن فتح هذا الرابط",
     ),
@@ -443,11 +497,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "towardsWorldOfSpeedInArchiving": MessageLookupByLibrary.simpleMessage(
       "نحو عالم السرعة في الأرشفة",
     ),
+    "typeToSearch": MessageLookupByLibrary.simpleMessage("اكتب للبحث..."),
+    "unknown": MessageLookupByLibrary.simpleMessage("غير معروف"),
+    "unknownAccount": MessageLookupByLibrary.simpleMessage("حساب غير معروف"),
     "unknownError": MessageLookupByLibrary.simpleMessage("خطأ غير معروف"),
     "upcomingSessions": MessageLookupByLibrary.simpleMessage("الجلسات القادمة"),
+    "update": MessageLookupByLibrary.simpleMessage("تحديث"),
+    "updateRole": MessageLookupByLibrary.simpleMessage("تحديث الدور"),
+    "updateRoleFor": m8,
     "uploadDocuments": MessageLookupByLibrary.simpleMessage("رفع المستندات"),
-    "uploadFailed": m7,
-    "uploadSuccessMessage": m8,
+    "uploadFailed": m9,
+    "uploadSuccessMessage": m10,
     "uploading": MessageLookupByLibrary.simpleMessage("جاري الرفع..."),
     "userName": MessageLookupByLibrary.simpleMessage("اسم المستخدم"),
     "usernameIsRequired": MessageLookupByLibrary.simpleMessage(

@@ -6,6 +6,7 @@ import '../../../common/widgets/rounded_container.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/functions/show_snackbar.dart';
 import '../../../data/models/assigned_model.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/assigned_accounts_provider.dart';
 
 class AssignedAccountsHorizontalList extends StatefulWidget {
@@ -37,6 +38,8 @@ class _AssignedAccountsHorizontalListState
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Consumer<AssignedAccountsProvider>(
       builder: (context, provider, child) {
         if (provider.status == AssignedAccountsStatus.loading &&
@@ -57,7 +60,7 @@ class _AssignedAccountsHorizontalListState
                   const Icon(Iconsax.warning_2, color: Colors.red, size: 24),
                   const SizedBox(height: 4),
                   Text(
-                    'Failed to load',
+                    localizations.failedToLoad,
                     style: Theme.of(
                       context,
                     ).textTheme.bodySmall?.copyWith(color: Colors.red),
@@ -65,7 +68,7 @@ class _AssignedAccountsHorizontalListState
                   TextButton(
                     onPressed: () =>
                         provider.fetchAssignedAccounts(widget.caseId),
-                    child: const Text('Retry'),
+                    child: Text(localizations.retry),
                   ),
                 ],
               ),
@@ -87,7 +90,7 @@ class _AssignedAccountsHorizontalListState
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'No accounts assigned',
+                    localizations.noAccountsAssigned,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppColors.mediumGrey,
                     ),
@@ -110,6 +113,7 @@ class _AssignedAccountsHorizontalListState
                 context,
                 assignedAccount,
                 provider,
+                localizations,
               );
             },
           ),
@@ -122,6 +126,7 @@ class _AssignedAccountsHorizontalListState
     BuildContext context,
     AssignedAccountModel assignedAccount,
     AssignedAccountsProvider provider,
+    AppLocalizations localizations,
   ) {
     final account = assignedAccount.account;
     final isUpdating = provider.isAccountLoading(
@@ -145,7 +150,7 @@ class _AssignedAccountsHorizontalListState
               radius: 20,
               backgroundColor: _getRoleColor(
                 assignedAccount.role,
-              ).withOpacity(0.2),
+              ).withValues(alpha: 0.2),
               child: Icon(
                 Iconsax.user,
                 color: _getRoleColor(assignedAccount.role),
@@ -153,7 +158,7 @@ class _AssignedAccountsHorizontalListState
             ),
             // Account name
             Text(
-              account.name ?? 'Unknown',
+              account.name ?? localizations.unknown,
               style: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
@@ -185,8 +190,12 @@ class _AssignedAccountsHorizontalListState
           ],
         ),
       ),
-      onTap: () =>
-          _showAccountActionsDialog(context, assignedAccount, provider),
+      onTap: () => _showAccountActionsDialog(
+        context,
+        assignedAccount,
+        provider,
+        localizations,
+      ),
     );
   }
 
@@ -209,6 +218,7 @@ class _AssignedAccountsHorizontalListState
     BuildContext context,
     AssignedAccountModel assignedAccount,
     AssignedAccountsProvider provider,
+    AppLocalizations localizations,
   ) {
     showModalBottomSheet(
       context: context,
@@ -224,7 +234,7 @@ class _AssignedAccountsHorizontalListState
                   radius: 20,
                   backgroundColor: _getRoleColor(
                     assignedAccount.role,
-                  ).withOpacity(0.2),
+                  ).withValues(alpha: 0.2),
                   child: Icon(
                     Iconsax.user,
                     color: _getRoleColor(assignedAccount.role),
