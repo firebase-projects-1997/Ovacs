@@ -13,6 +13,7 @@ import 'package:new_ovacs/data/repositories/session_repository.dart';
 import 'package:new_ovacs/features/case/provider/add_case_provider.dart';
 import 'package:new_ovacs/features/case/provider/case_details_provider.dart';
 import 'package:new_ovacs/features/case/provider/cases_provider.dart';
+import 'package:new_ovacs/features/case/providers/assigned_accounts_provider.dart';
 import 'package:new_ovacs/features/client/providers/add_client_provider.dart';
 import 'package:new_ovacs/features/client/providers/client_details_provider.dart';
 import 'package:new_ovacs/features/client/providers/clients_provider.dart';
@@ -104,6 +105,9 @@ Future<void> setupLocator() async {
   );
   getIt.registerLazySingleton(
     () => CaseDetailProvider(getIt<CaseRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => AssignedAccountsProvider(getIt<CaseRepository>()),
   );
   //-> sessions
   getIt.registerLazySingleton(

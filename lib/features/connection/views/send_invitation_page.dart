@@ -83,7 +83,6 @@ class _SendInvitationPageState extends State<SendInvitationPage> {
       appBar: AppBar(title: Text(localizations.sendInvitations)),
       body: Consumer<SendInvitationProvider>(
         builder: (context, provider, _) {
-          // Sync controllers with provider invitations count
           while (_emailControllers.length < provider.invitations.length) {
             _addInvitationControllers();
           }
@@ -166,12 +165,10 @@ class _SendInvitationPageState extends State<SendInvitationPage> {
                         maxLines: 3,
                         hint: localizations.addPersonalMessage,
                         label: '',
-                        // no onChanged, no cleaning
                       ),
 
                       const SizedBox(height: 15),
 
-                      // Action buttons
                       Row(
                         children: [
                           Expanded(
@@ -189,7 +186,7 @@ class _SendInvitationPageState extends State<SendInvitationPage> {
 
                                 _messageController.clear();
 
-                                _addInvitationControllers(); // start with one empty
+                                _addInvitationControllers();
                               },
                               child: Text(localizations.clearAll),
                             ),
@@ -232,7 +229,7 @@ class _SendInvitationPageState extends State<SendInvitationPage> {
     for (int i = 0; i < _emailControllers.length; i++) {
       final email = _emailControllers[i].text.trim();
       final name = _nameControllers[i].text.trim();
-      // Basic non-empty check here; detailed validation in LabeledTextFormField
+
       if (email.isEmpty || name.isEmpty) return false;
     }
     return true;

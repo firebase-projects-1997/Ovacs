@@ -21,6 +21,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
     super.initState();
     Future.microtask(() {
       context.read<ConnectionProvider>().fetchFollowing();
+      context.read<ConnectionProvider>().fetchFollowers();
     });
   }
 

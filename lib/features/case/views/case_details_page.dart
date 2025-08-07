@@ -4,6 +4,8 @@ import 'package:new_ovacs/core/constants/app_colors.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
 import 'package:new_ovacs/features/case/provider/case_details_provider.dart';
 import 'package:new_ovacs/features/case/provider/cases_provider.dart';
+import 'package:new_ovacs/features/case/providers/assigned_accounts_provider.dart';
+import 'package:new_ovacs/features/connection/providers/connection_provider.dart';
 import 'package:new_ovacs/features/message/views/messages_page.dart';
 import 'package:new_ovacs/features/session/views/add_session_page.dart';
 import 'package:new_ovacs/main.dart';
@@ -15,6 +17,7 @@ import '../../client/views/client_info_page.dart';
 import '../../session/providers/sessions_provider.dart';
 import '../../session/views/session_details_page.dart';
 import '../../session/widgets/session_card.dart';
+import '../widgets/assigned_accounts_horizontal_list.dart';
 import 'edit_case_page.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -250,6 +253,29 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
+                        'Assigned Accounts',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      RoundedContainer(
+                        onTap: () => _showAssignAccountDialog(context),
+                        child: Icon(
+                          Iconsax.add,
+                          color: isDarkMode(context)
+                              ? AppColors.pureWhite
+                              : AppColors.charcoalGrey,
+                        ),
+                      ),
+                    ],
+                  ),
+                  AssignedAccountsHorizontalList(
+                    caseId: widget.caseId,
+                    onAddPressed: () => _showAssignAccountDialog(context),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
                         AppLocalizations.of(context)!.sessions,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
@@ -332,6 +358,26 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
       ),
     );
   }
+
+  void _showAssignAccountDialog(BuildContext context) {
+    final assignedProvider = context.read<AssignedAccountsProvider>();
+    final connectionProvider = context.read<ConnectionProvider>();
+
+    // Ensure followers are loaded
+    if (connectionProvider.followers.isEmpty &&
+        !connectionProvider.isLoadingFollowers) {
+      connectionProvider.fetchFollowers();
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => _AssignAccountDialog(
+        assignedProvider: assignedProvider,
+        connectionProvider: connectionProvider,
+        caseId: widget.caseId,
+      ),
+    );
+  }
 }
 
 class _InfoColumn extends StatelessWidget {
@@ -375,5 +421,255 @@ class _InfoColumn extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _AssignAccountDialog extends StatefulWidget {
+  final AssignedAccountsProvider assignedProvider;
+  final ConnectionProvider connectionProvider;
+  final int caseId;
+
+  const _AssignAccountDialog({
+    required this.assignedProvider,
+    required this.connectionProvider,
+    required this.caseId,
+  });
+
+  @override
+  State<_AssignAccountDialog> createState() => _AssignAccountDialogState();
+}
+
+class _AssignAccountDialogState extends State<_AssignAccountDialog> {
+  String selectedRole = 'gold';
+  int? selectedAccountId;
+  String searchQuery = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Row(
+        children: [
+          Icon(Iconsax.user_add),
+          SizedBox(width: 8),
+          Text('Assign Account'),
+        ],
+      ),
+      content: SizedBox(
+        width: double.maxFinite,
+        height: 400,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Select a follower to assign to this case:'),
+            const SizedBox(height: 16),
+
+            // Search field
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'Search followers',
+                hintText: 'Type to search...',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Iconsax.search_normal),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value.toLowerCase();
+                });
+              },
+            ),
+
+            const SizedBox(height: 16),
+
+            // Role selection
+            DropdownButtonFormField<String>(
+              value: selectedRole,
+              decoration: const InputDecoration(
+                labelText: 'Role',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Iconsax.crown),
+              ),
+              items: widget.assignedProvider.availableRoles.map((role) {
+                return DropdownMenuItem(
+                  value: role,
+                  child: Row(
+                    children: [
+                      Icon(Iconsax.crown, size: 16, color: _getRoleColor(role)),
+                      const SizedBox(width: 8),
+                      Text(role.toUpperCase()),
+                    ],
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    selectedRole = value;
+                  });
+                }
+              },
+            ),
+
+            const SizedBox(height: 16),
+
+            // Followers list
+            Expanded(
+              child: Consumer<ConnectionProvider>(
+                builder: (context, provider, child) {
+                  if (provider.isLoadingFollowers) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (provider.followersfailure != null) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Iconsax.warning_2, color: Colors.red),
+                          const SizedBox(height: 8),
+                          Text('Failed to load followers'),
+                          TextButton(
+                            onPressed: () => provider.fetchFollowers(),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  if (provider.followers.isEmpty) {
+                    return const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Iconsax.user_minus, color: AppColors.mediumGrey),
+                          SizedBox(height: 8),
+                          Text('No followers available'),
+                        ],
+                      ),
+                    );
+                  }
+
+                  // Filter followers based on search and already assigned
+                  final filteredFollowers = provider.followers.where((
+                    follower,
+                  ) {
+                    final matchesSearch =
+                        searchQuery.isEmpty ||
+                        follower.name.toLowerCase().contains(searchQuery);
+                    final notAlreadyAssigned = !widget.assignedProvider
+                        .isAccountAssigned(follower.id);
+                    return matchesSearch && notAlreadyAssigned;
+                  }).toList();
+
+                  if (filteredFollowers.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Iconsax.search_normal,
+                            color: AppColors.mediumGrey,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            searchQuery.isEmpty
+                                ? 'All followers are already assigned'
+                                : 'No followers match your search',
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: filteredFollowers.length,
+                    itemBuilder: (context, index) {
+                      final follower = filteredFollowers[index];
+                      final isSelected = selectedAccountId == follower.id;
+
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: isSelected
+                              ? Theme.of(
+                                  context,
+                                ).primaryColor.withValues(alpha: 0.2)
+                              : AppColors.mediumGrey.withValues(alpha: 0.2),
+                          child: Icon(
+                            Iconsax.user,
+                            color: isSelected
+                                ? Theme.of(context).primaryColor
+                                : AppColors.mediumGrey,
+                          ),
+                        ),
+                        title: Text(follower.name),
+                        subtitle: Text('ID: ${follower.id}'),
+                        trailing: isSelected
+                            ? Icon(
+                                Iconsax.tick_circle,
+                                color: Theme.of(context).primaryColor,
+                              )
+                            : null,
+                        selected: isSelected,
+                        onTap: () {
+                          setState(() {
+                            selectedAccountId = isSelected ? null : follower.id;
+                          });
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: selectedAccountId == null
+              ? null
+              : () async {
+                  Navigator.of(context).pop();
+
+                  final success = await widget.assignedProvider
+                      .assignAccountToCase(
+                        accountId: selectedAccountId!,
+                        role: selectedRole,
+                      );
+
+                  if (context.mounted) {
+                    showAppSnackBar(
+                      context,
+                      success
+                          ? 'Account assigned successfully'
+                          : widget.assignedProvider.errorMessage ??
+                                'Failed to assign account',
+                      type: success ? SnackBarType.success : SnackBarType.error,
+                    );
+                  }
+                },
+          child: const Text('Assign'),
+        ),
+      ],
+    );
+  }
+
+  Color _getRoleColor(String role) {
+    switch (role.toLowerCase()) {
+      case 'admin':
+        return Colors.red;
+      case 'diamond':
+        return Colors.blue;
+      case 'gold':
+        return Colors.amber;
+      case 'silver':
+        return Colors.grey;
+      default:
+        return Colors.grey;
+    }
   }
 }

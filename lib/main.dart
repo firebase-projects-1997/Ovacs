@@ -13,6 +13,7 @@ import 'features/auth/views/login_page.dart';
 import 'features/case/provider/add_case_provider.dart';
 import 'features/case/provider/case_details_provider.dart';
 import 'features/case/provider/cases_provider.dart';
+import 'features/case/providers/assigned_accounts_provider.dart';
 import 'features/client/providers/add_client_provider.dart';
 import 'features/client/providers/client_details_provider.dart';
 import 'features/client/providers/clients_provider.dart';
@@ -134,6 +135,9 @@ class _MainAppState extends State<MainApp> {
             ),
             ChangeNotifierProvider(
               create: (context) => getIt<CaseDetailProvider>(),
+            ),
+            ChangeNotifierProvider(
+              create: (context) => getIt<AssignedAccountsProvider>(),
             ),
             // sessions
             ChangeNotifierProvider(
