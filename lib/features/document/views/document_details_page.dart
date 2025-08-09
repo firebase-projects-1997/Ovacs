@@ -7,6 +7,8 @@ import '../../../common/widgets/rounded_container.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/enums/permission_resource.dart';
 import '../../../core/enums/permission_action.dart';
+import '../../../core/enums/document_security_level.dart';
+import '../../../common/widgets/permission_guard.dart';
 import '../../../core/mixins/permission_mixin.dart';
 import '../../../data/models/document_model.dart';
 import '../../../l10n/app_localizations.dart';
@@ -315,15 +317,34 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage>
                 Row(
                   children: [
                     Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          context.read<DocumentsProvider>().viewFile(
-                            'https://ovacs.com/backend${document.secureViewUrl}',
-                            document.fileName,
-                          );
-                        },
-                        icon: const Icon(Iconsax.eye),
-                        label: Text(l10n.view),
+                      child: DocumentSecurityGuard(
+                        action: PermissionAction.read,
+                        securityLevel: DocumentSecurityLevel.fromString(
+                          document.securityLevel,
+                        ),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            context.read<DocumentsProvider>().viewFile(
+                              'https://ovacs.com/backend${document.secureViewUrl}',
+                              document.fileName,
+                            );
+                          },
+                          icon: const Icon(Iconsax.eye),
+                          label: Text(l10n.view),
+                        ),
+                        fallback: ElevatedButton.icon(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "You don't have permission to view this document",
+                                ),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Iconsax.eye),
+                          label: Text(l10n.view),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -333,40 +354,60 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage>
                           final isDownloading = docProvider
                               .isDocumentDownloading(document.id);
 
-                          return ElevatedButton.icon(
-                            onPressed: isDownloading
-                                ? null
-                                : () async {
-                                    final success = await docProvider.downloadFile(
-                                      'https://ovacs.com/backend${document.secureDownloadUrl}',
-                                      document.fileName,
-                                      document.id,
-                                    );
+                          return DocumentSecurityGuard(
+                            action: PermissionAction.read,
+                            securityLevel: DocumentSecurityLevel.fromString(
+                              document.securityLevel,
+                            ),
+                            child: ElevatedButton.icon(
+                              onPressed: isDownloading
+                                  ? null
+                                  : () async {
+                                      final success = await docProvider
+                                          .downloadFile(
+                                            'https://ovacs.com/backend${document.secureDownloadUrl}',
+                                            document.fileName,
+                                            document.id,
+                                          );
 
-                                    if (mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            success
-                                                ? l10n.downloadComplete
-                                                : l10n.downloadFailed,
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              success
+                                                  ? l10n.downloadComplete
+                                                  : l10n.downloadFailed,
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                            icon: isDownloading
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
+                                        );
+                                      }
+                                    },
+                              icon: isDownloading
+                                  ? const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Icon(Iconsax.arrow_circle_down),
+                              label: Text(l10n.download),
+                            ),
+                            fallback: ElevatedButton.icon(
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "You don't have permission to download this document",
                                     ),
-                                  )
-                                : const Icon(Iconsax.arrow_circle_down),
-                            label: Text(l10n.download),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Iconsax.arrow_circle_down),
+                              label: Text(l10n.download),
+                            ),
                           );
                         },
                       ),

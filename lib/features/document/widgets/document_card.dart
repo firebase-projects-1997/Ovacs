@@ -7,6 +7,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../common/widgets/rounded_container.dart';
 import '../../../core/enums/permission_resource.dart';
 import '../../../core/enums/permission_action.dart';
+import '../../../core/enums/document_security_level.dart';
+import '../../../common/widgets/permission_guard.dart';
 import '../../../core/mixins/permission_mixin.dart';
 import '../../../features/document/providers/documents_provider.dart';
 import '../../../data/models/document_model.dart';
@@ -221,45 +223,87 @@ class _DocumentCardState extends State<DocumentCard> with PermissionMixin {
                 ),
               ),
               const Spacer(),
-              IconButton(
-                icon: const Icon(Iconsax.eye),
-                tooltip: AppLocalizations.of(context)!.view,
-                onPressed: () {
-                  provider.viewFile(
-                    'https://ovacs.com/backend${widget.document.secureViewUrl}',
-                    widget.document.fileName,
-                  );
-                },
+              // View button with security-level guard
+              DocumentSecurityGuard(
+                action: PermissionAction.read,
+                securityLevel: DocumentSecurityLevel.fromString(
+                  widget.document.securityLevel,
+                ),
+                child: IconButton(
+                  icon: const Icon(Iconsax.eye),
+                  tooltip: AppLocalizations.of(context)!.view,
+                  onPressed: () {
+                    provider.viewFile(
+                      'https://ovacs.com/backend${widget.document.secureViewUrl}',
+                      widget.document.fileName,
+                    );
+                  },
+                ),
+                fallback: IconButton(
+                  icon: const Icon(Iconsax.eye),
+                  tooltip: AppLocalizations.of(context)!.view,
+                  onPressed: () {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "You don't have permission to view this document",
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-              IconButton(
-                icon: provider.isDocumentDownloading(widget.document.id)
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Iconsax.arrow_circle_down),
-                tooltip: AppLocalizations.of(context)!.download,
-                onPressed: provider.isDocumentDownloading(widget.document.id)
-                    ? null
-                    : () async {
-                        final success = await provider.downloadFile(
-                          'https://ovacs.com/backend${widget.document.secureViewUrl}',
-                          widget.document.fileName,
-                          widget.document.id, // ✅ Pass document ID
-                        );
+              // Download button with security-level guard
+              DocumentSecurityGuard(
+                action: PermissionAction.read,
+                securityLevel: DocumentSecurityLevel.fromString(
+                  widget.document.securityLevel,
+                ),
+                child: IconButton(
+                  icon: provider.isDocumentDownloading(widget.document.id)
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Iconsax.arrow_circle_down),
+                  tooltip: AppLocalizations.of(context)!.download,
+                  onPressed: provider.isDocumentDownloading(widget.document.id)
+                      ? null
+                      : () async {
+                          final success = await provider.downloadFile(
+                            'https://ovacs.com/backend${widget.document.secureDownloadUrl}',
+                            widget.document.fileName,
+                            widget.document.id, // ✅ Pass document ID
+                          );
 
-                        final message = success
-                            ? "Download complete"
-                            : provider.downloadViewErrorMessage ??
-                                  "Download failed";
+                          final message = success
+                              ? "Download complete"
+                              : provider.downloadViewErrorMessage ??
+                                    "Download failed";
 
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(message)));
-                        }
-                      },
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(SnackBar(content: Text(message)));
+                          }
+                        },
+                ),
+                fallback: IconButton(
+                  icon: const Icon(Iconsax.arrow_circle_down),
+                  tooltip: AppLocalizations.of(context)!.download,
+                  onPressed: () {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "You don't have permission to download this document",
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           ),

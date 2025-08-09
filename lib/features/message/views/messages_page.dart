@@ -34,19 +34,15 @@ class MessagesPage extends StatefulWidget {
 
 class _MessagesPageState extends State<MessagesPage> {
   final ScrollController _scrollController = ScrollController();
-  final AudioPlayer _audioPlayer = AudioPlayer();
   final TextEditingController _textController = TextEditingController();
   final _recorder = AudioRecorder();
 
-  final ValueNotifier<Duration> _positionNotifier = ValueNotifier(
-    Duration.zero,
-  );
+  final ValueNotifier<int?> _currentPlayingId = ValueNotifier<int?>(null);
 
   bool _isRecording = false;
   bool _isUploading = false;
   double _uploadProgress = 0.0;
   String? _recordingFilePath;
-  int? _playingMessageId;
 
   late Stopwatch _stopwatch;
   Timer? _recordingTimer;
@@ -66,10 +62,6 @@ class _MessagesPageState extends State<MessagesPage> {
         context.read<AllMessagesProvider>().fetchMoreMessages(widget.caseId);
       }
     });
-
-    _audioPlayer.positionStream
-        .throttleTime(const Duration(milliseconds: 100))
-        .listen((pos) => _positionNotifier.value = pos);
   }
 
   @override
@@ -90,9 +82,8 @@ class _MessagesPageState extends State<MessagesPage> {
     _stopwatch.stop();
     _recordingTimer?.cancel();
     _scrollController.dispose();
-    _audioPlayer.dispose();
     _textController.dispose();
-    _positionNotifier.dispose();
+    _currentPlayingId.dispose();
     super.dispose();
   }
 
@@ -431,7 +422,7 @@ class _MessagesPageState extends State<MessagesPage> {
         constraints: const BoxConstraints(maxWidth: 300),
         decoration: BoxDecoration(
           color: isMe
-              ? Theme.of(context).primaryColor.withOpacity(0.1)
+              ? Theme.of(context).primaryColor.withValues(alpha: 0.1)
               : Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
         ),
@@ -447,7 +438,11 @@ class _MessagesPageState extends State<MessagesPage> {
               ),
             const SizedBox(height: 4),
             if (isVoice)
-              _buildVoicePlayer(message)
+              VoiceMessagePlayer(
+                messageId: message.id,
+                url: message.voiceSteamUrl ?? '',
+                currentPlayingId: _currentPlayingId,
+              )
             else
               Text(
                 message.content ?? '',
@@ -465,116 +460,6 @@ class _MessagesPageState extends State<MessagesPage> {
         ),
       ),
     );
-  }
-
-  Widget _buildVoicePlayer(MessageModel message) {
-    final isPlaying = _playingMessageId == message.id;
-
-    return ValueListenableBuilder<Duration>(
-      valueListenable: _positionNotifier,
-      builder: (context, position, _) {
-        final duration = _audioPlayer.duration ?? Duration.zero;
-        final displayPos = isPlaying ? position : duration;
-
-        return Row(
-          children: [
-            IconButton(
-              iconSize: 30,
-              icon: Icon(
-                isPlaying ? Iconsax.pause_circle : Iconsax.play_circle,
-                color: Theme.of(context).primaryColor,
-              ),
-              onPressed: () async {
-                if (isPlaying) {
-                  await _audioPlayer.pause();
-                  if (mounted) setState(() => _playingMessageId = null);
-                } else {
-                  await _playVoice(message.voiceFileUrl ?? '', message.id);
-                }
-              },
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Slider(
-                    value: displayPos.inMilliseconds.toDouble().clamp(
-                      0,
-                      duration.inMilliseconds.toDouble(),
-                    ),
-                    max: duration.inMilliseconds.toDouble().clamp(
-                      1,
-                      double.infinity,
-                    ),
-                    onChanged: (v) =>
-                        _audioPlayer.seek(Duration(milliseconds: v.toInt())),
-                    activeColor: Theme.of(context).primaryColor,
-                    inactiveColor: Colors.grey.shade300,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _formatDuration(displayPos),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      Text(
-                        _formatDuration(duration),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _playVoice(String url, int messageId) async {
-    if (url.isEmpty) {
-      showAppSnackBar(context, AppLocalizations.of(context)!.audioUrlMissing);
-      return;
-    }
-
-    try {
-      // Get the authentication token
-      final authProvider = context.read<AuthProvider>();
-      final token = authProvider.accessToken;
-
-      if (token != null) {
-        // Create audio source with authentication headers
-        final audioSource = AudioSource.uri(
-          Uri.parse(url),
-          headers: {'Authorization': 'Bearer $token'},
-        );
-
-        await _audioPlayer.setAudioSource(audioSource);
-      } else {
-        // Fallback to direct URL if no token (shouldn't happen)
-        await _audioPlayer.setUrl(url);
-      }
-
-      setState(() => _playingMessageId = messageId);
-      await _audioPlayer.play();
-
-      _audioPlayer.playerStateStream.listen((state) {
-        if (!state.playing && _playingMessageId == messageId && mounted) {
-          setState(() => _playingMessageId = null);
-        }
-      });
-    } catch (e) {
-      if (mounted) {
-        setState(() => _playingMessageId = null);
-        showAppSnackBar(context, AppLocalizations.of(context)!.playbackError);
-      }
-
-      // Debug: Print the error details
-      debugPrint('Audio playback error: $e');
-      debugPrint('Audio URL: $url');
-    }
   }
 
   void _showMessageOptions(MessageModel message) {
@@ -610,12 +495,6 @@ class _MessagesPageState extends State<MessagesPage> {
         ),
       ),
     );
-  }
-
-  String _formatDuration(Duration duration) {
-    final m = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final s = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$m:$s';
   }
 
   String _formatTime(DateTime? dateTime) {
@@ -689,5 +568,167 @@ class _MessagesPageState extends State<MessagesPage> {
     } else if (mounted) {
       showAppSnackBar(context, provider.errorMessage);
     }
+  }
+}
+
+class VoiceMessagePlayer extends StatefulWidget {
+  final int messageId;
+  final String url;
+  final ValueNotifier<int?> currentPlayingId;
+
+  const VoiceMessagePlayer({
+    super.key,
+    required this.messageId,
+    required this.url,
+    required this.currentPlayingId,
+  });
+
+  @override
+  State<VoiceMessagePlayer> createState() => _VoiceMessagePlayerState();
+}
+
+class _VoiceMessagePlayerState extends State<VoiceMessagePlayer> {
+  late final AudioPlayer _player;
+  Duration _duration = Duration.zero;
+  Duration _position = Duration.zero;
+  late final StreamSubscription<Duration> _posSub;
+  late final StreamSubscription<Duration?> _durSub;
+  late final StreamSubscription<PlayerState> _stateSub;
+
+  bool get isPlaying => widget.currentPlayingId.value == widget.messageId;
+
+  @override
+  void initState() {
+    super.initState();
+    _player = AudioPlayer();
+
+    _durSub = _player.durationStream.listen((d) {
+      if (!mounted) return;
+      setState(() => _duration = d ?? Duration.zero);
+    });
+    _posSub = _player.positionStream
+        .throttleTime(const Duration(milliseconds: 100))
+        .listen((p) {
+          if (!mounted) return;
+          setState(() => _position = p);
+        });
+
+    _stateSub = _player.playerStateStream.listen((s) {
+      if (!mounted) return;
+      if (!s.playing && isPlaying) {
+        widget.currentPlayingId.value = null;
+      }
+    });
+
+    // Stop this player if another starts
+    widget.currentPlayingId.addListener(() async {
+      if (!mounted) return;
+      if (!isPlaying) {
+        await _player.stop();
+      }
+    });
+  }
+
+  Future<void> _play() async {
+    try {
+      // Stop any other players
+      widget.currentPlayingId.value = widget.messageId;
+
+      final tokenProvider = context.read<AuthProvider>();
+      final token = tokenProvider.accessToken;
+
+      if (token != null) {
+        await _player.setAudioSource(
+          AudioSource.uri(
+            Uri.parse(widget.url),
+            headers: {'Authorization': 'Bearer $token'},
+          ),
+        );
+      } else {
+        await _player.setUrl(widget.url);
+      }
+
+      await _player.play();
+    } catch (e) {
+      if (!mounted) return;
+      showAppSnackBar(context, AppLocalizations.of(context)!.playbackError);
+    }
+  }
+
+  Future<void> _stop() async {
+    await _player.stop();
+    if (mounted && isPlaying) widget.currentPlayingId.value = null;
+  }
+
+  @override
+  void dispose() {
+    _posSub.cancel();
+    _durSub.cancel();
+    _stateSub.cancel();
+    _player.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final displayPos = isPlaying ? _position : Duration.zero;
+    return Row(
+      children: [
+        IconButton(
+          iconSize: 30,
+          icon: Icon(
+            isPlaying ? Iconsax.pause_circle : Iconsax.play_circle,
+            color: Theme.of(context).primaryColor,
+          ),
+          onPressed: () async {
+            if (isPlaying) {
+              await _stop();
+            } else {
+              await _play();
+            }
+          },
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Slider(
+                value: displayPos.inMilliseconds.toDouble().clamp(
+                  0,
+                  _duration.inMilliseconds.toDouble(),
+                ),
+                max: _duration.inMilliseconds.toDouble().clamp(
+                  1,
+                  double.infinity,
+                ),
+                onChanged: (v) =>
+                    _player.seek(Duration(milliseconds: v.toInt())),
+                activeColor: Theme.of(context).primaryColor,
+                inactiveColor: Colors.grey.shade300,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _formatDuration(displayPos),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Text(
+                    _formatDuration(_duration),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatDuration(Duration duration) {
+    final m = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$m:$s';
   }
 }
