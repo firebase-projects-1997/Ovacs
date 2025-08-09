@@ -26,6 +26,8 @@ class CaseRepository {
 
     return response.fold((failure) => Left(failure), (res) {
       try {
+        print(uri.toString());
+        print(res.data['data']);
         final data = res.data['data'] as Map<String, dynamic>;
         final List<dynamic> casesJson = data['data'] ?? [];
         final cases = casesJson.map((e) => CaseModel.fromJson(e)).toList();
@@ -40,8 +42,14 @@ class CaseRepository {
     });
   }
 
-  Future<Either<Failure, CaseModel>> getCaseDetail(int id) async {
-    final response = await _dio.get('${AppUrls.cases}$id/');
+  Future<Either<Failure, CaseModel>> getCaseDetail(
+    int id, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final response = await _dio.get(
+      '${AppUrls.cases}$id/',
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (res) {
       try {
@@ -54,9 +62,14 @@ class CaseRepository {
   }
 
   Future<Either<Failure, CaseModel>> createCase(
-    Map<String, dynamic> payload,
-  ) async {
-    final response = await _dio.post(AppUrls.cases, data: payload);
+    Map<String, dynamic> payload, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final response = await _dio.post(
+      AppUrls.cases,
+      data: payload,
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (res) {
       try {
@@ -70,9 +83,14 @@ class CaseRepository {
 
   Future<Either<Failure, CaseModel>> updateCase(
     int id,
-    Map<String, dynamic> payload,
-  ) async {
-    final response = await _dio.put('${AppUrls.cases}$id/', data: payload);
+    Map<String, dynamic> payload, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final response = await _dio.put(
+      '${AppUrls.cases}$id/',
+      data: payload,
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (res) {
       try {
@@ -84,8 +102,14 @@ class CaseRepository {
     });
   }
 
-  Future<Either<Failure, bool>> deleteCase(int id) async {
-    final response = await _dio.delete('${AppUrls.cases}$id/');
+  Future<Either<Failure, bool>> deleteCase(
+    int id, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final response = await _dio.delete(
+      '${AppUrls.cases}$id/',
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (_) => Right(true));
   }

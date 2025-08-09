@@ -3,13 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:new_ovacs/data/models/client_model.dart';
 import 'package:new_ovacs/data/repositories/client_dashboard.dart';
+import 'package:new_ovacs/common/providers/workspace_provider.dart';
 
 enum ClientDetailStatus { idle, loading, success, error }
 
 class ClientDetailProvider extends ChangeNotifier {
   final ClientRepository repository;
+  final WorkspaceProvider _workspaceProvider;
 
-  ClientDetailProvider(this.repository);
+  ClientDetailProvider(this.repository, this._workspaceProvider);
 
   ClientDetailStatus _status = ClientDetailStatus.idle;
   ClientDetailStatus get status => _status;
@@ -24,7 +26,11 @@ class ClientDetailProvider extends ChangeNotifier {
     _status = ClientDetailStatus.loading;
     notifyListeners();
 
-    final result = await repository.getClientDetail(id);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await repository.getClientDetail(
+      id,
+      queryParams: queryParams,
+    );
 
     result.fold(
       (failure) {

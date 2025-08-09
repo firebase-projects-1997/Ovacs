@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:new_ovacs/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import '../../../core/constants/app_sizes.dart';
 import '../../../core/di/injection.dart';
 import '../../../data/repositories/connection_repository.dart';
 import '../providers/connection_provider.dart';
@@ -32,34 +33,49 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
     return Consumer<ConnectionProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text(l10n.connections),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                        create: (context) => SendInvitationProvider(
-                          getIt<ConnectionsRepository>(),
-                        ),
-                        child: const SendInvitationPage(),
-                      ),
+          body: Padding(
+            padding: AppSizes.defaultPadding(context),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      l10n.connections,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
-                  );
-                },
-                icon: const Icon(Icons.share_outlined),
-                tooltip: l10n.sendInvitations,
-              ),
-            ],
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ChangeNotifierProvider(
+                              create: (context) => SendInvitationProvider(
+                                getIt<ConnectionsRepository>(),
+                              ),
+                              child: const SendInvitationPage(),
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.share_outlined),
+                      tooltip: l10n.sendInvitations,
+                    ),
+                  ],
+                ),
+                provider.isLoadingFollowing
+                    ? const Center(child: CircularProgressIndicator())
+                    : provider.followingFailure != null
+                    ? Center(child: Text(provider.followingFailure!.message))
+                    : provider.following.isEmpty
+                    ? _buildEmptyState(context)
+                    : Expanded(
+                        child: ConnectionsListView(
+                          connections: provider.following,
+                        ),
+                      ),
+              ],
+            ),
           ),
-          body: provider.isLoadingFollowing
-              ? const Center(child: CircularProgressIndicator())
-              : provider.followingFailure != null
-              ? Center(child: Text(provider.followingFailure!.message))
-              : provider.following.isEmpty
-              ? _buildEmptyState(context)
-              : ConnectionsListView(connections: provider.following),
         );
       },
     );

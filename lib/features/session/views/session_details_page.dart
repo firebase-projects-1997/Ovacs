@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/core/constants/app_colors.dart';
 import 'package:new_ovacs/core/constants/app_sizes.dart';
+import 'package:new_ovacs/core/enums/permission_resource.dart';
+import 'package:new_ovacs/core/enums/permission_action.dart';
+import 'package:new_ovacs/core/mixins/permission_mixin.dart';
 import 'package:new_ovacs/features/document/providers/documents_provider.dart';
 import 'package:new_ovacs/features/session/providers/session_details_provider.dart';
 import 'package:new_ovacs/features/session/views/edit_session_page.dart';
@@ -29,12 +32,20 @@ class SessionDetailsPage extends StatefulWidget {
   State<SessionDetailsPage> createState() => _SessionDetailsPageState();
 }
 
-class _SessionDetailsPageState extends State<SessionDetailsPage> {
+class _SessionDetailsPageState extends State<SessionDetailsPage>
+    with PermissionMixin {
   late ScrollController _scrollController;
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    Future.microtask(() async {
+      if (!mounted) return;
+
+      // Load permissions for current workspace context
+      await loadPermissions();
+
+      if (!mounted) return;
+
       context.read<SessionDetailProvider>().fetchSessionDetails(
         widget.sessionId,
       );
@@ -82,97 +93,109 @@ class _SessionDetailsPageState extends State<SessionDetailsPage> {
             onSelected: (selectedValue) async {
               switch (selectedValue) {
                 case 'edit':
-                  await navigatorKey.currentState!.push<bool>(
-                    MaterialPageRoute(
-                      builder: (_) => EditSessionPage(
-                        sessionModel: context
-                            .read<SessionDetailProvider>()
-                            .sessionModel!,
-                        caseId: widget.caseId,
-                      ),
-                    ),
+                  await executeWithPermissionInSpaceContext(
+                    PermissionResource.session,
+                    PermissionAction.update,
+                    () async {
+                      await navigatorKey.currentState!.push<bool>(
+                        MaterialPageRoute(
+                          builder: (_) => EditSessionPage(
+                            sessionModel: context
+                                .read<SessionDetailProvider>()
+                                .sessionModel!,
+                            caseId: widget.caseId,
+                          ),
+                        ),
+                      );
+                    },
                   );
-
                   break;
                 case 'delete':
-                  final confirmed = await showDialog<bool>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: Text(
-                        AppLocalizations.of(context)!.confirmDeletion,
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: AppColors.titleText,
-                        ),
-                      ),
-                      content: Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.areYouSureYouWantToDeleteThisSession,
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: AppColors.titleText,
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, false),
-                          child: Text(AppLocalizations.of(context)!.cancel),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(ctx, true);
-                          },
-                          child: Text(
-                            AppLocalizations.of(context)!.delete,
-                            style: TextStyle(color: Colors.red),
+                  await executeWithPermissionInSpaceContext(
+                    PermissionResource.session,
+                    PermissionAction.delete,
+                    () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text(
+                            AppLocalizations.of(context)!.confirmDeletion,
+                            style: Theme.of(context).textTheme.bodyLarge!
+                                .copyWith(color: AppColors.titleText),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-
-                  if (confirmed == true) {
-                    final success = await context
-                        .read<SessionDetailProvider>()
-                        .deleteSession(widget.sessionId);
-                    if (success) {
-                      context.read<SessionsProvider>().fetchSessions(
-                        widget.caseId,
-                      );
-                      Navigator.of(context).pop();
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
                           content: Text(
-                            context
-                                    .read<SessionDetailProvider>()
-                                    .errorMessage ??
-                                AppLocalizations.of(
-                                  context,
-                                )!.errorDeletingSession,
+                            AppLocalizations.of(
+                              context,
+                            )!.areYouSureYouWantToDeleteThisSession,
+                            style: Theme.of(context).textTheme.bodyMedium!
+                                .copyWith(color: AppColors.titleText),
                           ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, false),
+                              child: Text(AppLocalizations.of(context)!.cancel),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(ctx, true);
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)!.delete,
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
                         ),
                       );
-                    }
-                  }
+
+                      if (confirmed == true) {
+                        final success = await context
+                            .read<SessionDetailProvider>()
+                            .deleteSession(widget.sessionId);
+                        if (success) {
+                          context.read<SessionsProvider>().fetchSessions(
+                            widget.caseId,
+                          );
+                          Navigator.of(context).pop();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                context
+                                        .read<SessionDetailProvider>()
+                                        .errorMessage ??
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.errorDeletingSession,
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  );
                   break;
               }
             },
-            itemBuilder: (BuildContext context) => [
-              PopupMenuItem<String>(
-                value: 'edit',
-                child: ListTile(
-                  leading: Icon(Iconsax.edit),
-                  title: Text(AppLocalizations.of(context)!.edit),
+            itemBuilder: (BuildContext context) {
+              return [
+                // Always show menu items, permission check happens in onSelected
+                PopupMenuItem<String>(
+                  value: 'edit',
+                  child: ListTile(
+                    leading: Icon(Iconsax.edit),
+                    title: Text(AppLocalizations.of(context)!.edit),
+                  ),
                 ),
-              ),
-              PopupMenuItem<String>(
-                value: 'delete',
-                child: ListTile(
-                  leading: Icon(Iconsax.trash, color: Colors.red),
-                  title: Text(AppLocalizations.of(context)!.delete),
+                PopupMenuItem<String>(
+                  value: 'delete',
+                  child: ListTile(
+                    leading: Icon(Iconsax.trash, color: Colors.red),
+                    title: Text(AppLocalizations.of(context)!.delete),
+                  ),
                 ),
-              ),
-            ],
+              ];
+            },
           ),
         ],
       ),
@@ -267,23 +290,28 @@ class _SessionDetailsPageState extends State<SessionDetailsPage> {
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
-                      RoundedContainer(
-                        onTap: () {
-                          navigatorKey.currentState!.push(
-                            MaterialPageRoute(
-                              builder: (context) => UploadDocumentsPage(
-                                id: value.sessionModel!.id,
+                      // Only show add document button if user has create permission
+                      if (hasPermissionWithOwnership(
+                        PermissionResource.document,
+                        PermissionAction.create,
+                      ))
+                        RoundedContainer(
+                          onTap: () {
+                            navigatorKey.currentState!.push(
+                              MaterialPageRoute(
+                                builder: (context) => UploadDocumentsPage(
+                                  id: value.sessionModel!.id,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        child: Icon(
-                          Iconsax.add,
-                          color: isDarkMode(context)
-                              ? AppColors.pureWhite
-                              : AppColors.charcoalGrey,
+                            );
+                          },
+                          child: Icon(
+                            Iconsax.add,
+                            color: isDarkMode(context)
+                                ? AppColors.pureWhite
+                                : AppColors.charcoalGrey,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   SizedBox(height: 10),

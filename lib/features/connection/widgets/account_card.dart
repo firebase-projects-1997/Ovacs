@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:new_ovacs/common/widgets/rounded_container.dart';
+import '../../../common/providers/permission_provider.dart';
 import '../../../common/providers/workspace_provider.dart';
 import '../../../data/models/space_account_model.dart';
 import '../../../l10n/app_localizations.dart';
@@ -33,7 +34,16 @@ class AccountCard extends StatelessWidget {
             ? ElevatedButton(
                 onPressed: () async {
                   final workspaceProvider = context.read<WorkspaceProvider>();
+                  final permissionProvider = context.read<PermissionProvider>();
+
+                  // Switch workspace
                   await workspaceProvider.switchToConnectionWorkspace(account);
+
+                  // Refresh permissions for the new workspace
+                  await permissionProvider.fetchPermissions(
+                    spaceId: account.id,
+                    forceRefresh: true,
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(

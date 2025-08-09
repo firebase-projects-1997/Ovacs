@@ -5,18 +5,27 @@ import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../common/widgets/rounded_container.dart';
+import '../../../core/enums/permission_resource.dart';
+import '../../../core/enums/permission_action.dart';
+import '../../../core/mixins/permission_mixin.dart';
 import '../../../features/document/providers/documents_provider.dart';
 import '../../../data/models/document_model.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../common/providers/workspace_provider.dart';
 import '../providers/document_detail_provider.dart';
 import '../providers/groups_provider.dart';
 import '../views/document_details_page.dart';
 
-class DocumentCard extends StatelessWidget {
+class DocumentCard extends StatefulWidget {
   final DocumentModel document;
 
   const DocumentCard({super.key, required this.document});
 
+  @override
+  State<DocumentCard> createState() => _DocumentCardState();
+}
+
+class _DocumentCardState extends State<DocumentCard> with PermissionMixin {
   String _formatFileSize(int bytes) {
     const kb = 1024;
     const mb = kb * 1024;
@@ -49,10 +58,14 @@ class DocumentCard extends StatelessWidget {
 
     return RoundedContainer(
       onTap: () {
+        final workspaceProvider = context.read<WorkspaceProvider>();
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => DocumentDetailsPage(documentId: document.id),
+            builder: (_) => DocumentDetailsPage(
+              documentId: widget.document.id,
+              spaceId: workspaceProvider.currentSpaceId,
+            ),
           ),
         );
       },
@@ -71,7 +84,7 @@ class DocumentCard extends StatelessWidget {
                     ),
                     children: [
                       TextSpan(
-                        text: document.fileName,
+                        text: widget.document.fileName,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -79,50 +92,68 @@ class DocumentCard extends StatelessWidget {
                 ),
               ),
               PopupMenuButton<String>(
-                onSelected: (value) {
+                onSelected: (value) async {
                   if (value == 'edit') {
-                    _showEditDialog(context, document, provider);
+                    await executeWithPermissionInSpaceContext(
+                      PermissionResource.document,
+                      PermissionAction.update,
+                      () async =>
+                          _showEditDialog(context, widget.document, provider),
+                    );
                   } else if (value == 'delete') {
-                    _showDeleteDialog(context, document, provider);
+                    await executeWithPermissionInSpaceContext(
+                      PermissionResource.document,
+                      PermissionAction.delete,
+                      () async =>
+                          _showDeleteDialog(context, widget.document, provider),
+                    );
                   } else if (value == 'move') {
-                    _showMoveToGroupDialog(context, document);
+                    await executeWithPermissionInSpaceContext(
+                      PermissionResource.documentGroup,
+                      PermissionAction.update,
+                      () async =>
+                          _showMoveToGroupDialog(context, widget.document),
+                    );
                   }
                 },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [
-                        const Icon(Iconsax.edit),
-                        const SizedBox(width: 8),
-                        Text(locale.edit),
-                      ],
+                itemBuilder: (context) {
+                  return [
+                    // Always show menu items, permission check happens in onSelected
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          const Icon(Iconsax.edit),
+                          const SizedBox(width: 8),
+                          Text(locale.edit),
+                        ],
+                      ),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 'move',
-                    child: Row(
-                      children: [
-                        const Icon(Iconsax.folder_2),
-                        const SizedBox(width: 8),
-                        Text(locale.moveToGroup),
-                      ],
+                    PopupMenuItem(
+                      value: 'move',
+                      child: Row(
+                        children: [
+                          const Icon(Iconsax.folder_2),
+                          const SizedBox(width: 8),
+                          Text(locale.moveToGroup),
+                        ],
+                      ),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        const Icon(Iconsax.trash, color: Colors.red),
-                        const SizedBox(width: 8),
-                        Text(
-                          locale.delete,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      ],
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          const Icon(Iconsax.trash, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Text(
+                            locale.delete,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ];
+                },
                 icon: const Icon(Iconsax.more_circle),
               ),
             ],
@@ -130,7 +161,7 @@ class DocumentCard extends StatelessWidget {
           const SizedBox(height: 8),
 
           // Group (if available)
-          if (document.groupName != null) ...[
+          if (widget.document.groupName != null) ...[
             Text.rich(
               TextSpan(
                 text: '${locale.groupName}: ',
@@ -139,7 +170,7 @@ class DocumentCard extends StatelessWidget {
                 ).textTheme.bodyMedium!.copyWith(color: AppColors.mediumGrey),
                 children: [
                   TextSpan(
-                    text: document.groupName!,
+                    text: widget.document.groupName!,
                     style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Theme.of(context).primaryColor,
                       decoration: TextDecoration.underline,
@@ -161,7 +192,7 @@ class DocumentCard extends StatelessWidget {
               ).textTheme.bodyMedium!.copyWith(color: AppColors.mediumGrey),
               children: [
                 TextSpan(
-                  text: _formatDate(document.createdAt),
+                  text: _formatDate(widget.document.createdAt),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -173,18 +204,18 @@ class DocumentCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                _formatFileSize(document.fileSize),
+                _formatFileSize(widget.document.fileSize),
                 style: Theme.of(
                   context,
                 ).textTheme.bodySmall!.copyWith(color: AppColors.mediumGrey),
               ),
               SizedBox(width: 10),
               Text(
-                "(${document.securityLevel})",
+                "(${widget.document.securityLevel})",
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: document.securityLevel == "red"
+                  color: widget.document.securityLevel == "red"
                       ? AppColors.red
-                      : document.securityLevel == 'yellow'
+                      : widget.document.securityLevel == 'yellow'
                       ? AppColors.gold
                       : AppColors.green,
                 ),
@@ -195,13 +226,13 @@ class DocumentCard extends StatelessWidget {
                 tooltip: AppLocalizations.of(context)!.view,
                 onPressed: () {
                   provider.viewFile(
-                    'https://ovacs.com/backend${document.secureViewUrl}',
-                    document.fileName,
+                    'https://ovacs.com/backend${widget.document.secureViewUrl}',
+                    widget.document.fileName,
                   );
                 },
               ),
               IconButton(
-                icon: provider.isDocumentDownloading(document.id)
+                icon: provider.isDocumentDownloading(widget.document.id)
                     ? const SizedBox(
                         width: 20,
                         height: 20,
@@ -209,13 +240,13 @@ class DocumentCard extends StatelessWidget {
                       )
                     : const Icon(Iconsax.arrow_circle_down),
                 tooltip: AppLocalizations.of(context)!.download,
-                onPressed: provider.isDocumentDownloading(document.id)
+                onPressed: provider.isDocumentDownloading(widget.document.id)
                     ? null
                     : () async {
                         final success = await provider.downloadFile(
-                          'https://ovacs.com/backend${document.secureViewUrl}',
-                          document.fileName,
-                          document.id, // ✅ Pass document ID
+                          'https://ovacs.com/backend${widget.document.secureViewUrl}',
+                          widget.document.fileName,
+                          widget.document.id, // ✅ Pass document ID
                         );
 
                         final message = success

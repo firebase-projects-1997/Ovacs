@@ -120,7 +120,6 @@ class _EditSessionPageState extends State<EditSessionPage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Container(
-          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: AppColors.charcoalGrey.withValues(alpha: 0.04),
@@ -140,7 +139,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                       LabeledTextField(
                         controller: _sessionNameC,
                         label: 'Session Name',
-                        labelColor: AppColors.charcoalGrey,
+
                         hint: 'Enter session name',
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
@@ -157,7 +156,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                         controller: _sessionDescriptionC,
                         maxLines: 5,
                         label: 'Description',
-                        labelColor: AppColors.charcoalGrey,
+
                         hint: 'Enter the description of session...',
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
@@ -175,7 +174,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                         child: LabeledTextField(
                           controller: _dateC,
                           label: 'Date',
-                          labelColor: AppColors.charcoalGrey,
+
                           hint: 'yyyy-MM-dd',
                           enabled: false,
                           validator: (value) {
@@ -195,7 +194,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                         child: LabeledTextField(
                           controller: _timeC,
                           label: 'Time',
-                          labelColor: AppColors.charcoalGrey,
+
                           hint: 'HH:mm',
                           icon: Iconsax.timer,
                           enabled: false,

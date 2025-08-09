@@ -133,6 +133,25 @@ class DioClient {
     String extractMessage() {
       try {
         final responseData = error.response?.data;
+
+        // Handle HTML error responses (like Django debug pages)
+        if (responseData is String) {
+          // Check if it's an HTML error page
+          if (responseData.contains('<html>') ||
+              responseData.contains('<!DOCTYPE')) {
+            // Extract error type from HTML if possible
+            if (responseData.contains('TypeError')) {
+              return "Server configuration error. Please contact support.";
+            } else if (responseData.contains('500')) {
+              return "Internal server error. Please try again later.";
+            } else if (responseData.contains('Permission')) {
+              return "Permission system error. Please contact support.";
+            }
+            return "Server error occurred. Please try again later.";
+          }
+          return responseData;
+        }
+
         if (responseData is Map<String, dynamic>) {
           // Try to get nested non_field_errors from data["data"]
           if (responseData.containsKey('data')) {
@@ -151,6 +170,22 @@ class DioClient {
           // Try top-level message
           if (responseData.containsKey('message')) {
             return responseData['message'].toString();
+          }
+
+          // Try detail field (common in DRF)
+          if (responseData.containsKey('detail')) {
+            return responseData['detail'].toString();
+          }
+
+          // Try error field
+          if (responseData.containsKey('error')) {
+            return responseData['error'].toString();
+          }
+
+          // Handle backend RBAC error structure
+          if (responseData.containsKey('type') &&
+              responseData['type'] == 'error') {
+            return responseData['message']?.toString() ?? 'Permission denied';
           }
         }
         return "Something went wrong.";
@@ -187,9 +222,28 @@ class DioClient {
           case 404:
             return NotFoundFailure(message);
           case 500:
+            // Provide more specific error message for 500 errors
+            if (message.contains("Permission") ||
+                message.contains("unhashable")) {
+              return ServerFailure(
+                "Server permission system error. Please contact support.",
+              );
+            } else if (message.contains("TypeError")) {
+              return ServerFailure(
+                "Server configuration error. Please contact support.",
+              );
+            }
+            return ServerFailure(
+              "Internal server error. Please try again later.",
+            );
           case 502:
+            return ServerFailure(
+              "Bad gateway. Server is temporarily unavailable.",
+            );
           case 503:
-            return ServerFailure(message);
+            return ServerFailure(
+              "Service unavailable. Please try again later.",
+            );
           default:
             return ServerFailure(message);
         }

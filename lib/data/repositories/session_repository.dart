@@ -18,17 +18,17 @@ class SessionRepository {
     int pageSize = 10,
     Map<String, dynamic>? filters,
   }) async {
-    final queryParams = <String, String>{
-      'page': page.toString(),
-      'page_size': pageSize.toString(),
-      'case': caseId.toString(),
-      if (filters != null) ...filters.map((k, v) => MapEntry(k, v.toString())),
+    final queryParams = <String, dynamic>{
+      'page': page,
+      'page_size': pageSize,
+      'case': caseId,
+      if (filters != null) ...filters,
     };
 
-    final uri = Uri.parse(
+    final response = await _dio.get(
       AppUrls.sessions,
-    ).replace(queryParameters: queryParams);
-    final response = await _dio.get(uri.toString());
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (res) {
       try {
@@ -52,8 +52,14 @@ class SessionRepository {
   }
 
   /// جلب تفاصيل جلسة واحدة
-  Future<Either<Failure, SessionModel>> getSessionDetails(int id) async {
-    final response = await _dio.get('${AppUrls.sessions}$id/');
+  Future<Either<Failure, SessionModel>> getSessionDetails(
+    int id, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final response = await _dio.get(
+      '${AppUrls.sessions}$id/',
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (res) {
       try {
@@ -67,9 +73,14 @@ class SessionRepository {
 
   /// إنشاء جلسة جديدة
   Future<Either<Failure, SessionModel>> createSession(
-    Map<String, dynamic> payload,
-  ) async {
-    final response = await _dio.post(AppUrls.sessions, data: payload);
+    Map<String, dynamic> payload, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final response = await _dio.post(
+      AppUrls.sessions,
+      data: payload,
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (res) {
       try {
@@ -84,9 +95,14 @@ class SessionRepository {
   /// تحديث جلسة موجودة
   Future<Either<Failure, SessionModel>> updateSession(
     int id,
-    Map<String, dynamic> payload,
-  ) async {
-    final response = await _dio.put('${AppUrls.sessions}$id/', data: payload);
+    Map<String, dynamic> payload, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final response = await _dio.put(
+      '${AppUrls.sessions}$id/',
+      data: payload,
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (res) {
       try {
@@ -99,8 +115,14 @@ class SessionRepository {
   }
 
   /// حذف جلسة
-  Future<Either<Failure, bool>> deleteSession(int id) async {
-    final response = await _dio.delete('${AppUrls.sessions}$id/');
+  Future<Either<Failure, bool>> deleteSession(
+    int id, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final response = await _dio.delete(
+      '${AppUrls.sessions}$id/',
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (_) => const Right(true));
   }

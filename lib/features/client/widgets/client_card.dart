@@ -6,6 +6,9 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../common/widgets/rounded_container.dart';
+import '../../../core/enums/permission_resource.dart';
+import '../../../core/enums/permission_action.dart';
+import '../../../core/mixins/permission_mixin.dart';
 import '../../../data/models/client_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../providers/clients_provider.dart';
@@ -13,11 +16,16 @@ import '../providers/update_client_provider.dart';
 import '../views/client_info_page.dart';
 import '../views/update_client_page.dart';
 
-class ClientCard extends StatelessWidget {
+class ClientCard extends StatefulWidget {
   const ClientCard({super.key, required this.client});
 
   final ClientModel client;
 
+  @override
+  State<ClientCard> createState() => _ClientCardState();
+}
+
+class _ClientCardState extends State<ClientCard> with PermissionMixin {
   @override
   Widget build(BuildContext context) {
     return Consumer<UpdateClientProvider>(
@@ -25,7 +33,8 @@ class ClientCard extends StatelessWidget {
         return RoundedContainer(
           onTap: () => navigatorKey.currentState!.push(
             MaterialPageRoute(
-              builder: (context) => ClientDetailsPage(clientId: client.id),
+              builder: (context) =>
+                  ClientDetailsPage(clientId: widget.client.id),
             ),
           ),
           child: Row(
@@ -37,53 +46,68 @@ class ClientCard extends StatelessWidget {
                     _buildInfo(
                       context,
                       AppLocalizations.of(context)!.clientName,
-                      client.name,
+                      widget.client.name,
                       valueColor: Theme.of(context).primaryColor,
                     ),
                     const SizedBox(height: 10),
                     _buildInfo(
                       context,
                       "${AppLocalizations.of(context)!.email}: ",
-                      client.email,
+                      widget.client.email,
                     ),
                     const SizedBox(height: 10),
                     _buildInfo(
                       context,
                       "${AppLocalizations.of(context)!.phone}: ",
-                      client.mobile,
+                      widget.client.mobile,
                     ),
                     const SizedBox(height: 10),
                     _buildInfo(
                       context,
                       "${AppLocalizations.of(context)!.country}: ",
-                      client.country.name ?? '',
+                      widget.client.country.name ?? '',
                       valueColor: Theme.of(context).primaryColor,
                     ),
                   ],
                 ),
               ),
               PopupMenuButton<String>(
-                onSelected: (value) {
+                onSelected: (value) async {
                   if (value == 'edit') {
-                    navigatorKey.currentState!.push(
-                      MaterialPageRoute(
-                        builder: (context) => EditClientPage(client: client),
-                      ),
+                    await executeWithPermissionInSpaceContext(
+                      PermissionResource.client,
+                      PermissionAction.update,
+                      () async {
+                        navigatorKey.currentState!.push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EditClientPage(client: widget.client),
+                          ),
+                        );
+                      },
                     );
                   } else if (value == 'delete') {
-                    _showDeleteConfirmationDialog(context, client);
+                    await executeWithPermissionInSpaceContext(
+                      PermissionResource.client,
+                      PermissionAction.delete,
+                      () async =>
+                          _showDeleteConfirmationDialog(context, widget.client),
+                    );
                   }
                 },
-                itemBuilder: (context) => [
-                  PopupMenuItem<String>(
-                    value: 'edit',
-                    child: Text(AppLocalizations.of(context)!.edit),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'delete',
-                    child: Text(AppLocalizations.of(context)!.delete),
-                  ),
-                ],
+                itemBuilder: (context) {
+                  return [
+                    // Always show menu items, permission check happens in onSelected
+                    PopupMenuItem<String>(
+                      value: 'edit',
+                      child: Text(AppLocalizations.of(context)!.edit),
+                    ),
+                    PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Text(AppLocalizations.of(context)!.delete),
+                    ),
+                  ];
+                },
                 icon: Icon(Iconsax.more_circle),
               ),
             ],

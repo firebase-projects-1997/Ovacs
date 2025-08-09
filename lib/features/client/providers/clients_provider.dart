@@ -5,12 +5,14 @@ import '../../../core/mixins/optimistic_update_mixin.dart';
 import '../../../data/models/client_model.dart';
 import '../../../data/models/country_model.dart';
 import '../../../data/repositories/client_dashboard.dart';
+import '../../../common/providers/workspace_provider.dart';
 
 class ClientsProvider extends ChangeNotifier
     with OptimisticUpdateMixin<ClientModel> {
   final ClientRepository repository;
+  final WorkspaceProvider _workspaceProvider;
 
-  ClientsProvider(this.repository);
+  ClientsProvider(this.repository, this._workspaceProvider);
 
   List<ClientModel> _clients = [];
 
@@ -57,7 +59,11 @@ class ClientsProvider extends ChangeNotifier
     _hasMore = true;
     notifyListeners();
 
-    final result = await repository.getClients(page: _currentPage);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await repository.getClients(
+      page: _currentPage,
+      queryParams: queryParams,
+    );
     result.fold(
       (failure) {
         _errorMessage = failure.message;
@@ -80,7 +86,11 @@ class ClientsProvider extends ChangeNotifier
     notifyListeners();
 
     _currentPage++;
-    final result = await repository.getClients(page: _currentPage);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await repository.getClients(
+      page: _currentPage,
+      queryParams: queryParams,
+    );
     result.fold((failure) => _errorMessage = failure.message, (response) {
       _clients.addAll(response.clients);
       _hasMore = response.pagination.hasNext;

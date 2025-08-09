@@ -10,12 +10,14 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../core/mixins/optimistic_update_mixin.dart';
 import '../../../data/models/document_model.dart';
 import '../../../data/repositories/document_repository.dart';
+import '../../../common/providers/workspace_provider.dart';
 
 class DocumentsProvider extends ChangeNotifier
     with OptimisticUpdateMixin<DocumentModel> {
   final DocumentRepository _repository;
+  final WorkspaceProvider _workspaceProvider;
 
-  DocumentsProvider(this._repository);
+  DocumentsProvider(this._repository, this._workspaceProvider);
 
   List<DocumentModel> _documents = [];
 
@@ -79,9 +81,15 @@ class DocumentsProvider extends ChangeNotifier
 
     notifyListeners();
 
-    final result = await _repository.listDocuments(
-      params: {'page': _currentPage, if (extraParams != null) ...extraParams},
-    );
+    // Merge workspace parameters with extra parameters
+    final workspaceParams = _workspaceProvider.getWorkspaceQueryParams();
+    final allParams = <String, dynamic>{
+      'page': _currentPage,
+      ...workspaceParams,
+      if (extraParams != null) ...extraParams,
+    };
+
+    final result = await _repository.listDocuments(params: allParams);
 
     result.fold(
       (failure) {
@@ -105,9 +113,16 @@ class DocumentsProvider extends ChangeNotifier
     notifyListeners();
 
     _currentPage++;
-    final result = await _repository.listDocuments(
-      params: {'session_id': _sessionId, 'page': _currentPage},
-    );
+
+    // Include workspace parameters in pagination requests
+    final workspaceParams = _workspaceProvider.getWorkspaceQueryParams();
+    final allParams = <String, dynamic>{
+      'session_id': _sessionId,
+      'page': _currentPage,
+      ...workspaceParams,
+    };
+
+    final result = await _repository.listDocuments(params: allParams);
 
     result.fold(
       (failure) {
@@ -225,7 +240,11 @@ class DocumentsProvider extends ChangeNotifier
     _deleteErrorMessage = null;
     notifyListeners();
 
-    final result = await _repository.deleteDocument(id);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await _repository.deleteDocument(
+      id,
+      queryParams: queryParams,
+    );
     result.fold(
       (failure) => _deleteErrorMessage = failure.message,
       (_) => _documents.removeWhere((doc) => doc.id == id),
@@ -243,9 +262,17 @@ class DocumentsProvider extends ChangeNotifier
     _editErrorMessage = null;
     notifyListeners();
 
-    final result = await _repository.updateDocument(id, updatedFields);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await _repository.updateDocument(
+      id,
+      updatedFields,
+      queryParams: queryParams,
+    );
     result.fold((failure) => _editErrorMessage = failure.message, (_) async {
-      final detailResult = await _repository.getDocumentDetail(id);
+      final detailResult = await _repository.getDocumentDetail(
+        id,
+        queryParams: queryParams,
+      );
       detailResult.fold((_) => null, (updatedDoc) {
         final index = _documents.indexWhere((doc) => doc.id == id);
         if (index != -1) {
@@ -290,13 +317,21 @@ class DocumentsProvider extends ChangeNotifier
       groupName: existingDoc.groupName,
     );
 
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
     return await optimisticUpdate<DocumentModel>(
       updatedItem: updatedDoc,
-      operation: () => _repository.updateDocument(id, updatedFields),
+      operation: () => _repository.updateDocument(
+        id,
+        updatedFields,
+        queryParams: queryParams,
+      ),
       getId: (doc) => doc.id,
       onSuccess: () async {
         // Fetch the updated document details from server
-        final detailResult = await _repository.getDocumentDetail(id);
+        final detailResult = await _repository.getDocumentDetail(
+          id,
+          queryParams: queryParams,
+        );
         detailResult.fold((_) => null, (serverDoc) {
           final index = _documents.indexWhere((doc) => doc.id == id);
           if (index != -1) {
@@ -310,9 +345,11 @@ class DocumentsProvider extends ChangeNotifier
 
   /// Optimistically deletes a document
   Future<bool> deleteDocumentOptimistic(int documentId) async {
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
     return await optimisticDelete(
       itemId: documentId,
-      operation: () => _repository.deleteDocument(documentId),
+      operation: () =>
+          _repository.deleteDocument(documentId, queryParams: queryParams),
       getId: (doc) => doc.id,
     );
   }

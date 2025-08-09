@@ -540,7 +540,23 @@ class _MessagesPageState extends State<MessagesPage> {
     }
 
     try {
-      await _audioPlayer.setUrl(url);
+      // Get the authentication token
+      final authProvider = context.read<AuthProvider>();
+      final token = authProvider.accessToken;
+
+      if (token != null) {
+        // Create audio source with authentication headers
+        final audioSource = AudioSource.uri(
+          Uri.parse(url),
+          headers: {'Authorization': 'Bearer $token'},
+        );
+
+        await _audioPlayer.setAudioSource(audioSource);
+      } else {
+        // Fallback to direct URL if no token (shouldn't happen)
+        await _audioPlayer.setUrl(url);
+      }
+
       setState(() => _playingMessageId = messageId);
       await _audioPlayer.play();
 
@@ -550,8 +566,14 @@ class _MessagesPageState extends State<MessagesPage> {
         }
       });
     } catch (e) {
-      if (mounted) setState(() => _playingMessageId = null);
-      showAppSnackBar(context, AppLocalizations.of(context)!.playbackError);
+      if (mounted) {
+        setState(() => _playingMessageId = null);
+        showAppSnackBar(context, AppLocalizations.of(context)!.playbackError);
+      }
+
+      // Debug: Print the error details
+      debugPrint('Audio playback error: $e');
+      debugPrint('Audio URL: $url');
     }
   }
 
@@ -640,7 +662,7 @@ class _MessagesPageState extends State<MessagesPage> {
                   provider.updatedMessage!,
                 );
                 Navigator.pop(context);
-              } else {
+              } else if (mounted) {
                 showAppSnackBar(
                   context,
                   provider.errorMessage ??
@@ -662,9 +684,9 @@ class _MessagesPageState extends State<MessagesPage> {
     final provider = context.read<EditDeleteMessageProvider>();
     await provider.deleteMessage(messageId);
 
-    if (provider.status == EditDeleteStatus.success) {
+    if (provider.status == EditDeleteStatus.success && mounted) {
       context.read<AllMessagesProvider>().removeMessage(messageId);
-    } else {
+    } else if (mounted) {
       showAppSnackBar(context, provider.errorMessage);
     }
   }

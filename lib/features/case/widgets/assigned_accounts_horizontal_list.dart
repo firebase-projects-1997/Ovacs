@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:new_ovacs/core/constants/app_sizes.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/widgets/rounded_container.dart';
@@ -52,7 +53,7 @@ class _AssignedAccountsHorizontalListState
 
         if (provider.status == AssignedAccountsStatus.error) {
           return SizedBox(
-            height: 80,
+            height: 100,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -223,7 +224,7 @@ class _AssignedAccountsHorizontalListState
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
+        padding: AppSizes.noAppBarPadding(context),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

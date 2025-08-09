@@ -3,11 +3,13 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/error/failure.dart';
 import '../../../data/models/case_model.dart';
 import '../../../data/repositories/case_repository.dart';
+import '../../../common/providers/workspace_provider.dart';
 
 class AddCaseProvider extends ChangeNotifier {
   final CaseRepository _caseRepository;
+  final WorkspaceProvider _workspaceProvider;
 
-  AddCaseProvider(this._caseRepository);
+  AddCaseProvider(this._caseRepository, this._workspaceProvider);
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -34,8 +36,10 @@ class AddCaseProvider extends ChangeNotifier {
       'date': date,
     };
 
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
     final Either<Failure, CaseModel> result = await _caseRepository.createCase(
       payload,
+      queryParams: queryParams,
     );
 
     return result.fold(

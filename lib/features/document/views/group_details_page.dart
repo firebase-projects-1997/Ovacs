@@ -3,7 +3,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import '../../../common/widgets/rounded_container.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/enums/permission_resource.dart';
+import '../../../core/enums/permission_action.dart';
 import '../../../core/functions/is_dark_mode.dart';
+import '../../../core/mixins/permission_mixin.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../main.dart';
 import '../providers/documents_provider.dart';
@@ -14,21 +17,35 @@ import 'upload_documents_page.dart';
 class GroupDetailsPage extends StatefulWidget {
   final int groupId;
   final int sessionId;
+  final int? spaceId;
+
   const GroupDetailsPage({
     super.key,
     required this.groupId,
     required this.sessionId,
+    this.spaceId,
   });
 
   @override
   State<GroupDetailsPage> createState() => _GroupDetailsPageState();
 }
 
-class _GroupDetailsPageState extends State<GroupDetailsPage> {
+class _GroupDetailsPageState extends State<GroupDetailsPage>
+    with PermissionMixin {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    Future.microtask(() async {
+      if (!mounted) return;
+
+      // Load permissions for specific space context if provided
+      await loadPermissionsForContext(
+        spaceId: widget.spaceId,
+        forceRefresh: true,
+      );
+
+      if (!mounted) return;
+
       context.read<GroupDetailsProvider>().fetchGroupDetail(widget.groupId);
       context.read<DocumentsProvider>().fetchDocumentsBySession(
         extraParams: {'session_id': widget.sessionId, 'group': widget.groupId},
@@ -75,26 +92,31 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
                       AppLocalizations.of(context)!.documents,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    RoundedContainer(
-                      onTap: () {
-                        navigatorKey.currentState!.push(
-                          MaterialPageRoute(
-                            builder: (context) => UploadDocumentsPage(
-                              id: widget.sessionId,
-                              groupId: provider.group!.id,
-                              groupName: provider.group!.name,
-                              groupDescription: provider.group!.description,
+                    // Only show add document button if user has create permission
+                    if (hasPermissionWithOwnership(
+                      PermissionResource.document,
+                      PermissionAction.create,
+                    ))
+                      RoundedContainer(
+                        onTap: () {
+                          navigatorKey.currentState!.push(
+                            MaterialPageRoute(
+                              builder: (context) => UploadDocumentsPage(
+                                id: widget.sessionId,
+                                groupId: provider.group!.id,
+                                groupName: provider.group!.name,
+                                groupDescription: provider.group!.description,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      child: Icon(
-                        Iconsax.add,
-                        color: isDarkMode(context)
-                            ? AppColors.pureWhite
-                            : AppColors.charcoalGrey,
+                          );
+                        },
+                        child: Icon(
+                          Iconsax.add,
+                          color: isDarkMode(context)
+                              ? AppColors.pureWhite
+                              : AppColors.charcoalGrey,
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 SizedBox(height: 10),

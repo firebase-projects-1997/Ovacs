@@ -17,6 +17,7 @@ class ClientRepository {
     required String email,
     required String mobile,
     required int countryId,
+    Map<String, dynamic>? queryParams,
   }) async {
     try {
       final response = await _dioClient.post(
@@ -27,6 +28,7 @@ class ClientRepository {
           'mobile': mobile,
           'country_id': countryId,
         },
+        queryParameters: queryParams,
       );
 
       return response.fold((failure) => Left(failure), (res) {
@@ -40,8 +42,17 @@ class ClientRepository {
 
   Future<Either<Failure, ClientsWithPaginationResponse>> getClients({
     int page = 1,
+    Map<String, dynamic>? queryParams,
   }) async {
-    final response = await _dioClient.get('${AppUrls.clients}?page=$page');
+    final allParams = <String, dynamic>{
+      'page': page,
+      if (queryParams != null) ...queryParams,
+    };
+
+    final response = await _dioClient.get(
+      AppUrls.clients,
+      queryParameters: allParams,
+    );
 
     return response.fold((failure) => Left(failure), (res) {
       try {
@@ -63,8 +74,14 @@ class ClientRepository {
     });
   }
 
-  Future<Either<Failure, ClientModel>> getClientDetail(int id) async {
-    final response = await _dioClient.get('${AppUrls.clients}$id/');
+  Future<Either<Failure, ClientModel>> getClientDetail(
+    int id, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final response = await _dioClient.get(
+      '${AppUrls.clients}$id/',
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (res) {
       try {
@@ -82,6 +99,7 @@ class ClientRepository {
     required String email,
     required String mobile,
     required int countryId,
+    Map<String, dynamic>? queryParams,
   }) async {
     final response = await _dioClient.put(
       '${AppUrls.clients}$id/',
@@ -91,6 +109,7 @@ class ClientRepository {
         'mobile': mobile,
         'country_id': countryId,
       },
+      queryParameters: queryParams,
     );
 
     return response.fold((failure) => Left(failure), (res) {
@@ -103,8 +122,14 @@ class ClientRepository {
     });
   }
 
-  Future<Either<Failure, bool>> deleteClient(int id) async {
-    final response = await _dioClient.delete('${AppUrls.clients}$id/');
+  Future<Either<Failure, bool>> deleteClient(
+    int id, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final response = await _dioClient.delete(
+      '${AppUrls.clients}$id/',
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (_) => Right(true));
   }
@@ -114,9 +139,10 @@ class ClientRepository {
     String? search,
     String? ordering,
     String? country,
+    Map<String, dynamic>? extraQueryParams,
   }) async {
     try {
-      final queryParams = <String, String>{};
+      final queryParams = <String, dynamic>{};
 
       if (page != null) queryParams['page'] = page.toString();
       if (search != null && search.isNotEmpty) queryParams['search'] = search;
@@ -127,10 +153,15 @@ class ClientRepository {
         queryParams['country'] = country;
       }
 
-      final queryString = Uri(queryParameters: queryParams).query;
-      final url = '${AppUrls.clients}?$queryString';
+      // Add extra query parameters (like space_id)
+      if (extraQueryParams != null) {
+        queryParams.addAll(extraQueryParams);
+      }
 
-      final response = await _dioClient.get(url);
+      final response = await _dioClient.get(
+        AppUrls.clients,
+        queryParameters: queryParams,
+      );
 
       return response.fold((failure) => Left(failure), (res) {
         final responseData = res.data['data'];

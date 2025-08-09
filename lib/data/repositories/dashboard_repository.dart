@@ -13,9 +13,14 @@ class DashboardRepository {
 
   DashboardRepository(this._dioClient);
 
-  Future<Either<Failure, DashboardSummaryModel>> getDashboardSummery() async {
+  Future<Either<Failure, DashboardSummaryModel>> getDashboardSummery({
+    Map<String, dynamic>? queryParams,
+  }) async {
     try {
-      final request = await _dioClient.get(AppUrls.dashboardSummary);
+      final request = await _dioClient.get(
+        AppUrls.dashboardSummary,
+        queryParameters: queryParams,
+      );
       return request.fold((failure) => Left(failure), (response) {
         final data = response.data as Map<String, dynamic>;
         return Right(DashboardSummaryModel.fromJson(data['data']));
@@ -41,9 +46,16 @@ class DashboardRepository {
 
   Future<Either<Failure, SessionsWithPaginationResponse>> getUpcomingSessions({
     int page = 1,
+    Map<String, dynamic>? queryParams,
   }) async {
+    final params = <String, dynamic>{'page': page};
+    if (queryParams != null) {
+      params.addAll(queryParams);
+    }
+
     final response = await _dioClient.get(
-      '${AppUrls.upcomingSessions}?page=$page',
+      AppUrls.upcomingSessions,
+      queryParameters: params,
     );
 
     return response.fold((failure) => Left(failure), (res) {

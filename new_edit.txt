@@ -1,0 +1,342 @@
+Frontend Integration Guide for RBAC System
+Overview
+The backend now has a comprehensive Role-Based Access Control (RBAC) system with space switching support. Here's what the frontend needs to know to integrate properly.
+
+Key Changes for Frontend
+1. Space Switching Parameter
+All endpoints now support space_id parameter for cross-account access:
+// Before (only worked for lists)
+GET /api/cases/?account_id=123
+
+// Now (works for everything)
+GET /api/cases/?space_id=123          // List cases
+GET /api/cases/456/?space_id=123      // Get case detail
+PUT /api/cases/456/?space_id=123      // Update case
+DELETE /api/cases/456/?space_id=123   // Delete case
+
+// All endpoints support space_id
+GET /api/sessions/?space_id=123
+GET /api/sessions/789/?space_id=123
+PUT /api/sessions/789/?space_id=123
+
+GET /api/documents/?space_id=123
+GET /api/documents/101/?space_id=123
+
+GET /api/clients/?space_id=123
+GET /api/clients/202/?space_id=123
+
+GET /api/document-groups/?space_id=123
+GET /api/document-groups/303/?space_id=123
+
+2. Permission-Based UI Control
+Check User Permissions
+Use the new debug endpoint to determine what UI elements to show:
+// Check user permissions in a space
+const checkPermissions = async (spaceId, caseId = null) => {
+  const params = new URLSearchParams();
+  if (spaceId) params.append('space_id', spaceId);
+  if (caseId) params.append('case_id', caseId);
+  
+  const response = await fetch(/api/check-permissions/?${params}, {
+    headers: { 'Authorization': Bearer ${token} }
+  });
+  
+  return await response.json();
+};
+
+// Example response
+{
+  "type": "success",
+  "data": {
+    "user_role": "gold",
+    "permissions": {
+      "case": ["read", "list"],
+      "session": ["read", "update", "list"],
+      "document": ["read", "list"],
+      "client": ["read", "list"]
+    }
+  }
+}
+
+Conditional UI Rendering
+const UserPermissions = ({ spaceId, caseId, children }) => {
+  const [permissions, setPermissions] = useState(null);
+  
+  useEffect(() => {
+    checkPermissions(spaceId, caseId).then(setPermissions);
+  }, [spaceId, caseId]);
+  
+  if (!permissions) return <Loading />;
+  
+  return children(permissions.data.permissions);
+};
+
+// Usage
+<UserPermissions spaceId={currentSpaceId} caseId={currentCaseId}>
+  {(permissions) => (
+    <div>
+      {permissions.case?.includes('create') && (
+        <button>Create Case</button>
+      )}
+      {permissions.session?.includes('update') && (
+        <button>Edit Session</button>
+      )}
+      {permissions.document?.includes('delete') && (
+        <button>Delete Document</button>
+      )}
+    </div>
+  )}
+</UserPermissions>
+
+3. Error Handling
+Permission Denied Responses
+The backend now returns structured permission errors:
+// Handle permission errors
+const handleApiCall = async (url, options) => {
+  try {
+    const response = await fetch(url, options);
+    const data = await response.json();
+    
+    if (response.status === 403) {
+      // Permission denied
+      showError(Access denied: ${data.message});
+      return null;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('API Error:', error);
+  }
+};
+
+Common Error Messages
+// Expected error responses
+{
+  "type": "error",
+  "code": 403,
+  "message": "Insufficient permissions to update case"
+}
+
+{
+  "type": "error", 
+  "code": 403,
+  "message": "User not connected to this space"
+}
+
+{
+  "type": "error",
+  "code": 403, 
+  "message": "User not assigned to this case"
+}
+
+4. Role-Based UI Components
+Role Display Component
+const RoleBadge = ({ role }) => {
+  const roleConfig = {
+    owner: { color: 'purple', label: 'Owner', icon: '👑' },
+    admin: { color: 'red', label: 'Admin', icon: '⚡' },
+    diamond: { color: 'blue', label: 'Diamond', icon: '💎' },
+    gold: { color: 'yellow', label: 'Gold', icon: '🥇' },
+    silver: { color: 'gray', label: 'Silver', icon: '🥈' }
+  };
+  
+  const config = roleConfig[role] || { color: 'gray', label: 'Unknown' };
+  
+  return (
+    <span className={badge badge-${config.color}}>
+      {config.icon} {config.label}
+    </span>
+  );
+};
+
+Permission-Aware Action Buttons
+const ActionButton = ({ action, resource, spaceId, caseId, onClick, children }) => {
+  const [canPerform, setCanPerform] = useState(false);
+  
+  useEffect(() => {
+    checkPermissions(spaceId, caseId).then(result => {
+      const permissions = result.data?.permissions?.[resource] || [];
+      setCanPerform(permissions.includes(action));
+    });
+  }, [action, resource, spaceId, caseId]);
+  
+  if (!canPerform) return null;
+  
+  return <button onClick={onClick}>{children}</button>;
+};
+
+// Usage
+<ActionButton action="update" resource="session" spaceId={spaceId} caseId={caseId}>
+  Edit Session
+</ActionButton>
+
+5. Space Switching UI
+Space Selector Component
+const SpaceSelector = ({ currentSpaceId, onSpaceChange }) => {
+  const [connections, setConnections] = useState([]);
+  
+  useEffect(() => {
+    // Fetch connected accounts
+    fetch('/api/connections/', {
+      headers: { 'Authorization': Bearer ${token} }
+    })
+    .then(res => res.json())
+    .then(data => {
+      setConnections([
+        { id: null, name: 'My Account', relationship: 'owner' },
+        ...data.data.following
+      ]);
+    });
+  }, []);
+  
+  return (
+    <select value={currentSpaceId || ''} onChange={(e) => onSpaceChange(e.target.value || null)}>
+      {connections.map(conn => (
+        <option key={conn.id} value={conn.id}>
+          {conn.name} {conn.relationship === 'owner' ? '(You)' : (${conn.relationship})}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+6. API Integration Patterns
+Unified API Service
+
+class ApiService {
+  constructor(baseURL, token) {
+    this.baseURL = baseURL;
+    this.token = token;
+  }
+  
+  // Generic method that handles space_id automatically
+  async request(endpoint, options = {}) {
+    const url = new URL(endpoint, this.baseURL);
+    
+    // Add space_id if in space switching mode
+    if (this.currentSpaceId) {
+      url.searchParams.set('space_id', this.currentSpaceId);
+    }
+    
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Authorization': Bearer ${this.token},
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+    
+    return await response.json();
+  }
+  
+  setCurrentSpace(spaceId) {
+    this.currentSpaceId = spaceId;
+  }
+  
+  // Resource methods
+  getCases() { return this.request('/api/cases/'); }
+  getCase(id) { return this.request(/api/cases/${id}/); }
+  updateCase(id, data) { return this.request(/api/cases/${id}/, { method: 'PUT', body: JSON.stringify(data) }); }
+  
+  getSessions() { return this.request('/api/sessions/'); }
+  getSession(id) { return this.request(/api/sessions/${id}/); }
+  updateSession(id, data) { return this.request(/api/sessions/${id}/, { method: 'PUT', body: JSON.stringify(data) }); }
+}
+
+// Usage
+const api = new ApiService('http://localhost:8000', userToken);
+api.setCurrentSpace(selectedSpaceId);
+const cases = await api.getCases(); // Automatically includes space_id
+
+
+7. State Management
+Redux/Context State Structure
+const initialState = {
+  user: {
+    id: null,
+    email: '',
+    account: null
+  },
+  currentSpace: {
+    id: null,
+    name: '',
+    role: null,
+    permissions: {}
+  },
+  connections: [],
+  ui: {
+    showPermissionDenied: false,
+    permissionError: null
+  }
+};
+
+// Actions
+const setCurrentSpace = (spaceId, spaceName) => ({
+  type: 'SET_CURRENT_SPACE',
+  payload: { id: spaceId, name: spaceName }
+});
+
+const setUserPermissions = (permissions) => ({
+  type: 'SET_USER_PERMISSIONS', 
+  payload: permissions
+});
+
+8. URL Structure
+Route Parameters
+Update your routing to handle space switching:
+// Route structure
+/dashboard                          // Own account
+/dashboard?space=123               // Space switching
+/cases                             // Own cases  
+/cases?space=123                   // Cases in space 123
+/cases/456                         // Own case detail
+/cases/456?space=123              // Case detail in space 123
+
+// React Router example
+const CaseDetail = () => {
+  const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const spaceId = searchParams.get('space');
+  
+  // Use spaceId in API calls
+  const [caseData, setCaseData] = useState(null);
+  
+  useEffect(() => {
+    const url = spaceId 
+      ? /api/cases/${id}/?space_id=${spaceId}
+      : /api/cases/${id}/;
+    
+    fetch(url, { headers: { 'Authorization': Bearer ${token} }})
+      .then(res => res.json())
+      .then(setCaseData);
+  }, [id, spaceId]);
+};
+
+9. Testing Checklist
+Frontend should test these scenarios:
+
+// Test cases for frontend
+const testScenarios = [
+  // Basic functionality
+  'Can list own resources without space_id',
+  'Can access resource details without space_id', 
+  'Can update own resources',
+  
+  // Space switching
+  'Can list resources with space_id',
+  'Can access resource details with space_id',
+  'Can update resources in other spaces (if permitted)',
+  'Cannot access resources without proper connection',
+  'Cannot perform actions without proper role',
+  
+  // Permission-based UI
+  'Shows/hides buttons based on permissions',
+  'Displays correct role badges',
+  'Shows appropriate error messages',
+  
+  // Error handling
+  'Handles 403 permission denied gracefully',
+  'Shows user-friendly error messages',
+  'Redirects or disables UI when access denied'
+];

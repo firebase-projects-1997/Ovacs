@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import '../../../core/error/failure.dart';
 import '../../../data/models/document_model.dart';
 import '../../../data/repositories/document_repository.dart';
+import '../../../common/providers/workspace_provider.dart';
 
 enum DocumentDetailStatus { initial, loading, loaded, error }
 
 class DocumentDetailProvider extends ChangeNotifier {
   final DocumentRepository repository;
+  final WorkspaceProvider _workspaceProvider;
 
-  DocumentDetailProvider(this.repository);
+  DocumentDetailProvider(this.repository, this._workspaceProvider);
 
   DocumentDetailStatus _status = DocumentDetailStatus.initial;
   DocumentDetailStatus get status => _status;
@@ -27,7 +29,11 @@ class DocumentDetailProvider extends ChangeNotifier {
     _failure = null;
     notifyListeners();
 
-    final result = await repository.getDocumentDetail(documentId);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await repository.getDocumentDetail(
+      documentId,
+      queryParams: queryParams,
+    );
 
     result.fold(
       (failure) {
@@ -53,7 +59,12 @@ class DocumentDetailProvider extends ChangeNotifier {
     _status = DocumentDetailStatus.loading;
     notifyListeners();
 
-    final result = await repository.updateDocument(documentId, updatedFields);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await repository.updateDocument(
+      documentId,
+      updatedFields,
+      queryParams: queryParams,
+    );
 
     return result.fold(
       (failure) {
@@ -76,7 +87,11 @@ class DocumentDetailProvider extends ChangeNotifier {
     _status = DocumentDetailStatus.loading;
     notifyListeners();
 
-    final result = await repository.deleteDocument(documentId);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await repository.deleteDocument(
+      documentId,
+      queryParams: queryParams,
+    );
 
     return result.fold(
       (failure) {
@@ -101,7 +116,12 @@ class DocumentDetailProvider extends ChangeNotifier {
     _status = DocumentDetailStatus.loading;
     notifyListeners();
 
-    final result = await repository.moveDocumentToGroup(documentId, groupId);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await repository.moveDocumentToGroup(
+      documentId,
+      groupId,
+      queryParams: queryParams,
+    );
 
     return result.fold(
       (failure) {

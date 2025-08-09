@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/client_model.dart';
 import '../../../data/repositories/client_dashboard.dart';
+import '../../../common/providers/workspace_provider.dart';
 
 class ClientsSearchProvider extends ChangeNotifier {
   final ClientRepository repository;
+  final WorkspaceProvider _workspaceProvider;
 
-  ClientsSearchProvider(this.repository);
+  ClientsSearchProvider(this.repository, this._workspaceProvider);
 
   List<ClientModel> _clients = [];
   List<ClientModel> get clients => _clients;
@@ -48,11 +50,13 @@ class ClientsSearchProvider extends ChangeNotifier {
 
     notifyListeners();
 
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
     final result = await repository.getClientsBySearch(
       page: _currentPage,
       search: _search,
       ordering: _ordering,
       country: _country,
+      extraQueryParams: queryParams,
     );
 
     result.fold(
@@ -79,11 +83,13 @@ class ClientsSearchProvider extends ChangeNotifier {
 
     _currentPage++;
 
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
     final result = await repository.getClientsBySearch(
       page: _currentPage,
       search: _search,
       ordering: _ordering,
       country: _country,
+      extraQueryParams: queryParams,
     );
 
     result.fold((failure) => _errorMessage = failure.message, (response) {
@@ -95,8 +101,8 @@ class ClientsSearchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Reset search state
-  void clearFilters() {
+  /// Reset search state but preserve workspace context
+  Future<void> clearFilters() async {
     _search = '';
     _ordering = '-created_at';
     _country = '';
@@ -104,6 +110,8 @@ class ClientsSearchProvider extends ChangeNotifier {
     _currentPage = 1;
     _hasMore = true;
     _errorMessage = null;
-    notifyListeners();
+
+    // Fetch with cleared filters but preserve space_id
+    await fetchClientsBySearch();
   }
 }

@@ -1,0 +1,62 @@
+// admin check-permissions :
+{
+    "type": "success",
+    "code": 200,
+    "message": "Permission check completed",
+    "data": {
+        "user_id": 7,
+        "user_email": "firebase.projects.1997@gmail.com",
+        "space_id": "53",
+        "case_id": "80",
+        "user_role": "admin",
+        "permissions": {
+            "session": [
+                "delete",
+                "read",
+                "list",
+                "create",
+                "update"
+            ],
+            "client": [
+                "list",
+                "read"
+            ],
+            "case": [
+                "assign",
+                "update",
+                "read",
+                "unassign",
+                "manage_roles",
+                "list"
+            ],
+            "document_group": [
+                "delete",
+                "read",
+                "list",
+                "create",
+                "update"
+            ],
+            "message": [
+                "list",
+                "create",
+                "update",
+                "read",
+                "delete"
+            ],
+            "document": [
+                "update",
+                "delete",
+                "read",
+                "create",
+                "list"
+            ]
+        },
+        "total_permissions": 28
+    }
+}
+// diamond check-permissions:
+{type: success, code: 200, message: Permission check completed, data: {user_id: 7, user_email: firebase.projects.1997@gmail.com, space_id: 53, case_id: null, user_role: diamond, permissions: {session: [delete, read, list, create, update], client: [list, read], document_group: [delete, read, list, create, update], message: [list, create, update, read, delete], document: [update, delete, read, create, list], case: [read, list]}, total_permissions: 24}}
+// gold check-permissions:
+{type: success, code: 200, message: Permission check completed, data: {user_id: 7, user_email: firebase.projects.1997@gmail.com, space_id: 53, case_id: null, user_role: gold, permissions: {case: [read, list], session: [read, update, list], client: [list, read], message: [read, create, list], document: [list, read], document_group: [read, list]}, total_permissions: 14}}
+// silver check-permissions:
+{type: success, code: 200, message: Permission check completed, data: {user_id: 7, user_email: firebase.projects.1997@gmail.com, space_id: 53, case_id: null, user_role: silver, permissions: {case: [read, list], session: [read, list], client: [list, read], message: [read, list], document: [list, read], document_group: [read, list]}, total_permissions: 12}}

@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../../data/models/session_model.dart';
 import '../../../data/repositories/session_repository.dart';
+import '../../../common/providers/workspace_provider.dart';
 
 enum SessionDetailStatus { initial, loading, loaded, error }
 
 class SessionDetailProvider extends ChangeNotifier {
   final SessionRepository _sessionRepository;
+  final WorkspaceProvider _workspaceProvider;
 
-  SessionDetailProvider(this._sessionRepository);
+  SessionDetailProvider(this._sessionRepository, this._workspaceProvider);
 
   SessionModel? sessionModel;
   SessionDetailStatus status = SessionDetailStatus.initial;
@@ -20,7 +22,11 @@ class SessionDetailProvider extends ChangeNotifier {
     errorMessage = null;
     notifyListeners();
 
-    final result = await _sessionRepository.getSessionDetails(id);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await _sessionRepository.getSessionDetails(
+      id,
+      queryParams: queryParams,
+    );
     result.fold(
       (failure) {
         status = SessionDetailStatus.error;
@@ -40,7 +46,12 @@ class SessionDetailProvider extends ChangeNotifier {
     status = SessionDetailStatus.loading;
     notifyListeners();
 
-    final result = await _sessionRepository.updateSession(id, payload);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await _sessionRepository.updateSession(
+      id,
+      payload,
+      queryParams: queryParams,
+    );
     return result.fold(
       (failure) {
         errorMessage = failure.message;
@@ -62,7 +73,11 @@ class SessionDetailProvider extends ChangeNotifier {
     status = SessionDetailStatus.loading;
     notifyListeners();
 
-    final result = await _sessionRepository.deleteSession(id);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await _sessionRepository.deleteSession(
+      id,
+      queryParams: queryParams,
+    );
     return result.fold(
       (failure) {
         errorMessage = failure.message;

@@ -12,9 +12,11 @@ import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/providers/workspace_provider.dart';
-
 import '../../../common/widgets/rounded_container.dart';
 import '../../../core/functions/is_dark_mode.dart';
+import '../../../core/enums/permission_resource.dart';
+import '../../../core/enums/permission_action.dart';
+import '../../../core/mixins/permission_mixin.dart';
 import '../../client/views/client_info_page.dart';
 import '../../session/providers/sessions_provider.dart';
 import '../../session/views/session_details_page.dart';
@@ -31,21 +33,27 @@ class CaseDetailsPage extends StatefulWidget {
   State<CaseDetailsPage> createState() => _CaseDetailsPageState();
 }
 
-class _CaseDetailsPageState extends State<CaseDetailsPage> {
+class _CaseDetailsPageState extends State<CaseDetailsPage>
+    with PermissionMixin {
   late ScrollController _scrollController;
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    Future.microtask(() async {
       if (mounted) {
         final workspaceProvider = context.read<WorkspaceProvider>();
         final filters = workspaceProvider.getWorkspaceQueryParams();
 
-        context.read<CaseDetailProvider>().fetchCaseDetail(widget.caseId);
-        context.read<SessionsProvider>().fetchSessions(
-          widget.caseId,
-          filters: filters.isNotEmpty ? filters : null,
-        );
+        // Load permissions for current workspace context
+        await loadPermissions(forceRefresh: true);
+
+        if (mounted) {
+          context.read<CaseDetailProvider>().fetchCaseDetail(widget.caseId);
+          context.read<SessionsProvider>().fetchSessions(
+            widget.caseId,
+            filters: filters.isNotEmpty ? filters : null,
+          );
+        }
       }
     });
     _scrollController = ScrollController();
@@ -88,87 +96,102 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
             onSelected: (selectedValue) async {
               switch (selectedValue) {
                 case 'edit':
-                  final updated = await Navigator.of(context).push<bool>(
-                    MaterialPageRoute(
-                      builder: (_) => EditCasePage(
-                        caseModel: context
-                            .read<CaseDetailProvider>()
-                            .caseModel!,
-                      ),
-                    ),
-                  );
-                  if (updated == true) {
-                    context.read<CaseDetailProvider>().fetchCaseDetail(
-                      widget.caseId,
-                    );
-                  }
-                  break;
-                case 'delete':
-                  final confirmed = await showDialog<bool>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: Text(
-                        AppLocalizations.of(context)!.confirmDeletion,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      content: Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.areYouSureYouWantToDeleteThisCase,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, false),
-                          child: Text(AppLocalizations.of(context)!.cancel),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(ctx, true);
-                          },
-                          child: Text(
-                            AppLocalizations.of(context)!.delete,
-                            style: TextStyle(color: Colors.red),
+                  await executeWithPermissionInSpaceContext(
+                    PermissionResource.case_,
+                    PermissionAction.update,
+                    () async {
+                      final updated = await Navigator.of(context).push<bool>(
+                        MaterialPageRoute(
+                          builder: (_) => EditCasePage(
+                            caseModel: context
+                                .read<CaseDetailProvider>()
+                                .caseModel!,
                           ),
                         ),
-                      ],
-                    ),
-                  );
-
-                  if (confirmed == true) {
-                    final success = await context
-                        .read<CaseDetailProvider>()
-                        .deleteCase(widget.caseId);
-                    if (success) {
-                      context.read<CasesProvider>().fetchCases();
-                      Navigator.of(context).pop();
-                    } else {
-                      showAppSnackBar(
-                        context,
-                        context.read<CaseDetailProvider>().errorMessage ??
-                            AppLocalizations.of(context)!.errorDeletingCase,
                       );
-                    }
-                  }
+                      if (updated == true && mounted) {
+                        context.read<CaseDetailProvider>().fetchCaseDetail(
+                          widget.caseId,
+                        );
+                      }
+                    },
+                  );
+                  break;
+                case 'delete':
+                  await executeWithPermissionInSpaceContext(
+                    PermissionResource.case_,
+                    PermissionAction.delete,
+                    () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text(
+                            AppLocalizations.of(context)!.confirmDeletion,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          content: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.areYouSureYouWantToDeleteThisCase,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, false),
+                              child: Text(AppLocalizations.of(context)!.cancel),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(ctx, true);
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)!.delete,
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (confirmed == true && mounted) {
+                        final success = await context
+                            .read<CaseDetailProvider>()
+                            .deleteCase(widget.caseId);
+                        if (success && mounted) {
+                          context.read<CasesProvider>().fetchCases();
+                          Navigator.of(context).pop();
+                        } else if (mounted) {
+                          showAppSnackBar(
+                            context,
+                            context.read<CaseDetailProvider>().errorMessage ??
+                                AppLocalizations.of(context)!.errorDeletingCase,
+                          );
+                        }
+                      }
+                    },
+                  );
                   break;
               }
             },
-            itemBuilder: (BuildContext context) => [
-              PopupMenuItem<String>(
-                value: 'edit',
-                child: ListTile(
-                  leading: Icon(Iconsax.edit),
-                  title: Text(AppLocalizations.of(context)!.edit),
+            itemBuilder: (BuildContext context) {
+              return [
+                // Always show menu items, permission check happens in onSelected
+                PopupMenuItem<String>(
+                  value: 'edit',
+                  child: ListTile(
+                    leading: Icon(Iconsax.edit),
+                    title: Text(AppLocalizations.of(context)!.edit),
+                  ),
                 ),
-              ),
-              PopupMenuItem<String>(
-                value: 'delete',
-                child: ListTile(
-                  leading: Icon(Iconsax.trash, color: Colors.red),
-                  title: Text(AppLocalizations.of(context)!.delete),
+                PopupMenuItem<String>(
+                  value: 'delete',
+                  child: ListTile(
+                    leading: Icon(Iconsax.trash, color: Colors.red),
+                    title: Text(AppLocalizations.of(context)!.delete),
+                  ),
                 ),
-              ),
-            ],
+              ];
+            },
           ),
         ],
       ),
@@ -261,29 +284,44 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
                     child: Text(AppLocalizations.of(context)!.messages),
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        localizations.assignedAccounts,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      RoundedContainer(
-                        onTap: () => _showAssignAccountDialog(context),
-                        child: Icon(
-                          Iconsax.add,
-                          color: isDarkMode(context)
-                              ? AppColors.pureWhite
-                              : AppColors.charcoalGrey,
-                        ),
-                      ),
-                    ],
+                  // Only show assigned accounts section when in personal workspace
+                  Consumer<WorkspaceProvider>(
+                    builder: (context, workspaceProvider, child) {
+                      if (workspaceProvider.isConnectionMode) {
+                        // Don't show assigned accounts when viewing another account's cases
+                        return const SizedBox.shrink();
+                      }
+
+                      return Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                localizations.assignedAccounts,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              RoundedContainer(
+                                onTap: () => _showAssignAccountDialog(context),
+                                child: Icon(
+                                  Iconsax.add,
+                                  color: isDarkMode(context)
+                                      ? AppColors.pureWhite
+                                      : AppColors.charcoalGrey,
+                                ),
+                              ),
+                            ],
+                          ),
+                          AssignedAccountsHorizontalList(
+                            caseId: widget.caseId,
+                            onAddPressed: () =>
+                                _showAssignAccountDialog(context),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      );
+                    },
                   ),
-                  AssignedAccountsHorizontalList(
-                    caseId: widget.caseId,
-                    onAddPressed: () => _showAssignAccountDialog(context),
-                  ),
-                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -291,22 +329,31 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
                         AppLocalizations.of(context)!.sessions,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                      RoundedContainer(
-                        onTap: () {
-                          navigatorKey.currentState!.push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  AddSessionPage(caseId: widget.caseId),
+                      // Only show add session button when in personal workspace
+                      Consumer<WorkspaceProvider>(
+                        builder: (context, workspaceProvider, child) {
+                          if (workspaceProvider.isConnectionMode) {
+                            // Don't show add session button when viewing another account's cases
+                            return const SizedBox.shrink();
+                          }
+
+                          return RoundedContainer(
+                            onTap: () {
+                              navigatorKey.currentState!.push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AddSessionPage(caseId: widget.caseId),
+                                ),
+                              );
+                            },
+                            child: Icon(
+                              Iconsax.add,
+                              color: isDarkMode(context)
+                                  ? AppColors.pureWhite
+                                  : AppColors.charcoalGrey,
                             ),
                           );
                         },
-
-                        child: Icon(
-                          Iconsax.add,
-                          color: isDarkMode(context)
-                              ? AppColors.pureWhite
-                              : AppColors.charcoalGrey,
-                        ),
                       ),
                     ],
                   ),
@@ -382,6 +429,7 @@ class _CaseDetailsPageState extends State<CaseDetailsPage> {
     }
 
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) => _AssignAccountDialog(
         assignedProvider: assignedProvider,
@@ -470,7 +518,7 @@ class _AssignAccountDialogState extends State<_AssignAccountDialog> {
       ),
       content: SizedBox(
         width: double.maxFinite,
-        height: 400,
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -35,9 +35,9 @@ class _SearchClientsPageState extends State<SearchClientsPage> {
       listen: false,
     );
 
-    Future.microtask(() {
+    Future.microtask(() async {
       countryProvider.fetchCountries();
-      searchProvider.clearFilters();
+      await searchProvider.clearFilters();
     });
 
     _scrollController.addListener(() {
@@ -79,7 +79,7 @@ class _SearchClientsPageState extends State<SearchClientsPage> {
           IconButton(
             tooltip: 'Clear Filters',
             icon: const Icon(Iconsax.filter_remove1),
-            onPressed: () {
+            onPressed: () async {
               setState(() {
                 _searchController.clear();
                 _selectedCountry = null;
@@ -91,9 +91,8 @@ class _SearchClientsPageState extends State<SearchClientsPage> {
                 listen: false,
               );
 
-              searchProvider.clearFilters();
-
-              searchProvider.fetchClientsBySearch();
+              // clearFilters now automatically fetches with workspace context
+              await searchProvider.clearFilters();
             },
           ),
         ],

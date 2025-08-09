@@ -35,44 +35,67 @@ class DocumentRepository {
   }
 
   // GET: Get document detail
-  Future<Either<Failure, DocumentModel>> getDocumentDetail(int id) async {
-    final res = await _dio.get('${AppUrls.documents}$id/');
+  Future<Either<Failure, DocumentModel>> getDocumentDetail(
+    int id, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final res = await _dio.get(
+      '${AppUrls.documents}$id/',
+      queryParameters: queryParams,
+    );
     return res.fold(
       (failure) => Left(failure),
-      (response) => Right(DocumentModel.fromJson(response.data)),
+      (response) => Right(DocumentModel.fromJson(response.data['data'])),
     );
   }
 
   // PUT: Update a document
   Future<Either<Failure, DocumentModel>> updateDocument(
     int id,
-    Map<String, dynamic> body,
-  ) async {
-    final request = await _dio.put('${AppUrls.documents}$id/', data: body);
+    Map<String, dynamic> body, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final request = await _dio.put(
+      '${AppUrls.documents}$id/',
+      data: body,
+      queryParameters: queryParams,
+    );
     return request.fold(
       (f) => Left(f),
-      (res) => Right(DocumentModel.fromJson(res.data as Map<String, dynamic>)),
+      (res) => Right(
+        DocumentModel.fromJson(res.data['data'] as Map<String, dynamic>),
+      ),
     );
   }
 
   // DELETE: Delete a document
-  Future<Either<Failure, Unit>> deleteDocument(int id) async {
-    final res = await _dio.delete('${AppUrls.documents}$id/');
+  Future<Either<Failure, Unit>> deleteDocument(
+    int id, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final res = await _dio.delete(
+      '${AppUrls.documents}$id/',
+      queryParameters: queryParams,
+    );
     return res.fold((f) => Left(f), (_) => const Right(unit));
   }
 
   // POST: Move document to group
   Future<Either<Failure, DocumentModel>> moveDocumentToGroup(
     int documentId,
-    int groupId,
-  ) async {
-    final res = await _dio.post(
+    int groupId, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final res = await _dio.patch(
       '${AppUrls.documents}$documentId/move-to-group/',
       data: {'group_id': groupId},
+      queryParameters: queryParams,
     );
     return res.fold(
       (f) => Left(f),
-      (res) => Right(DocumentModel.fromJson(res.data as Map<String, dynamic>)),
+      (res) => Right(
+        DocumentModel.fromJson(res.data['data'] as Map<String, dynamic>),
+      ),
     );
   }
 
@@ -134,32 +157,57 @@ class DocumentRepository {
   }
 
   // GET: Group detail
-  Future<Either<Failure, DocumentGroupModel>> getGroupDetail(int id) async {
-    final res = await _dio.get('${AppUrls.documentGroups}$id/');
-    return res.fold(
-      (failure) => Left(failure),
-      (response) => Right(DocumentGroupModel.fromJson(response.data)),
+  Future<Either<Failure, DocumentGroupModel>> getGroupDetail(
+    int id, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final res = await _dio.get(
+      '${AppUrls.documentGroups}$id/',
+      queryParameters: queryParams,
     );
+    return res.fold((failure) => Left(failure), (response) {
+      // The group detail API returns data directly, not wrapped in 'data' field
+      final data = response.data;
+      return Right(DocumentGroupModel.fromJson(data));
+    });
   }
 
   // POST: Create group
-  Future<Either<Failure, Unit>> createGroup(Map<String, dynamic> body) async {
-    final res = await _dio.post(AppUrls.documentGroups, data: body);
+  Future<Either<Failure, Unit>> createGroup(
+    Map<String, dynamic> body, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final res = await _dio.post(
+      AppUrls.documentGroups,
+      data: body,
+      queryParameters: queryParams,
+    );
     return res.fold((f) => Left(f), (_) => const Right(unit));
   }
 
   // PUT: Update group
   Future<Either<Failure, Unit>> updateGroup(
     int id,
-    Map<String, dynamic> body,
-  ) async {
-    final res = await _dio.put('${AppUrls.documentGroups}$id/', data: body);
+    Map<String, dynamic> body, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final res = await _dio.put(
+      '${AppUrls.documentGroups}$id/',
+      data: body,
+      queryParameters: queryParams,
+    );
     return res.fold((f) => Left(f), (_) => const Right(unit));
   }
 
   // DELETE: Delete group
-  Future<Either<Failure, Unit>> deleteGroup(int id) async {
-    final res = await _dio.delete('${AppUrls.documentGroups}$id/');
+  Future<Either<Failure, Unit>> deleteGroup(
+    int id, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    final res = await _dio.delete(
+      '${AppUrls.documentGroups}$id/',
+      queryParameters: queryParams,
+    );
     return res.fold((f) => Left(f), (_) => const Right(unit));
   }
 

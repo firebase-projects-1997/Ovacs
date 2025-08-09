@@ -8,6 +8,7 @@ import 'package:new_ovacs/features/document/providers/group_details_provider.dar
 import 'package:new_ovacs/features/document/providers/upload_documents_provider.dart';
 import 'common/providers/country_provider.dart';
 import 'common/providers/workspace_provider.dart';
+import 'common/providers/permission_provider.dart';
 import 'core/constants/app_routes.dart';
 import 'core/utils/app_theme.dart';
 import 'features/auth/views/login_page.dart';
@@ -108,6 +109,10 @@ class _MainAppState extends State<MainApp> {
             ChangeNotifierProvider(create: (_) => widget.authProvider),
             ChangeNotifierProvider(
               create: (context) => getIt<CountryProvider>(),
+            ),
+            // permissions
+            ChangeNotifierProvider(
+              create: (context) => getIt<PermissionProvider>(),
             ),
             // dashboard
             ChangeNotifierProvider(

@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:new_ovacs/core/error/failure.dart';
 import 'package:new_ovacs/data/models/document_group_model.dart';
 import 'package:new_ovacs/data/repositories/document_repository.dart';
+import 'package:new_ovacs/common/providers/workspace_provider.dart';
 
 enum GroupsStatus { initial, loading, loaded, error }
 
 class GroupsProvider extends ChangeNotifier {
   final DocumentRepository _documentRepository;
+  final WorkspaceProvider _workspaceProvider;
 
-  GroupsProvider(this._documentRepository);
+  GroupsProvider(this._documentRepository, this._workspaceProvider);
 
   GroupsStatus status = GroupsStatus.initial;
   List<DocumentGroupModel> groups = [];
@@ -19,8 +21,15 @@ class GroupsProvider extends ChangeNotifier {
     status = GroupsStatus.loading;
     notifyListeners();
 
+    // Include workspace parameters
+    final workspaceParams = _workspaceProvider.getWorkspaceQueryParams();
+    final allParams = <String, dynamic>{
+      'session_id': sessionId,
+      ...workspaceParams,
+    };
+
     final result = await _documentRepository.listDocumentGroups(
-      params: {'session_id': sessionId},
+      params: allParams,
     );
 
     result.fold(
@@ -43,11 +52,12 @@ class GroupsProvider extends ChangeNotifier {
     required String name,
     required String description,
   }) async {
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
     final result = await _documentRepository.createGroup({
       'session_id': sessionId,
       'name': name,
       'description': description,
-    });
+    }, queryParams: queryParams);
 
     return result.fold((failure) {
       errorMessage = _mapFailureToMessage(failure);
@@ -62,11 +72,12 @@ class GroupsProvider extends ChangeNotifier {
     required String name,
     required String description,
   }) async {
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
     final result = await _documentRepository.updateGroup(groupId, {
       'name': name,
       'description': description,
       'session_id': sessionId,
-    });
+    }, queryParams: queryParams);
 
     return result.fold((failure) {
       errorMessage = _mapFailureToMessage(failure);
@@ -76,7 +87,11 @@ class GroupsProvider extends ChangeNotifier {
 
   // Delete group
   Future<bool> deleteGroup(int groupId) async {
-    final result = await _documentRepository.deleteGroup(groupId);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await _documentRepository.deleteGroup(
+      groupId,
+      queryParams: queryParams,
+    );
 
     return result.fold(
       (failure) {

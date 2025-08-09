@@ -5,6 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:new_ovacs/common/widgets/rounded_container.dart';
 import 'package:new_ovacs/data/models/document_group_model.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/enums/permission_resource.dart';
+import '../../../core/enums/permission_action.dart';
+import '../../../core/mixins/permission_mixin.dart';
+import '../../../common/providers/workspace_provider.dart';
 import '../../../main.dart';
 import '../providers/groups_provider.dart';
 import 'group_details_page.dart';
@@ -17,7 +21,7 @@ class GroupsPage extends StatefulWidget {
   State<GroupsPage> createState() => _GroupsPageState();
 }
 
-class _GroupsPageState extends State<GroupsPage> {
+class _GroupsPageState extends State<GroupsPage> with PermissionMixin {
   @override
   void initState() {
     super.initState();
@@ -200,11 +204,13 @@ class _GroupsPageState extends State<GroupsPage> {
                 final group = groups[index];
                 return RoundedContainer(
                   onTap: () {
+                    final workspaceProvider = context.read<WorkspaceProvider>();
                     navigatorKey.currentState!.push(
                       MaterialPageRoute(
                         builder: (context) => GroupDetailsPage(
                           groupId: group.id,
                           sessionId: widget.sessionId,
+                          spaceId: workspaceProvider.currentSpaceId,
                         ),
                       ),
                     );
@@ -224,43 +230,54 @@ class _GroupsPageState extends State<GroupsPage> {
                         ),
                       ),
                       PopupMenuButton<String>(
-                        onSelected: (value) {
+                        onSelected: (value) async {
                           if (value == 'edit') {
-                            _showEditDialog(group);
+                            await executeWithPermissionInSpaceContext(
+                              PermissionResource.documentGroup,
+                              PermissionAction.update,
+                              () async => _showEditDialog(group),
+                            );
                           } else if (value == 'delete') {
-                            _showDeleteDialog(group);
+                            await executeWithPermissionInSpaceContext(
+                              PermissionResource.documentGroup,
+                              PermissionAction.delete,
+                              () async => _showDeleteDialog(group),
+                            );
                           }
                         },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 'edit',
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Iconsax.edit,
-                                  size: 18,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                SizedBox(width: 8),
-                                Text('Edit'),
-                              ],
+                        itemBuilder: (context) {
+                          return [
+                            // Always show menu items, permission check happens in onSelected
+                            PopupMenuItem(
+                              value: 'edit',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Iconsax.edit,
+                                    size: 18,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text('Edit'),
+                                ],
+                              ),
                             ),
-                          ),
-                          PopupMenuItem(
-                            value: 'delete',
-                            child: Row(
-                              children: const [
-                                Icon(
-                                  Iconsax.trash,
-                                  size: 18,
-                                  color: AppColors.red,
-                                ),
-                                SizedBox(width: 8),
-                                Text('Delete'),
-                              ],
+                            PopupMenuItem(
+                              value: 'delete',
+                              child: Row(
+                                children: const [
+                                  Icon(
+                                    Iconsax.trash,
+                                    size: 18,
+                                    color: AppColors.red,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text('Delete'),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ];
+                        },
                         icon: const Icon(Iconsax.more_circle),
                       ),
                     ],

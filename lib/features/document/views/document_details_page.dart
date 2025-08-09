@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../../../common/widgets/rounded_container.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/enums/permission_resource.dart';
+import '../../../core/enums/permission_action.dart';
+import '../../../core/mixins/permission_mixin.dart';
 import '../../../data/models/document_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../providers/document_detail_provider.dart';
@@ -13,22 +16,36 @@ import '../providers/groups_provider.dart';
 
 class DocumentDetailsPage extends StatefulWidget {
   final int documentId;
+  final int? spaceId;
 
-  const DocumentDetailsPage({super.key, required this.documentId});
+  const DocumentDetailsPage({
+    super.key,
+    required this.documentId,
+    this.spaceId,
+  });
 
   @override
   State<DocumentDetailsPage> createState() => _DocumentDetailsPageState();
 }
 
-class _DocumentDetailsPageState extends State<DocumentDetailsPage> {
+class _DocumentDetailsPageState extends State<DocumentDetailsPage>
+    with PermissionMixin {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    Future.microtask(() async {
       if (mounted) {
-        context.read<DocumentDetailProvider>().fetchDocumentDetail(
-          widget.documentId,
+        // Load permissions for specific space context if provided
+        await loadPermissionsForContext(
+          spaceId: widget.spaceId,
+          forceRefresh: true,
         );
+
+        if (mounted) {
+          context.read<DocumentDetailProvider>().fetchDocumentDetail(
+            widget.documentId,
+          );
+        }
       }
     });
   }
@@ -84,54 +101,77 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage> {
               if (provider.document == null) return const SizedBox.shrink();
 
               return PopupMenuButton<String>(
-                onSelected: (value) {
+                onSelected: (value) async {
                   if (value == 'edit') {
-                    _showEditDialog(context, provider.document!, provider);
+                    await executeWithPermissionInSpaceContext(
+                      PermissionResource.document,
+                      PermissionAction.update,
+                      () async => _showEditDialog(
+                        context,
+                        provider.document!,
+                        provider,
+                      ),
+                    );
                   } else if (value == 'delete') {
-                    _showDeleteDialog(context, provider.document!, provider);
+                    await executeWithPermissionInSpaceContext(
+                      PermissionResource.document,
+                      PermissionAction.delete,
+                      () async => _showDeleteDialog(
+                        context,
+                        provider.document!,
+                        provider,
+                      ),
+                    );
                   } else if (value == 'move') {
-                    _showMoveToGroupDialog(
-                      context,
-                      provider.document!,
-                      provider,
+                    await executeWithPermissionInSpaceContext(
+                      PermissionResource.documentGroup,
+                      PermissionAction.update,
+                      () async => _showMoveToGroupDialog(
+                        context,
+                        provider.document!,
+                        provider,
+                      ),
                     );
                   }
                 },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [
-                        const Icon(Iconsax.edit),
-                        const SizedBox(width: 8),
-                        Text(l10n.edit),
-                      ],
+                itemBuilder: (context) {
+                  return [
+                    // Always show menu items, permission check happens in onSelected
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          const Icon(Iconsax.edit),
+                          const SizedBox(width: 8),
+                          Text(l10n.edit),
+                        ],
+                      ),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 'move',
-                    child: Row(
-                      children: [
-                        const Icon(Iconsax.folder_2),
-                        const SizedBox(width: 8),
-                        Text(l10n.moveToGroup),
-                      ],
+                    PopupMenuItem(
+                      value: 'move',
+                      child: Row(
+                        children: [
+                          const Icon(Iconsax.folder_2),
+                          const SizedBox(width: 8),
+                          Text(l10n.moveToGroup),
+                        ],
+                      ),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        const Icon(Iconsax.trash, color: Colors.red),
-                        const SizedBox(width: 8),
-                        Text(
-                          l10n.delete,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      ],
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          const Icon(Iconsax.trash, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Text(
+                            l10n.delete,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ];
+                },
                 icon: const Icon(Iconsax.more_circle),
               );
             },

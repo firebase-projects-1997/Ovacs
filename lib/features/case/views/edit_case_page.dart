@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../data/models/case_model.dart';
 import '../../../data/models/client_model.dart';
+import '../../../data/models/country_model.dart';
 import '../../client/providers/clients_provider.dart';
 import '../../case/provider/case_details_provider.dart';
 import '../../../common/widgets/labeled_text_field.dart';
@@ -49,7 +50,12 @@ class _EditCasePageState extends State<EditCasePage> {
     );
 
     Future.microtask(() {
-      context.read<ClientsProvider>().fetchClients();
+      if (mounted) {
+        final clientsProvider = context.read<ClientsProvider>();
+
+        // Fetch clients with workspace context (space_id if in switched space)
+        clientsProvider.fetchClients();
+      }
     });
   }
 
@@ -222,18 +228,43 @@ class _EditCasePageState extends State<EditCasePage> {
         '${AppLocalizations.of(context)!.errorLoadingClients} ${provider.errorMessage}',
       );
     } else {
-      _selectedClient = provider.clients.firstWhere(
-        (client) => client.id == widget.caseModel.clientId,
-      );
+      // Safely find the client, handle case where client might not exist in current space
+      try {
+        _selectedClient = provider.clients.firstWhere(
+          (client) => client.id == widget.caseModel.clientId,
+        );
+      } catch (e) {
+        // Client not found in current space - this can happen in switched spaces
+        // Create a placeholder client to show the original client info
+        _selectedClient = ClientModel(
+          id: widget.caseModel.clientId,
+          account: 0,
+          name: widget.caseModel.clientName,
+          email: '',
+          mobile: '',
+          country: CountryModel(id: 0, name: 'Unknown'),
+          createdAt: DateTime.now(),
+        );
+      }
+
       return DropdownButtonFormField<ClientModel>(
         value: _selectedClient,
-
         decoration: InputDecoration(
           labelText: AppLocalizations.of(context)!.chooseYourClient,
         ),
-        items: provider.clients.map((client) {
-          return DropdownMenuItem(value: client, child: Text(client.name));
-        }).toList(),
+        items: [
+          // Always include the selected client first (even if not in the list)
+          if (_selectedClient != null &&
+              !provider.clients.any((c) => c.id == _selectedClient!.id))
+            DropdownMenuItem(
+              value: _selectedClient,
+              child: Text('${_selectedClient!.name} (Original)'),
+            ),
+          // Then add all available clients
+          ...provider.clients.map((client) {
+            return DropdownMenuItem(value: client, child: Text(client.name));
+          }),
+        ],
         onChanged: (val) => setState(() => _selectedClient = val),
       );
     }

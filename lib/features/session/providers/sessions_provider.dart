@@ -6,12 +6,14 @@ import '../../../core/mixins/optimistic_update_mixin.dart';
 import '../../../data/models/session_model.dart';
 import '../../../data/models/session_with_pagenation_response.dart';
 import '../../../data/repositories/session_repository.dart';
+import '../../../common/providers/workspace_provider.dart';
 
 class SessionsProvider extends ChangeNotifier
     with OptimisticUpdateMixin<SessionModel> {
   final SessionRepository sessionRepository;
+  final WorkspaceProvider _workspaceProvider;
 
-  SessionsProvider(this.sessionRepository);
+  SessionsProvider(this.sessionRepository, this._workspaceProvider);
 
   List<SessionModel> _sessions = [];
 
@@ -69,11 +71,16 @@ class SessionsProvider extends ChangeNotifier
     _filters = filters;
     notifyListeners();
 
+    // Merge workspace parameters (space_id) with filters
+    final filtersWithWorkspace = _workspaceProvider.mergeWithWorkspaceParams(
+      filters,
+    );
+
     final Either<Failure, SessionsWithPaginationResponse> result =
         await sessionRepository.getSessions(
           caseId,
           page: _currentPage,
-          filters: filters,
+          filters: filtersWithWorkspace,
         );
 
     result.fold(
@@ -99,11 +106,16 @@ class SessionsProvider extends ChangeNotifier
 
     _currentPage++;
 
+    // Merge workspace parameters (space_id) with filters
+    final filtersWithWorkspace = _workspaceProvider.mergeWithWorkspaceParams(
+      _filters,
+    );
+
     final Either<Failure, SessionsWithPaginationResponse> result =
         await sessionRepository.getSessions(
           _caseId!,
           page: _currentPage,
-          filters: _filters,
+          filters: filtersWithWorkspace,
         );
 
     result.fold(
@@ -124,6 +136,7 @@ class SessionsProvider extends ChangeNotifier
 
   Future<void> refresh() async {
     if (_caseId != null) {
+      // fetchSessions will automatically include workspace context
       await fetchSessions(_caseId!, filters: _filters);
     }
   }

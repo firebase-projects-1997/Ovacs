@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../core/mixins/optimistic_update_mixin.dart';
 import '../../../data/models/case_model.dart';
 import '../../../data/repositories/case_repository.dart';
+import '../../../common/providers/workspace_provider.dart';
 
 class CasesProvider extends ChangeNotifier
     with OptimisticUpdateMixin<CaseModel> {
   final CaseRepository _repository;
-  CasesProvider(this._repository);
+  final WorkspaceProvider _workspaceProvider;
+
+  CasesProvider(this._repository, this._workspaceProvider);
 
   List<CaseModel> _cases = [];
 
@@ -54,7 +57,7 @@ class CasesProvider extends ChangeNotifier
     _errorMessage = null;
     _currentPage = 1;
     _hasMore = true;
-    _filters = filters;
+    _filters = _workspaceProvider.mergeWithWorkspaceParams(filters);
     notifyListeners();
 
     final result = await _repository.getCases(
@@ -64,12 +67,24 @@ class CasesProvider extends ChangeNotifier
 
     result.fold(
       (failure) {
-        _errorMessage = failure.message;
+        // Provide user-friendly error messages
+        if (failure.message.contains("Permission") ||
+            failure.message.contains("unhashable") ||
+            failure.message.contains("Server permission system error")) {
+          _errorMessage =
+              "There's a temporary issue with the permission system. Please try again later or contact support.";
+        } else if (failure.message.contains("Server configuration error")) {
+          _errorMessage =
+              "Server is experiencing technical difficulties. Please try again later.";
+        } else {
+          _errorMessage = failure.message;
+        }
         _cases = [];
       },
       (response) {
         _cases = response.cases;
         _hasMore = response.pagination.hasNext;
+        _errorMessage = null; // Clear any previous errors
       },
     );
 
@@ -163,10 +178,12 @@ class CasesProvider extends ChangeNotifier
     );
 
     final payload = {'title': title, 'description': description, 'date': date};
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
 
     return await optimisticUpdate<CaseModel>(
       updatedItem: updatedCase,
-      operation: () => _repository.updateCase(id, payload),
+      operation: () =>
+          _repository.updateCase(id, payload, queryParams: queryParams),
       getId: (caseModel) => caseModel.id,
       mapResult: (response) => response, // The response is already a CaseModel
     );
@@ -174,9 +191,11 @@ class CasesProvider extends ChangeNotifier
 
   /// Optimistically deletes a case
   Future<bool> deleteCaseOptimistic(int caseId) async {
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+
     return await optimisticDelete<bool>(
       itemId: caseId,
-      operation: () => _repository.deleteCase(caseId),
+      operation: () => _repository.deleteCase(caseId, queryParams: queryParams),
       getId: (caseModel) => caseModel.id,
     );
   }

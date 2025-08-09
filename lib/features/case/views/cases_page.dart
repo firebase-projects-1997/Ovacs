@@ -4,9 +4,13 @@ import 'package:provider/provider.dart';
 
 import '../../../common/providers/workspace_provider.dart';
 import '../../../common/widgets/rounded_container.dart';
+import '../../../common/widgets/permission_guard.dart';
+import '../../../common/widgets/server_error_widget.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
-
+import '../../../core/enums/permission_resource.dart';
+import '../../../core/enums/permission_action.dart';
+import '../../../core/mixins/permission_mixin.dart';
 import '../../../core/functions/is_dark_mode.dart';
 import '../../../data/models/case_model.dart';
 import '../../../l10n/app_localizations.dart';
@@ -22,7 +26,7 @@ class CasesPage extends StatefulWidget {
   State<CasesPage> createState() => _CasesPageState();
 }
 
-class _CasesPageState extends State<CasesPage> {
+class _CasesPageState extends State<CasesPage> with PermissionMixin {
   late ScrollController _scrollController;
 
   @override
@@ -30,25 +34,16 @@ class _CasesPageState extends State<CasesPage> {
     super.initState();
     Future.microtask(() {
       if (mounted) {
-        final workspaceProvider = Provider.of<WorkspaceProvider>(
-          context,
-          listen: false,
-        );
         final casesProvider = Provider.of<CasesProvider>(
           context,
           listen: false,
         );
 
-        // Add account_id filter if in connection workspace mode
-        final filters = <String, dynamic>{};
-        if (workspaceProvider.isConnectionMode) {
-          final accountId = workspaceProvider.getAccountIdForCases();
-          if (accountId != null) {
-            filters['account_id'] = accountId;
-          }
-        }
+        // Load permissions for current workspace context
+        loadPermissions();
 
-        casesProvider.fetchCases(filters: filters.isNotEmpty ? filters : null);
+        // Fetch cases (workspace parameters are handled in the provider)
+        casesProvider.fetchCases();
       }
     });
 
@@ -108,25 +103,10 @@ class _CasesPageState extends State<CasesPage> {
                     }
 
                     if (provider.errorMessage != null) {
-                      return Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              provider.errorMessage!,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () => provider.fetchCases(),
-                              child: Text(
-                                AppLocalizations.of(context)!.retry,
-                                style: Theme.of(context).textTheme.bodyMedium!
-                                    .copyWith(color: AppColors.pureWhite),
-                              ),
-                            ),
-                          ],
-                        ),
+                      return ServerErrorWidget(
+                        message: provider.errorMessage!,
+                        onRetry: () => provider.fetchCases(),
+                        showContactSupport: true,
                       );
                     }
 
@@ -191,19 +171,22 @@ class _CasesPageState extends State<CasesPage> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
-            RoundedContainer(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => AddNewCasePage()),
-                );
-              },
-
-              child: Icon(
-                Iconsax.add,
-                color: isDarkMode(context)
-                    ? AppColors.pureWhite
-                    : AppColors.charcoalGrey,
+            PermissionGuard(
+              resource: PermissionResource.case_,
+              action: PermissionAction.create,
+              child: RoundedContainer(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => AddNewCasePage()),
+                  );
+                },
+                child: Icon(
+                  Iconsax.add,
+                  color: isDarkMode(context)
+                      ? AppColors.pureWhite
+                      : AppColors.charcoalGrey,
+                ),
               ),
             ),
           ],

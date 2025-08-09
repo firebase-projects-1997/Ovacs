@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "4e17d1e5-5156-4f32-ac3d-69aa6ab13b7e",
-		"name": "ovacs Copy",
+		"_postman_id": "44785155-824b-4b94-b5e9-bb07bf1dbabe",
+		"name": "OVACS 3.5 - Updated with RBAC & Space Switching",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "30020814",
-		"_collection_link": "https://ovacs-team.postman.co/workspace/Ovacs-Team-Workspace~c6f0357b-bcf7-4a85-8b55-ed0e7fc89f8c/collection/30020814-4e17d1e5-5156-4f32-ac3d-69aa6ab13b7e?action=share&source=collection_link&creator=30020814"
+		"_collection_link": "https://ovacs-team.postman.co/workspace/Ovacs-Team-Workspace~c6f0357b-bcf7-4a85-8b55-ed0e7fc89f8c/collection/30020814-44785155-824b-4b94-b5e9-bb07bf1dbabe?action=share&source=collection_link&creator=30020814"
 	},
 	"item": [
 		{
@@ -702,7 +702,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"muneer client 20\",\r\n    \"email\": \"cli88888@example.com\",\r\n    \"mobile\": \"0087654999\",\r\n    \"country_id\": 2\r\n}",
+							"raw": "{\r\n    \"name\": \"client 100\",\r\n    \"email\": \"cli88888@example.com\",\r\n    \"mobile\": \"0087654999\",\r\n    \"country_id\": 2\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -880,7 +880,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"client_id_input\": 66,\r\n    \"title\": \"Case 2 for muneer\",\r\n    \"description\": \"Case Description\",\r\n    \"date\": \"2025-10-01\"\r\n}",
+							"raw": "{\r\n    \"client_id_input\": 76,\r\n    \"title\": \"Case 1 --- 100\",\r\n    \"description\": \"Case Description\",\r\n    \"date\": \"2025-10-01\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1058,7 +1058,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"case\": 47,\r\n  \"account\": 39,\r\n  \"role\": \"gold\"\r\n}",
+							"raw": "{\r\n  \"case\": 83,\r\n  \"account\": 59,\r\n  \"role\": \"gold\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1496,8 +1496,8 @@
 								},
 								{
 									"key": "space_id",
-									"value": "28",
-									"description": "NEW: SPACE SWITCHING - Get sessions from specific account",
+									"value": "{{space_id}}",
+									"description": "🔐 SPACE SWITCHING: Access sessions in another account you're connected to. Requires connection + case assignment.",
 									"disabled": true
 								}
 							]
@@ -2333,12 +2333,80 @@
 			]
 		},
 		{
-			"name": "New Request",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
+			"name": "🔐 RBAC & Space Switching",
+			"item": [
+				{
+					"name": "Permission Management",
+					"item": [
+						{
+							"name": "check-permissions",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has permission data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.have.property('user_role');",
+											"    pm.expect(jsonData.data).to.have.property('permissions');",
+											"});",
+											"",
+											"// Store permissions for use in other requests",
+											"var jsonData = pm.response.json();",
+											"if (jsonData.data && jsonData.data.permissions) {",
+											"    pm.collectionVariables.set('user_permissions', JSON.stringify(jsonData.data.permissions));",
+											"    pm.collectionVariables.set('user_role', jsonData.data.user_role);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/check-permissions/?space_id={{space_id}}&case_id={{case_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"check-permissions",
+										""
+									],
+									"query": [
+										{
+											"key": "space_id",
+											"value": "{{space_id}}",
+											"description": "Target account ID for space switching (optional)"
+										},
+										{
+											"key": "case_id",
+											"value": "{{case_id}}",
+											"description": "Specific case ID for case-level permissions (optional)"
+										},
+										{
+											"key": "space_id",
+											"value": "{{space_id}}",
+											"description": "🔐 SPACE SWITCHING: Access cases in another account you're connected to. Requires connection + case assignment.",
+											"disabled": true
+										}
+									]
+								},
+								"description": "**Check User Permissions in Space**\n\nThis endpoint allows you to check what permissions the current user has in a specific space (account) and optionally for a specific case.\n\n**Parameters:**\n- `space_id` (optional): The account ID you want to check permissions for. If omitted, checks permissions in your own account.\n- `case_id` (optional): Specific case ID to check case-level permissions.\n\n**Response:**\n```json\n{\n  \"type\": \"success\",\n  \"data\": {\n    \"user_role\": \"gold\",\n    \"permissions\": {\n      \"case\": [\"read\", \"list\"],\n      \"session\": [\"read\", \"update\", \"list\"],\n      \"document\": [\"read\", \"list\"]\n    }\n  }\n}\n```\n\n**Use Cases:**\n- Check what actions are available before showing UI elements\n- Debug permission issues\n- Validate access before making API calls\n- Display user's role in different spaces"
+							},
+							"response": []
+						}
+					],
+					"description": "**Permission Management Endpoints**\n\nThese endpoints help you understand and debug the Role-Based Access Control (RBAC) system.\n\n**Key Concepts:**\n\n- **Roles**: owner, admin, diamond, gold, silver\n    \n- **Resources**: case, client, session, document, document_group, message\n    \n- **Actions**: create, read, update, delete, list, assign, unassign, manage_roles\n    \n- **Space Switching**: Access resources in other accounts you're connected to"
+				}
+			],
+			"description": "**🔐 Role-Based Access Control & Space Switching**\n\nThis section contains endpoints and examples for the new RBAC system that allows users to access resources across different accounts based on their assigned roles.\n\n**Key Features:**\n- **Space Switching**: Access resources in other accounts using `space_id` parameter\n- **Role-Based Permissions**: Different access levels (owner, admin, diamond, gold, silver)\n- **Case-Level Granularity**: Permissions tied to specific case assignments\n- **Permission Checking**: Debug and validate access before making requests\n\n**How to Use:**\n1. First, check your permissions using the `check-permissions` endpoint\n2. Use the `space_id` parameter in any resource endpoint to access other accounts\n3. The system will automatically enforce role-based permissions\n4. Use the updated examples in other sections that now include space switching"
 		}
 	],
 	"auth": {
@@ -2347,6 +2415,26 @@
 			{
 				"key": "token",
 				"value": "{{access_token}}",
+				"type": "string"
+			},
+			{
+				"key": "space_id",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "case_id",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "user_permissions",
+				"value": "{}",
+				"type": "string"
+			},
+			{
+				"key": "user_role",
+				"value": "",
 				"type": "string"
 			}
 		]
@@ -2385,6 +2473,11 @@
 		{
 			"key": "access_token",
 			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzNTM1MTQ2LCJpYXQiOjE3NTI5MzAzNDYsImp0aSI6IjViNjA3MDc2YjcxODRiMzI5ZWQxNjk0YTM0MGFiZDdjIiwidXNlcl9pZCI6MzJ9.20bWwCZ2pcgvf6uvv17orul9iR1uVmgcUfFMQOqM_Fk",
+			"type": "string"
+		},
+		{
+			"key": "second_access_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU1Mjg4MjUzLCJpYXQiOjE3NTQ2ODM0NTMsImp0aSI6ImNjMDljNWM4YWRjNDRlMmJiY2VlMWExZmIxMjk3MjZiIiwidXNlcl9pZCI6NTd9.EOmcrLXn0w6M0MWGRt2X3SDp5CqbkZgfSONzu-ZxNaQ",
 			"type": "string"
 		}
 	]

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/case_model.dart';
 import '../../../data/repositories/case_repository.dart';
+import '../../../common/providers/workspace_provider.dart';
 
 enum CaseDetailStatus { initial, loading, loaded, error }
 
 class CaseDetailProvider extends ChangeNotifier {
   final CaseRepository caseRepository;
+  final WorkspaceProvider _workspaceProvider;
 
-  CaseDetailProvider(this.caseRepository);
+  CaseDetailProvider(this.caseRepository, this._workspaceProvider);
 
   CaseModel? caseModel;
   CaseDetailStatus status = CaseDetailStatus.initial;
@@ -19,7 +21,11 @@ class CaseDetailProvider extends ChangeNotifier {
     errorMessage = null;
     notifyListeners();
 
-    final result = await caseRepository.getCaseDetail(id);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await caseRepository.getCaseDetail(
+      id,
+      queryParams: queryParams,
+    );
     result.fold(
       (failure) {
         status = CaseDetailStatus.error;
@@ -39,7 +45,12 @@ class CaseDetailProvider extends ChangeNotifier {
     status = CaseDetailStatus.loading;
     notifyListeners();
 
-    final result = await caseRepository.updateCase(id, payload);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await caseRepository.updateCase(
+      id,
+      payload,
+      queryParams: queryParams,
+    );
     return result.fold(
       (failure) {
         errorMessage = failure.message;
@@ -61,7 +72,11 @@ class CaseDetailProvider extends ChangeNotifier {
     status = CaseDetailStatus.loading;
     notifyListeners();
 
-    final result = await caseRepository.deleteCase(id);
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+    final result = await caseRepository.deleteCase(
+      id,
+      queryParams: queryParams,
+    );
     return result.fold(
       (failure) {
         errorMessage = failure.message;

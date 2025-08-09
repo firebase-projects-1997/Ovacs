@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:new_ovacs/common/providers/country_provider.dart';
 import 'package:new_ovacs/common/providers/workspace_provider.dart';
+import 'package:new_ovacs/common/providers/permission_provider.dart';
 import 'package:new_ovacs/core/network/dio_client.dart';
 import 'package:new_ovacs/core/network/app_interceptors.dart';
 import 'package:new_ovacs/data/repositories/auth_repository.dart';
@@ -11,6 +12,7 @@ import 'package:new_ovacs/data/repositories/dashboard_repository.dart';
 import 'package:new_ovacs/data/repositories/document_repository.dart';
 import 'package:new_ovacs/data/repositories/message_repository.dart';
 import 'package:new_ovacs/data/repositories/session_repository.dart';
+import 'package:new_ovacs/data/repositories/permission_repository.dart';
 import 'package:new_ovacs/features/case/provider/add_case_provider.dart';
 import 'package:new_ovacs/features/case/provider/case_details_provider.dart';
 import 'package:new_ovacs/features/case/provider/cases_provider.dart';
@@ -78,16 +80,27 @@ Future<void> setupLocator() async {
   );
   getIt.registerLazySingleton(() => DocumentRepository(getIt<DioClient>()));
   getIt.registerLazySingleton(() => ConnectionsRepository(getIt<DioClient>()));
+  getIt.registerLazySingleton(() => PermissionRepository(getIt<DioClient>()));
 
   // providers
   //-> country
   getIt.registerLazySingleton(() => CountryProvider(getIt<AuthRepository>()));
+  //-> permissions
+  getIt.registerLazySingleton(
+    () => PermissionProvider(getIt<PermissionRepository>()),
+  );
   //-> dashboard
   getIt.registerLazySingleton(
-    () => DashboardProvider(getIt<DashboardRepository>()),
+    () => DashboardProvider(
+      getIt<DashboardRepository>(),
+      getIt<WorkspaceProvider>(),
+    ),
   );
   //-> clients
-  getIt.registerLazySingleton(() => ClientsProvider(getIt<ClientRepository>()));
+  getIt.registerLazySingleton(
+    () =>
+        ClientsProvider(getIt<ClientRepository>(), getIt<WorkspaceProvider>()),
+  );
   getIt.registerLazySingleton(
     () => AddClientProvider(getIt<ClientRepository>()),
   );
@@ -95,32 +108,52 @@ Future<void> setupLocator() async {
     () => UpdateClientProvider(getIt<ClientRepository>()),
   );
   getIt.registerLazySingleton(
-    () => ClientDetailProvider(getIt<ClientRepository>()),
+    () => ClientDetailProvider(
+      getIt<ClientRepository>(),
+      getIt<WorkspaceProvider>(),
+    ),
   );
   getIt.registerLazySingleton(
-    () => ClientsSearchProvider(getIt<ClientRepository>()),
+    () => ClientsSearchProvider(
+      getIt<ClientRepository>(),
+      getIt<WorkspaceProvider>(),
+    ),
   );
   //-> cases
-  getIt.registerLazySingleton(() => CasesProvider(getIt<CaseRepository>()));
-  getIt.registerLazySingleton(() => AddCaseProvider(getIt<CaseRepository>()));
   getIt.registerLazySingleton(
-    () => CasesSearchProvider(getIt<CaseRepository>()),
+    () => CasesProvider(getIt<CaseRepository>(), getIt<WorkspaceProvider>()),
   );
   getIt.registerLazySingleton(
-    () => CaseDetailProvider(getIt<CaseRepository>()),
+    () => AddCaseProvider(getIt<CaseRepository>(), getIt<WorkspaceProvider>()),
+  );
+  getIt.registerLazySingleton(
+    () => CasesSearchProvider(
+      getIt<CaseRepository>(),
+      getIt<WorkspaceProvider>(),
+    ),
+  );
+  getIt.registerLazySingleton(
+    () =>
+        CaseDetailProvider(getIt<CaseRepository>(), getIt<WorkspaceProvider>()),
   );
   getIt.registerLazySingleton(
     () => AssignedAccountsProvider(getIt<CaseRepository>()),
   );
   //-> sessions
   getIt.registerLazySingleton(
-    () => SessionsProvider(getIt<SessionRepository>()),
+    () => SessionsProvider(
+      getIt<SessionRepository>(),
+      getIt<WorkspaceProvider>(),
+    ),
   );
   getIt.registerLazySingleton(
     () => AddSessionProvider(getIt<SessionRepository>()),
   );
   getIt.registerLazySingleton(
-    () => SessionDetailProvider(getIt<SessionRepository>()),
+    () => SessionDetailProvider(
+      getIt<SessionRepository>(),
+      getIt<WorkspaceProvider>(),
+    ),
   );
   // messages
   getIt.registerLazySingleton(
@@ -137,19 +170,29 @@ Future<void> setupLocator() async {
   );
   // documents
   getIt.registerLazySingleton(
-    () => DocumentsProvider(getIt<DocumentRepository>()),
+    () => DocumentsProvider(
+      getIt<DocumentRepository>(),
+      getIt<WorkspaceProvider>(),
+    ),
   );
   getIt.registerLazySingleton(
-    () => DocumentDetailProvider(getIt<DocumentRepository>()),
+    () => DocumentDetailProvider(
+      getIt<DocumentRepository>(),
+      getIt<WorkspaceProvider>(),
+    ),
   );
   getIt.registerLazySingleton(
     () => UploadDocumentsProvider(getIt<DocumentRepository>()),
   );
   getIt.registerLazySingleton(
-    () => GroupsProvider(getIt<DocumentRepository>()),
+    () =>
+        GroupsProvider(getIt<DocumentRepository>(), getIt<WorkspaceProvider>()),
   );
   getIt.registerLazySingleton(
-    () => GroupDetailsProvider(getIt<DocumentRepository>()),
+    () => GroupDetailsProvider(
+      getIt<DocumentRepository>(),
+      getIt<WorkspaceProvider>(),
+    ),
   );
   // connections
   getIt.registerLazySingleton(

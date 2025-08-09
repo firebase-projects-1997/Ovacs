@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:new_ovacs/features/client/providers/clients_provider.dart';
+import 'package:new_ovacs/features/dashboard/providers/dashboard_provider.dart';
 import 'package:provider/provider.dart';
+import '../providers/permission_provider.dart';
 import '../providers/workspace_provider.dart';
 import '../../features/case/provider/cases_provider.dart';
 import '../../l10n/app_localizations.dart';
@@ -56,10 +59,21 @@ class WorkspaceBanner extends StatelessWidget {
                 ),
                 TextButton.icon(
                   onPressed: () async {
+                    final permissionProvider = context
+                        .read<PermissionProvider>();
+
                     await workspaceProvider.switchToPersonalWorkspace();
+
+                    // Refresh permissions for personal workspace
+                    await permissionProvider.fetchPermissions(
+                      forceRefresh: true,
+                    );
+
                     // Refresh cases to show user's own cases after closing workspace
                     if (context.mounted) {
+                      context.read<DashboardProvider>().fetchAllDashboardData();
                       context.read<CasesProvider>().fetchCases();
+                      context.read<ClientsProvider>().fetchClients();
                     }
                   },
                   icon: Icon(

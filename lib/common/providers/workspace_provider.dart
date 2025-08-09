@@ -94,9 +94,44 @@ class WorkspaceProvider extends ChangeNotifier {
     return {};
   }
 
-  /// Get account_id parameter for cases API when in connection mode
+  /// Get account_id parameter for cases API when in connection mode (backward compatibility)
+  /// @deprecated Use currentSpaceId instead - backend now uses space_id consistently
   int? getAccountIdForCases() {
     return isConnectionMode ? _activeConnectionAccount?.id : null;
+  }
+
+  /// Get space_id for current workspace context
+  int? get currentSpaceId =>
+      isConnectionMode ? _activeConnectionAccount?.id : null;
+
+  /// Merge workspace query parameters with existing parameters
+  Map<String, dynamic> mergeWithWorkspaceParams(
+    Map<String, dynamic>? existingParams,
+  ) {
+    final workspaceParams = getWorkspaceQueryParams();
+    if (workspaceParams.isEmpty) {
+      return existingParams ?? {};
+    }
+
+    final merged = <String, dynamic>{};
+    if (existingParams != null) {
+      merged.addAll(existingParams);
+    }
+    merged.addAll(workspaceParams);
+    return merged;
+  }
+
+  /// Check if we're currently in a specific space
+  bool isInSpace(int spaceId) {
+    return isConnectionMode && _activeConnectionAccount?.id == spaceId;
+  }
+
+  /// Get display name for current workspace
+  String get workspaceDisplayName {
+    if (isPersonalMode) {
+      return 'Personal Workspace';
+    }
+    return _activeConnectionAccount?.name ?? 'Unknown Workspace';
   }
 
   /// Reset workspace state (useful for logout)

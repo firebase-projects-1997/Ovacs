@@ -3,11 +3,13 @@ import '../../../../core/error/failure.dart';
 import '../../../data/models/case_model.dart';
 import '../../../data/models/pagination_model.dart';
 import '../../../data/repositories/case_repository.dart';
+import '../../../common/providers/workspace_provider.dart';
 
 class CasesSearchProvider extends ChangeNotifier {
   final CaseRepository _repository;
+  final WorkspaceProvider _workspaceProvider;
 
-  CasesSearchProvider(this._repository);
+  CasesSearchProvider(this._repository, this._workspaceProvider);
 
   List<CaseModel> _cases = [];
   int _currentPage = 1;
@@ -76,9 +78,14 @@ class CasesSearchProvider extends ChangeNotifier {
         'date_before': dateBefore,
     };
 
+    // Merge workspace parameters (space_id) with search filters
+    final filtersWithWorkspace = _workspaceProvider.mergeWithWorkspaceParams(
+      filters,
+    );
+
     final result = await _repository.getCases(
       page: _currentPage,
-      filters: filters,
+      filters: filtersWithWorkspace,
     );
 
     result.fold(
@@ -104,6 +111,7 @@ class CasesSearchProvider extends ChangeNotifier {
     dateAfter = null;
     dateBefore = null;
     _currentPage = 1;
+    // fetchCases() will automatically include workspace context (space_id)
     fetchCases();
   }
 }
