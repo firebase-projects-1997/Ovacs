@@ -176,9 +176,13 @@ class SessionsProvider extends ChangeNotifier
       if (clientId != null) 'client_id': clientId,
     };
 
+    // Get workspace query parameters (includes space_id if in connection mode)
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+
     return await optimisticAdd<SessionModel>(
       item: tempSession,
-      operation: () => sessionRepository.createSession(payload),
+      operation: () =>
+          sessionRepository.createSession(payload, queryParams: queryParams),
       getId: (session) => session.id,
       mapResult: (response) =>
           response, // The response is already a SessionModel

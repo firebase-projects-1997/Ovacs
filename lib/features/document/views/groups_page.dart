@@ -11,6 +11,7 @@ import '../../../core/mixins/permission_mixin.dart';
 import '../../../common/providers/workspace_provider.dart';
 import '../../../main.dart';
 import '../providers/groups_provider.dart';
+import '../providers/documents_provider.dart';
 import 'group_details_page.dart';
 
 class GroupsPage extends StatefulWidget {
@@ -205,15 +206,27 @@ class _GroupsPageState extends State<GroupsPage> with PermissionMixin {
                 return RoundedContainer(
                   onTap: () {
                     final workspaceProvider = context.read<WorkspaceProvider>();
-                    navigatorKey.currentState!.push(
-                      MaterialPageRoute(
-                        builder: (context) => GroupDetailsPage(
-                          groupId: group.id,
-                          sessionId: widget.sessionId,
-                          spaceId: workspaceProvider.currentSpaceId,
-                        ),
-                      ),
-                    );
+                    navigatorKey.currentState!
+                        .push(
+                          MaterialPageRoute(
+                            builder: (context) => GroupDetailsPage(
+                              groupId: group.id,
+                              sessionId: widget.sessionId,
+                              spaceId: workspaceProvider.currentSpaceId,
+                            ),
+                          ),
+                        )
+                        .then((_) {
+                          // Refresh session documents when returning from group details
+                          // This ensures the session shows all documents, not just group documents
+                          if (context.mounted) {
+                            context
+                                .read<DocumentsProvider>()
+                                .fetchDocumentsBySession(
+                                  extraParams: {'session_id': widget.sessionId},
+                                );
+                          }
+                        });
                   },
                   child: Row(
                     children: [

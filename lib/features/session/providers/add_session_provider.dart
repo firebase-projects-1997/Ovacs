@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../../data/repositories/session_repository.dart';
+import '../../../common/providers/workspace_provider.dart';
 
 enum AddSessionStatus { initial, loading, success, error }
 
 class AddSessionProvider extends ChangeNotifier {
   final SessionRepository sessionRepository;
+  final WorkspaceProvider _workspaceProvider;
 
-  AddSessionProvider(this.sessionRepository);
+  AddSessionProvider(this.sessionRepository, this._workspaceProvider);
 
   AddSessionStatus _status = AddSessionStatus.initial;
   AddSessionStatus get status => _status;
@@ -38,7 +40,13 @@ class AddSessionProvider extends ChangeNotifier {
       if (clientId != null) 'client_id': clientId,
     };
 
-    final result = await sessionRepository.createSession(payload);
+    // Get workspace query parameters (includes space_id if in connection mode)
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+
+    final result = await sessionRepository.createSession(
+      payload,
+      queryParams: queryParams,
+    );
 
     return result.fold(
       (failure) {

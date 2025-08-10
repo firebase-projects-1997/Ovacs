@@ -1,31 +1,23 @@
-import 'dart:async';
 import 'dart:io';
-import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter_new/return_code.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:new_ovacs/core/functions/show_snackbar.dart';
-import 'package:new_ovacs/features/auth/providers/auth_provider.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 import 'package:record/record.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:uuid/uuid.dart';
-import 'package:path/path.dart' as p;
+import 'package:file_picker/file_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
-import '../../../core/constants/app_sizes.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../data/models/message_model.dart';
-import '../../../l10n/app_localizations.dart';
-import '../providers/edit_delete_message_provider.dart';
 import '../providers/messages_provider.dart';
 import '../providers/send_message_provider.dart';
+import '../../../features/auth/providers/auth_provider.dart';
 
 class MessagesPage extends StatefulWidget {
   final int caseId;
-
   const MessagesPage({super.key, required this.caseId});
 
   @override
@@ -33,702 +25,778 @@ class MessagesPage extends StatefulWidget {
 }
 
 class _MessagesPageState extends State<MessagesPage> {
+  final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final TextEditingController _textController = TextEditingController();
-  final _recorder = AudioRecorder();
-
-  final ValueNotifier<int?> _currentPlayingId = ValueNotifier<int?>(null);
+  final AudioRecorder _audioRecorder = AudioRecorder();
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   bool _isRecording = false;
-  bool _isUploading = false;
-  double _uploadProgress = 0.0;
-  String? _recordingFilePath;
-
-  late Stopwatch _stopwatch;
-  Timer? _recordingTimer;
+  bool _isPlaying = false;
+  String? _recordingPath;
+  String? _currentPlayingUrl;
+  Duration _recordingDuration = Duration.zero;
 
   @override
   void initState() {
     super.initState();
-    _stopwatch = Stopwatch();
-
-    Future.microtask(() {
-      context.read<AllMessagesProvider>().fetchMessages(widget.caseId);
-    });
-
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 100) {
-        context.read<AllMessagesProvider>().fetchMoreMessages(widget.caseId);
-      }
-    });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.animateTo(
-        _scrollController.position.minScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    });
+    _initializeMessages();
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
-    _stopwatch.stop();
-    _recordingTimer?.cancel();
+    _messageController.dispose();
     _scrollController.dispose();
-    _textController.dispose();
-    _currentPlayingId.dispose();
+    _audioRecorder.dispose();
+    _audioPlayer.dispose();
     super.dispose();
+  }
+
+  void _initializeMessages() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AllMessagesProvider>().fetchMessages(widget.caseId);
+    });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      context.read<AllMessagesProvider>().fetchMoreMessages(widget.caseId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.lightBackground,
       appBar: AppBar(
+        backgroundColor: AppColors.pureWhite,
+        elevation: 1,
         title: Text(
-          AppLocalizations.of(context)!.messages,
-          style: Theme.of(context).textTheme.titleLarge,
+          'Messages',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppColors.titleText,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Iconsax.arrow_left_2, color: AppColors.charcoalGrey),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Column(
         children: [
-          Expanded(
-            child: Consumer<AllMessagesProvider>(
-              builder: (context, provider, _) {
-                if (provider.status == AllMessagesStatus.loading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+          Expanded(child: _buildMessagesList()),
+          _buildMessageInput(),
+        ],
+      ),
+    );
+  }
 
-                if (provider.status == AllMessagesStatus.error) {
-                  return Center(
-                    child: Text(
-                      provider.errorMessage ??
-                          AppLocalizations.of(context)!.errorLoadingMessages,
+  Widget _buildMessagesList() {
+    return Consumer<AllMessagesProvider>(
+      builder: (context, provider, child) {
+        if (provider.status == AllMessagesStatus.loading &&
+            provider.messages.isEmpty) {
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.primaryBlue),
+          );
+        }
+
+        if (provider.status == AllMessagesStatus.error &&
+            provider.messages.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Iconsax.message_minus,
+                  size: 64,
+                  color: AppColors.mediumGrey,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Failed to load messages',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: AppColors.mediumGrey,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  provider.errorMessage ?? 'Unknown error occurred',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: AppColors.mediumGrey),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => provider.fetchMessages(widget.caseId),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (provider.messages.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Iconsax.message, size: 64, color: AppColors.mediumGrey),
+                const SizedBox(height: 16),
+                Text(
+                  'No messages yet',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: AppColors.mediumGrey,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Start the conversation by sending a message',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: AppColors.mediumGrey),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          controller: _scrollController,
+          reverse: true,
+          padding: const EdgeInsets.all(16),
+          itemCount:
+              provider.messages.length + (provider.isLoadingMore ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == provider.messages.length) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryBlue,
+                  ),
+                ),
+              );
+            }
+
+            final message = provider.messages[index];
+            return _buildMessageBubble(message);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMessageBubble(MessageModel message) {
+    final currentUser = context.read<AuthProvider>().user;
+    final isMe = currentUser?.id == message.sender;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (!isMe) ...[
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
+              child: Text(
+                message.senderName.isNotEmpty
+                    ? message.senderName[0].toUpperCase()
+                    : 'U',
+                style: const TextStyle(
+                  color: AppColors.primaryBlue,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+          Flexible(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.75,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: isMe ? AppColors.primaryBlue : AppColors.pureWhite,
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(20),
+                  topRight: const Radius.circular(20),
+                  bottomLeft: Radius.circular(isMe ? 20 : 4),
+                  bottomRight: Radius.circular(isMe ? 4 : 20),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.charcoalGrey.withValues(alpha: 0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!isMe) ...[
+                    Text(
+                      message.senderName,
+                      style: TextStyle(
+                        color: AppColors.primaryBlue,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                  ],
+                  if (message.type == 'text' && message.content != null)
+                    _buildTextMessage(message.content!, isMe)
+                  else if (message.type == 'voice')
+                    _buildVoiceMessage(message, isMe),
+                  const SizedBox(height: 4),
+                  Text(
+                    _formatMessageTime(message.createdAt),
+                    style: TextStyle(
+                      color: isMe
+                          ? AppColors.pureWhite.withValues(alpha: 0.7)
+                          : AppColors.mediumGrey,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (isMe) ...[
+            const SizedBox(width: 8),
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: AppColors.tealGreen.withValues(alpha: 0.1),
+              child: Text(
+                currentUser?.name?.isNotEmpty == true
+                    ? currentUser!.name![0].toUpperCase()
+                    : 'M',
+                style: const TextStyle(
+                  color: AppColors.tealGreen,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextMessage(String content, bool isMe) {
+    return Text(
+      content,
+      style: TextStyle(
+        color: isMe ? AppColors.pureWhite : AppColors.charcoalGrey,
+        fontSize: 14,
+      ),
+    );
+  }
+
+  Widget _buildVoiceMessage(MessageModel message, bool isMe) {
+    final isCurrentlyPlaying =
+        _currentPlayingUrl == message.voiceFileUrl && _isPlaying;
+    final hasValidUrl =
+        message.voiceFileUrl != null && message.voiceFileUrl!.isNotEmpty;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isMe
+            ? AppColors.pureWhite.withValues(alpha: 0.2)
+            : AppColors.primaryBlue.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: hasValidUrl
+                ? () => _toggleAudioPlayback(message.voiceFileUrl)
+                : null,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: hasValidUrl
+                    ? (isMe ? AppColors.pureWhite : AppColors.primaryBlue)
+                    : AppColors.mediumGrey,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isCurrentlyPlaying ? Iconsax.pause : Iconsax.play,
+                color: hasValidUrl
+                    ? (isMe ? AppColors.primaryBlue : AppColors.pureWhite)
+                    : AppColors.pureWhite,
+                size: 16,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Iconsax.microphone_2,
+                      color: isMe ? AppColors.pureWhite : AppColors.primaryBlue,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Voice message',
+                      style: TextStyle(
+                        color: isMe
+                            ? AppColors.pureWhite
+                            : AppColors.primaryBlue,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                if (!hasValidUrl) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'Audio file unavailable',
+                    style: TextStyle(
+                      color: isMe
+                          ? AppColors.pureWhite.withValues(alpha: 0.7)
+                          : AppColors.mediumGrey,
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (isCurrentlyPlaying) ...[
+            const SizedBox(width: 8),
+            SizedBox(
+              width: 12,
+              height: 12,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  isMe ? AppColors.pureWhite : AppColors.primaryBlue,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _formatMessageTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inDays > 0) {
+      return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
+  Widget _buildMessageInput() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.pureWhite,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.charcoalGrey.withValues(alpha: 0.1),
+            blurRadius: 4,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.lightBackground,
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: AppColors.mediumGrey.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _messageController,
+                        decoration: const InputDecoration(
+                          hintText: 'Type a message...',
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        maxLines: null,
+                        textCapitalization: TextCapitalization.sentences,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _pickAudioFile,
+                      icon: const Icon(
+                        Iconsax.attach_circle,
+                        color: AppColors.mediumGrey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Consumer<SendMessageProvider>(
+              builder: (context, sendProvider, child) {
+                if (sendProvider.isLoading) {
+                  return Container(
+                    width: 48,
+                    height: 48,
+                    decoration: const BoxDecoration(
+                      color: AppColors.primaryBlue,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Center(
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: AppColors.pureWhite,
+                          strokeWidth: 2,
+                        ),
+                      ),
                     ),
                   );
                 }
 
-                return ListView.separated(
-                  controller: _scrollController,
-                  reverse: true,
-                  itemCount:
-                      provider.messages.length + (provider.hasMore ? 1 : 0),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    if (index == provider.messages.length) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    final message = provider.messages[index];
-                    return GestureDetector(
-                      onLongPress: () => _showMessageOptions(message),
-                      child: _buildMessageItem(message),
-                    );
-                  },
+                return Row(
+                  children: [
+                    GestureDetector(
+                      onLongPressStart: (_) => _startRecording(),
+                      onLongPressEnd: (_) => _stopRecording(),
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: _isRecording
+                              ? AppColors.red
+                              : AppColors.primaryBlue,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          _isRecording ? Iconsax.stop : Iconsax.microphone,
+                          color: AppColors.pureWhite,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: _sendTextMessage,
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration: const BoxDecoration(
+                          color: AppColors.tealGreen,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Iconsax.send_1,
+                          color: AppColors.pureWhite,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
-          ),
-          if (_isUploading)
-            LinearProgressIndicator(value: _uploadProgress, minHeight: 2),
-          _buildInputField(),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Future<File?> convertToMp3(File inputFile) async {
-    final dir = await getTemporaryDirectory();
-    final outputPath = p.join(
-      dir.path,
-      '${DateTime.now().millisecondsSinceEpoch}.mp3',
-    );
+  Future<void> _toggleAudioPlayback(String? audioUrl) async {
+    if (audioUrl == null || audioUrl.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Audio file not available'),
+            backgroundColor: AppColors.red,
+          ),
+        );
+      }
+      return;
+    }
 
-    final command =
-        '-i "${inputFile.path}" -vn -ar 44100 -ac 2 -b:a 192k "$outputPath"';
+    try {
+      if (_currentPlayingUrl == audioUrl && _isPlaying) {
+        await _audioPlayer.pause();
+        setState(() {
+          _isPlaying = false;
+        });
+      } else {
+        // Stop any currently playing audio
+        if (_isPlaying) {
+          await _audioPlayer.stop();
+        }
 
-    final session = await FFmpegKit.execute(command);
+        // Set up the new audio URL
+        await _audioPlayer.setUrl(audioUrl);
+        await _audioPlayer.play();
 
-    final returnCode = await session.getReturnCode();
+        setState(() {
+          _currentPlayingUrl = audioUrl;
+          _isPlaying = true;
+        });
 
-    if (ReturnCode.isSuccess(returnCode)) {
-      return File(outputPath);
-    } else {
-      // Handle conversion failure
+        // Listen for completion
+        _audioPlayer.playerStateStream.listen((state) {
+          if (mounted && state.processingState == ProcessingState.completed) {
+            setState(() {
+              _isPlaying = false;
+              _currentPlayingUrl = null;
+            });
+          }
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isPlaying = false;
+        _currentPlayingUrl = null;
+      });
 
-      return null;
+      if (mounted) {
+        String errorMessage = 'Error playing audio';
+        if (e.toString().contains('Cleartext HTTP traffic not permitted')) {
+          errorMessage =
+              'Audio playback requires secure connection. Please check network settings.';
+        } else if (e.toString().contains('Unable to connect')) {
+          errorMessage =
+              'Unable to connect to audio server. Please check your internet connection.';
+        } else if (e.toString().contains('404') ||
+            e.toString().contains('not found')) {
+          errorMessage = 'Audio file not found on server.';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: AppColors.red,
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: AppColors.pureWhite,
+              onPressed: () => _toggleAudioPlayback(audioUrl),
+            ),
+          ),
+        );
+      }
     }
   }
 
   Future<void> _startRecording() async {
-    final micPermission = await Permission.microphone.request();
-    if (!micPermission.isGranted) {
-      showAppSnackBar(
-        context,
-        AppLocalizations.of(context)!.microphonePermissionRequired,
-      );
-      openAppSettings();
-      return;
-    }
-
-    final dir = await getTemporaryDirectory();
-    final filePath = '${dir.path}/${const Uuid().v4()}.m4a';
-
     try {
-      await _recorder.start(
-        RecordConfig(
+      final permission = await Permission.microphone.request();
+      if (permission != PermissionStatus.granted) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Microphone permission is required to record audio',
+              ),
+              backgroundColor: AppColors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      final directory = await getTemporaryDirectory();
+      final fileName = 'voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+      _recordingPath = path.join(directory.path, fileName);
+
+      await _audioRecorder.start(
+        const RecordConfig(
           encoder: AudioEncoder.aacLc,
           bitRate: 128000,
           sampleRate: 44100,
         ),
-        path: filePath,
+        path: _recordingPath!,
       );
 
-      _recordingFilePath = filePath;
-      _stopwatch
-        ..reset()
-        ..start();
-      _recordingTimer = Timer.periodic(
-        const Duration(seconds: 1),
-        (_) => setState(() {}),
-      );
-      setState(() => _isRecording = true);
+      setState(() {
+        _isRecording = true;
+        _recordingDuration = Duration.zero;
+      });
+
+      HapticFeedback.lightImpact();
     } catch (e) {
-      showAppSnackBar(
-        context,
-        AppLocalizations.of(context)!.failedToStartRecording,
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error starting recording: $e'),
+            backgroundColor: AppColors.red,
+          ),
+        );
+      }
     }
   }
 
-  Future<void> _stopRecording({bool send = true}) async {
+  Future<void> _stopRecording() async {
     if (!_isRecording) return;
 
     try {
-      final path = await _recorder.stop();
-      _recordingTimer?.cancel();
-      _stopwatch.stop();
-      setState(() => _isRecording = false);
+      await _audioRecorder.stop();
+      setState(() {
+        _isRecording = false;
+      });
 
-      if (!send) return;
+      HapticFeedback.lightImpact();
 
-      if (path != null && await File(path).exists()) {
-        final originalFile = File(path);
-        if (await originalFile.length() > 0) {
-          final mp3File = await convertToMp3(originalFile);
-          if (mp3File != null && await mp3File.exists()) {
-            await _sendAudioMessage(mp3File);
-            unawaited(originalFile.delete()); // delete original file
-          } else {
-            showAppSnackBar(
-              context,
-              AppLocalizations.of(context)!.failedToConvertAudioToMp3,
-            );
-          }
-        } else {
-          showAppSnackBar(
-            context,
-            AppLocalizations.of(context)!.emptyAudioFile,
-          );
+      if (_recordingPath != null) {
+        final file = File(_recordingPath!);
+        if (await file.exists()) {
+          await _sendVoiceMessage(file);
         }
       }
     } catch (e) {
-      showAppSnackBar(context, AppLocalizations.of(context)!.recordingError);
-    } finally {
-      _recordingFilePath = null;
-    }
-  }
-
-  Future<void> _cancelRecording() async {
-    await _stopRecording(send: false);
-    if (_recordingFilePath != null) {
-      final file = File(_recordingFilePath!);
-      if (await file.exists()) await file.delete();
-    }
-    showAppSnackBar(context, AppLocalizations.of(context)!.recordingCancelled);
-  }
-
-  Future<void> _sendAudioMessage(File file) async {
-    final provider = context.read<SendMessageProvider>();
-    double currentProgress = 0.0;
-
-    void progressListener() {
-      final newProgress = provider.uploadProgress.value;
-      if (mounted && newProgress != currentProgress) {
-        currentProgress = newProgress;
-        setState(() => _uploadProgress = newProgress);
-      }
-    }
-
-    provider.uploadProgress.addListener(progressListener);
-    setState(() {
-      _isUploading = true;
-      _uploadProgress = 0.0;
-    });
-
-    try {
-      await provider.sendVoiceMessage(widget.caseId, file);
-    } finally {
-      provider.uploadProgress.removeListener(progressListener);
-    }
-
-    setState(() => _isUploading = false);
-
-    if (provider.status == SendMessageStatus.sent) {
-      context.read<AllMessagesProvider>().addNewMessage(provider.sentMessage!);
-      unawaited(file.delete());
-    } else {
-      showAppSnackBar(
-        context,
-        provider.errorMessage ?? AppLocalizations.of(context)!.sendFailed,
-      );
-    }
-  }
-
-  Future<void> _pickAndSendAudio() async {
-    final mic = await Permission.audio.request();
-    final storage = await Permission.storage.request();
-
-    if (!mic.isGranted && !storage.isGranted) {
-      showAppSnackBar(
-        context,
-        AppLocalizations.of(context)!.microphoneAndStoragePermissionsRequired,
-      );
-      openAppSettings();
-      return;
-    }
-
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['mp3', 'm4a', 'wav'],
-    );
-
-    if (result != null && result.files.single.path != null) {
-      final file = File(result.files.single.path!);
-      if (await file.exists()) {
-        await _sendAudioMessage(file);
-      } else {
-        showAppSnackBar(context, AppLocalizations.of(context)!.fileNotFound);
-      }
-    }
-  }
-
-  String _recordingTimerText() {
-    final seconds = _stopwatch.elapsed.inSeconds;
-    return '00:${seconds.toString().padLeft(2, '0')}';
-  }
-
-  Widget _buildInputField() {
-    final isTextNotEmpty = _textController.text.trim().isNotEmpty;
-
-    return Padding(
-      padding: AppSizes.noAppBarPadding(context),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Iconsax.folder_open),
-            onPressed: _pickAndSendAudio,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextField(
-              controller: _textController,
-              onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: _isRecording
-                    ? _recordingTimerText()
-                    : AppLocalizations.of(context)!.enterMessage,
-                filled: true,
-                fillColor: Theme.of(context).cardColor,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                  borderSide: BorderSide.none,
-                ),
-                suffixIcon: _isRecording
-                    ? Icon(Iconsax.info_circle, color: Colors.red, size: 10)
-                    : null,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          if (_isRecording) ...[
-            CircleAvatar(
-              backgroundColor: Colors.red,
-              child: IconButton(
-                icon: const Icon(Iconsax.close_circle, color: Colors.white),
-                onPressed: _cancelRecording,
-              ),
-            ),
-            const SizedBox(width: 8),
-            CircleAvatar(
-              backgroundColor: Colors.green,
-              child: IconButton(
-                icon: const Icon(Iconsax.send_2, color: Colors.white),
-                onPressed: () => _stopRecording(send: true),
-              ),
-            ),
-          ] else
-            CircleAvatar(
-              backgroundColor: Theme.of(context).primaryColor,
-              child: IconButton(
-                icon: Icon(
-                  isTextNotEmpty ? Iconsax.send1 : Iconsax.microphone,
-                  color: Colors.white,
-                ),
-                onPressed: isTextNotEmpty ? _sendMessage : _startRecording,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _sendMessage() async {
-    final provider = context.read<SendMessageProvider>();
-    final content = _textController.text.trim();
-    if (content.isEmpty) return;
-
-    _textController.clear();
-    await provider.sendTextMessage(widget.caseId, content);
-
-    if (!mounted) return;
-
-    if (provider.status == SendMessageStatus.sent) {
-      context.read<AllMessagesProvider>().addNewMessage(provider.sentMessage!);
-    } else {
-      showAppSnackBar(
-        context,
-        provider.errorMessage ?? AppLocalizations.of(context)!.sendFailed,
-      );
-    }
-  }
-
-  Widget _buildMessageItem(MessageModel message) {
-    final provider = context.read<AuthProvider>();
-    final isMe = provider.user?.account?.id == message.account;
-    final isVoice = message.type == 'voice';
-
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 300),
-        decoration: BoxDecoration(
-          color: isMe
-              ? Theme.of(context).primaryColor.withValues(alpha: 0.1)
-              : Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        padding: const EdgeInsets.all(12),
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (!isMe)
-              Text(
-                message.senderName,
-                style: Theme.of(context).textTheme.labelSmall,
-              ),
-            const SizedBox(height: 4),
-            if (isVoice)
-              VoiceMessagePlayer(
-                messageId: message.id,
-                url: message.voiceSteamUrl ?? '',
-                currentPlayingId: _currentPlayingId,
-              )
-            else
-              Text(
-                message.content ?? '',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            const SizedBox(height: 4),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Text(
-                _formatTime(message.createdAt),
-                style: Theme.of(context).textTheme.labelSmall,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showMessageOptions(MessageModel message) {
-    showModalBottomSheet(
-      context: context,
-      builder: (_) => SafeArea(
-        child: Wrap(
-          children: [
-            if (message.type == 'text')
-              ListTile(
-                leading: const Icon(Iconsax.edit),
-                title: Text(
-                  AppLocalizations.of(context)!.edit,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  _editMessage(message);
-                },
-              ),
-            ListTile(
-              leading: const Icon(Iconsax.trash),
-              title: Text(
-                AppLocalizations.of(context)!.delete,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                _deleteMessage(message.id);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _formatTime(DateTime? dateTime) {
-    if (dateTime == null) return '';
-    final time = TimeOfDay.fromDateTime(dateTime.toLocal());
-    return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
-  }
-
-  Future<void> _editMessage(MessageModel message) async {
-    final provider = context.read<EditDeleteMessageProvider>();
-    final controller = TextEditingController(text: message.content);
-
-    await showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(
-          AppLocalizations.of(context)!.editMessageTitle,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.writeNewMessage,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              AppLocalizations.of(context)!.cancel,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-          TextButton(
-            onPressed: () async {
-              await provider.editMessage(message.id, controller.text);
-              if (provider.status == EditDeleteStatus.success && mounted) {
-                context.read<AllMessagesProvider>().updateMessage(
-                  provider.updatedMessage!,
-                );
-                Navigator.pop(context);
-              } else if (mounted) {
-                showAppSnackBar(
-                  context,
-                  provider.errorMessage ??
-                      AppLocalizations.of(context)!.failedToEditMessage,
-                );
-              }
-            },
-            child: Text(
-              AppLocalizations.of(context)!.save,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _deleteMessage(int messageId) async {
-    final provider = context.read<EditDeleteMessageProvider>();
-    await provider.deleteMessage(messageId);
-
-    if (provider.status == EditDeleteStatus.success && mounted) {
-      context.read<AllMessagesProvider>().removeMessage(messageId);
-    } else if (mounted) {
-      showAppSnackBar(context, provider.errorMessage);
-    }
-  }
-}
-
-class VoiceMessagePlayer extends StatefulWidget {
-  final int messageId;
-  final String url;
-  final ValueNotifier<int?> currentPlayingId;
-
-  const VoiceMessagePlayer({
-    super.key,
-    required this.messageId,
-    required this.url,
-    required this.currentPlayingId,
-  });
-
-  @override
-  State<VoiceMessagePlayer> createState() => _VoiceMessagePlayerState();
-}
-
-class _VoiceMessagePlayerState extends State<VoiceMessagePlayer> {
-  late final AudioPlayer _player;
-  Duration _duration = Duration.zero;
-  Duration _position = Duration.zero;
-  late final StreamSubscription<Duration> _posSub;
-  late final StreamSubscription<Duration?> _durSub;
-  late final StreamSubscription<PlayerState> _stateSub;
-
-  bool get isPlaying => widget.currentPlayingId.value == widget.messageId;
-
-  @override
-  void initState() {
-    super.initState();
-    _player = AudioPlayer();
-
-    _durSub = _player.durationStream.listen((d) {
-      if (!mounted) return;
-      setState(() => _duration = d ?? Duration.zero);
-    });
-    _posSub = _player.positionStream
-        .throttleTime(const Duration(milliseconds: 100))
-        .listen((p) {
-          if (!mounted) return;
-          setState(() => _position = p);
-        });
-
-    _stateSub = _player.playerStateStream.listen((s) {
-      if (!mounted) return;
-      if (!s.playing && isPlaying) {
-        widget.currentPlayingId.value = null;
-      }
-    });
-
-    // Stop this player if another starts
-    widget.currentPlayingId.addListener(() async {
-      if (!mounted) return;
-      if (!isPlaying) {
-        await _player.stop();
-      }
-    });
-  }
-
-  Future<void> _play() async {
-    try {
-      // Stop any other players
-      widget.currentPlayingId.value = widget.messageId;
-
-      final tokenProvider = context.read<AuthProvider>();
-      final token = tokenProvider.accessToken;
-
-      if (token != null) {
-        await _player.setAudioSource(
-          AudioSource.uri(
-            Uri.parse(widget.url),
-            headers: {'Authorization': 'Bearer $token'},
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error stopping recording: $e'),
+            backgroundColor: AppColors.red,
           ),
         );
-      } else {
-        await _player.setUrl(widget.url);
       }
-
-      await _player.play();
-    } catch (e) {
-      if (!mounted) return;
-      showAppSnackBar(context, AppLocalizations.of(context)!.playbackError);
     }
   }
 
-  Future<void> _stop() async {
-    await _player.stop();
-    if (mounted && isPlaying) widget.currentPlayingId.value = null;
-  }
+  Future<void> _pickAudioFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.audio,
+        allowMultiple: false,
+      );
 
-  @override
-  void dispose() {
-    _posSub.cancel();
-    _durSub.cancel();
-    _stateSub.cancel();
-    _player.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final displayPos = isPlaying ? _position : Duration.zero;
-    return Row(
-      children: [
-        IconButton(
-          iconSize: 30,
-          icon: Icon(
-            isPlaying ? Iconsax.pause_circle : Iconsax.play_circle,
-            color: Theme.of(context).primaryColor,
+      if (result != null && result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+        await _sendVoiceMessage(file);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error picking audio file: $e'),
+            backgroundColor: AppColors.red,
           ),
-          onPressed: () async {
-            if (isPlaying) {
-              await _stop();
-            } else {
-              await _play();
-            }
-          },
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Slider(
-                value: displayPos.inMilliseconds.toDouble().clamp(
-                  0,
-                  _duration.inMilliseconds.toDouble(),
-                ),
-                max: _duration.inMilliseconds.toDouble().clamp(
-                  1,
-                  double.infinity,
-                ),
-                onChanged: (v) =>
-                    _player.seek(Duration(milliseconds: v.toInt())),
-                activeColor: Theme.of(context).primaryColor,
-                inactiveColor: Colors.grey.shade300,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _formatDuration(displayPos),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  Text(
-                    _formatDuration(_duration),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+        );
+      }
+    }
   }
 
-  String _formatDuration(Duration duration) {
-    final m = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final s = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$m:$s';
+  Future<void> _sendTextMessage() async {
+    final content = _messageController.text.trim();
+    if (content.isEmpty) return;
+
+    _messageController.clear();
+
+    final sendProvider = context.read<SendMessageProvider>();
+    await sendProvider.sendTextMessage(widget.caseId, content);
+
+    if (sendProvider.status == SendMessageStatus.sent &&
+        sendProvider.sentMessage != null) {
+      if (mounted) {
+        context.read<AllMessagesProvider>().addNewMessage(
+          sendProvider.sentMessage!,
+        );
+        _scrollToBottom();
+      }
+    } else if (sendProvider.status == SendMessageStatus.error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              sendProvider.errorMessage ?? 'Failed to send message',
+            ),
+            backgroundColor: AppColors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _sendVoiceMessage(File audioFile) async {
+    final sendProvider = context.read<SendMessageProvider>();
+    await sendProvider.sendVoiceMessage(widget.caseId, audioFile);
+
+    if (sendProvider.status == SendMessageStatus.sent &&
+        sendProvider.sentMessage != null) {
+      if (mounted) {
+        context.read<AllMessagesProvider>().addNewMessage(
+          sendProvider.sentMessage!,
+        );
+        _scrollToBottom();
+      }
+    } else if (sendProvider.status == SendMessageStatus.error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              sendProvider.errorMessage ?? 'Failed to send voice message',
+            ),
+            backgroundColor: AppColors.red,
+          ),
+        );
+      }
+    }
+
+    // Clean up temporary file if it was a recording
+    if (_recordingPath != null && audioFile.path == _recordingPath) {
+      try {
+        await audioFile.delete();
+        _recordingPath = null;
+      } catch (e) {
+        // Ignore cleanup errors
+      }
+    }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 }

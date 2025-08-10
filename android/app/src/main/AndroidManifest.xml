@@ -67,11 +67,12 @@
         android:label="Ovacs"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
         android:preserveLegacyExternalStorage="true"
         android:largeHeap="true"
-        android:hardwareAccelerated="true">
+        android:hardwareAccelerated="true"
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config">
 
         <!-- ✅ REQUIRED for open_filex -->
         <provider
@@ -91,7 +92,6 @@
             android:taskAffinity=""
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize"
             android:enableOnBackInvokedCallback="true">
             <meta-data

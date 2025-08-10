@@ -136,6 +136,7 @@ class PermissionConfig {
         PermissionAction.list,
       ],
       PermissionResource.document: [
+        PermissionAction.create, // Gold can create green and yellow documents
         PermissionAction.read,
         PermissionAction.list,
       ],
@@ -157,6 +158,7 @@ class PermissionConfig {
         PermissionAction.list,
       ],
       PermissionResource.document: [
+        PermissionAction.create, // Silver can create green documents only
         PermissionAction.read,
         PermissionAction.list,
       ],
@@ -249,5 +251,36 @@ class PermissionConfig {
         .where((entry) => entry.value.contains(role))
         .map((entry) => entry.key)
         .toList();
+  }
+
+  /// Get document security levels that a role can create/upload
+  /// This is more restrictive than read access
+  static List<DocumentSecurityLevel> getCreatableDocumentLevels(UserRole role) {
+    switch (role) {
+      case UserRole.owner:
+      case UserRole.admin:
+      case UserRole.diamond:
+        // Can create all security levels
+        return [
+          DocumentSecurityLevel.red,
+          DocumentSecurityLevel.yellow,
+          DocumentSecurityLevel.green,
+        ];
+      case UserRole.gold:
+        // Can create yellow and green documents only
+        return [DocumentSecurityLevel.yellow, DocumentSecurityLevel.green];
+      case UserRole.silver:
+        // Can create green documents only
+        return [DocumentSecurityLevel.green];
+    }
+  }
+
+  /// Check if a role can create documents with a specific security level
+  static bool canCreateDocumentLevel(
+    UserRole role,
+    DocumentSecurityLevel level,
+  ) {
+    final creatableLevels = getCreatableDocumentLevels(role);
+    return creatableLevels.contains(level);
   }
 }

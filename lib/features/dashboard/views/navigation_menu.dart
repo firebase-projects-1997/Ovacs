@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart'; // تأكد من إضافته في pubspec.yaml
 import 'package:provider/provider.dart';
@@ -5,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../../../common/providers/workspace_provider.dart';
 import '../../../common/widgets/workspace_banner.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../services/trial_service.dart';
+import '../../trial/widgets/trial_banner.dart';
 import '../../case/views/cases_page.dart';
 import '../../client/views/clients_page.dart';
 import '../../connection/views/connections_page.dart';
@@ -20,6 +23,30 @@ class NavigationMenu extends StatefulWidget {
 
 class _NavigationMenuState extends State<NavigationMenu> {
   int index = 0;
+  Timer? _trialCheckTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Check trial status every minute
+    _trialCheckTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      final trialService = context.read<TrialService>();
+      trialService.checkTrialStatus();
+
+      // If trial expired, navigate to trial expired page
+      if (trialService.isTrialExpired) {
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil('/trial-expired', (route) => false);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _trialCheckTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +91,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
           body: Column(
             children: [
               const WorkspaceBanner(),
+              // const TrialBanner(),
               Expanded(child: pages[index]),
             ],
           ),

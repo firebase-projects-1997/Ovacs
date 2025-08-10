@@ -9,7 +9,7 @@ class MessageModel {
   final String? content;
   final String? voiceFile;
   final String? voiceFileUrl;
-  final String? voiceSteamUrl;
+  final String? voiceStreamUrl;
   final DateTime createdAt;
   final bool isActive;
 
@@ -25,7 +25,8 @@ class MessageModel {
     this.voiceFile,
     this.voiceFileUrl,
     required this.createdAt,
-    required this.isActive,this.voiceSteamUrl
+    required this.isActive,
+    this.voiceStreamUrl,
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
@@ -40,7 +41,7 @@ class MessageModel {
       content: json['content'],
       voiceFile: json['voice_file'],
       voiceFileUrl: json['voice_file_url'],
-      voiceSteamUrl: json['voice_stream_url'],
+      voiceStreamUrl: json['voice_stream_url'],
       createdAt: DateTime.parse(json['created_at']),
       isActive: json['is_active'],
     );
@@ -60,7 +61,7 @@ class MessageModel {
       'voice_file_url': voiceFileUrl,
       'created_at': createdAt.toIso8601String(),
       'is_active': isActive,
-      'voice_stream_url':voiceSteamUrl
+      'voice_stream_url': voiceStreamUrl,
     };
   }
 
@@ -77,7 +78,7 @@ class MessageModel {
     String? voiceFileUrl,
     DateTime? createdAt,
     bool? isActive,
-    String? voiceSteamUrl
+    String? voiceStreamUrl
   }) {
     return MessageModel(
       id: id ?? this.id,
@@ -92,7 +93,7 @@ class MessageModel {
       voiceFileUrl: voiceFileUrl ?? this.voiceFileUrl,
       createdAt: createdAt ?? this.createdAt,
       isActive: isActive ?? this.isActive,
-      voiceSteamUrl: voiceSteamUrl ?? this.voiceSteamUrl
+      voiceStreamUrl: voiceStreamUrl ?? this.voiceStreamUrl,
     );
   }
 }

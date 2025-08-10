@@ -15,7 +15,7 @@ import 'features/auth/views/login_page.dart';
 import 'features/case/provider/add_case_provider.dart';
 import 'features/case/provider/case_details_provider.dart';
 import 'features/case/provider/cases_provider.dart';
-import 'features/case/providers/assigned_accounts_provider.dart';
+import 'features/case/provider/assigned_accounts_provider.dart';
 import 'features/client/providers/add_client_provider.dart';
 import 'features/client/providers/client_details_provider.dart';
 import 'features/client/providers/clients_provider.dart';
@@ -47,16 +47,18 @@ import 'features/message/providers/message_details_provider.dart';
 import 'features/message/providers/messages_provider.dart';
 import 'features/message/providers/send_message_provider.dart';
 import 'features/onboarding/views/welcome_page.dart';
+import 'features/trial/views/trial_expired_page.dart';
 import 'l10n/app_localizations.dart';
+import 'services/trial_service.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupLocator();
-
   final authProvider = getIt<AuthProvider>();
   await authProvider.init();
+  final trialService = getIt<TrialService>();
+  await trialService.init();
 
   runApp(
     DevicePreview(
@@ -84,6 +86,16 @@ class _MainAppState extends State<MainApp> {
     _initFuture = widget.authProvider.init();
   }
 
+  Widget Function(BuildContext) _getInitialRoute(AuthProvider authProvider) {
+    return (context) {
+      if (authProvider.accessToken != null) {
+        return const NavigationMenu();
+      } else {
+        return const WelcomePage();
+      }
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -98,6 +110,7 @@ class _MainAppState extends State<MainApp> {
         final themeProvider = getIt<ThemeProvider>()..init();
         final localeProvider = getIt<LocaleProvider>()..init();
         final workspaceProvider = getIt<WorkspaceProvider>()..init();
+        final trialService = getIt<TrialService>();
 
         return MultiProvider(
           providers: [
@@ -105,6 +118,8 @@ class _MainAppState extends State<MainApp> {
             ChangeNotifierProvider(create: (_) => themeProvider),
             ChangeNotifierProvider(create: (_) => localeProvider),
             ChangeNotifierProvider(create: (_) => workspaceProvider),
+            // trial
+            ChangeNotifierProvider(create: (_) => trialService),
             // auth
             ChangeNotifierProvider(create: (_) => widget.authProvider),
             ChangeNotifierProvider(
@@ -196,8 +211,8 @@ class _MainAppState extends State<MainApp> {
               create: (context) => getIt<SendInvitationProvider>(),
             ),
           ],
-          child: Consumer2<ThemeProvider, LocaleProvider>(
-            builder: (context, themeProvider, localeProvider, _) {
+          child: Consumer3<ThemeProvider, LocaleProvider, TrialService>(
+            builder: (context, themeProvider, localeProvider, trialService, _) {
               return MaterialApp(
                 navigatorKey: navigatorKey,
                 debugShowCheckedModeBanner: false,
@@ -226,9 +241,7 @@ class _MainAppState extends State<MainApp> {
                       ),
                 initialRoute: '/',
                 routes: {
-                  '/': widget.authProvider.accessToken != null
-                      ? (context) => const NavigationMenu()
-                      : (context) => const WelcomePage(),
+                  '/': _getInitialRoute(widget.authProvider),
                   AppRoutes.loginRoute: (_) => const LoginPage(),
                   AppRoutes.navigationMenuRoute: (_) => const NavigationMenu(),
                   AppRoutes.forgetPasswordRoute: (_) =>
@@ -236,6 +249,7 @@ class _MainAppState extends State<MainApp> {
                   AppRoutes.registerRoute: (_) => const RegisterPage(),
                   AppRoutes.homeRoute: (_) => const DashboardPage(),
                   AppRoutes.addClientRoute: (_) => const AddNewClientPage(),
+                  '/trial-expired': (_) => const TrialExpiredPage(),
                 },
               );
             },

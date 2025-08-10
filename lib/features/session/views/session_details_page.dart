@@ -12,6 +12,7 @@ import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/widgets/rounded_container.dart';
+import '../../../common/widgets/permission_guard.dart';
 import '../../../core/functions/is_dark_mode.dart';
 import '../../document/views/groups_page.dart';
 import '../../document/views/upload_documents_page.dart';
@@ -35,9 +36,20 @@ class SessionDetailsPage extends StatefulWidget {
 class _SessionDetailsPageState extends State<SessionDetailsPage>
     with PermissionMixin {
   late ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
+    _loadSessionData();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _loadSessionData() {
     Future.microtask(() async {
       if (!mounted) return;
 
@@ -53,6 +65,8 @@ class _SessionDetailsPageState extends State<SessionDetailsPage>
         extraParams: {'session_id': widget.sessionId},
       );
     });
+
+    // Initialize scroll controller
     _scrollController = ScrollController();
     _scrollController.addListener(() {
       final provider = context.read<SessionsProvider>();
@@ -64,12 +78,6 @@ class _SessionDetailsPageState extends State<SessionDetailsPage>
         provider.fetchMoreSessions();
       }
     });
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 
   @override
@@ -290,12 +298,11 @@ class _SessionDetailsPageState extends State<SessionDetailsPage>
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
-                      // Only show add document button if user has create permission
-                      if (hasPermissionWithOwnership(
-                        PermissionResource.document,
-                        PermissionAction.create,
-                      ))
-                        RoundedContainer(
+                      // Add document button with security level restrictions
+                      PermissionGuard(
+                        resource: PermissionResource.document,
+                        action: PermissionAction.create,
+                        child: RoundedContainer(
                           onTap: () {
                             navigatorKey.currentState!.push(
                               MaterialPageRoute(
@@ -312,9 +319,76 @@ class _SessionDetailsPageState extends State<SessionDetailsPage>
                                 : AppColors.charcoalGrey,
                           ),
                         ),
+                      ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  // Search field for documents
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        hintText:
+                            'Search documents by name or security level...',
+                        prefixIcon: const Icon(Iconsax.search_normal),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Iconsax.close_circle),
+                          onPressed: () {
+                            // Clear search and refresh documents
+                            context
+                                .read<DocumentsProvider>()
+                                .fetchDocumentsBySession(
+                                  extraParams: {'session_id': widget.sessionId},
+                                );
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: AppColors.mediumGrey.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: AppColors.mediumGrey.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.primaryBlue,
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: AppColors.pureWhite,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        if (value.trim().isEmpty) {
+                          // Clear search when input is empty
+                          context
+                              .read<DocumentsProvider>()
+                              .fetchDocumentsBySession(
+                                extraParams: {'session_id': widget.sessionId},
+                              );
+                        } else {
+                          // Search by file name or security level
+                          final extraParams = <String, dynamic>{
+                            'session_id': widget.sessionId,
+                            'search': value.trim(),
+                          };
+                          context
+                              .read<DocumentsProvider>()
+                              .fetchDocumentsBySession(
+                                extraParams: extraParams,
+                              );
+                        }
+                      },
+                    ),
+                  ),
                   Consumer<DocumentsProvider>(
                     builder: (context, value, child) {
                       if (value.isLoading) {

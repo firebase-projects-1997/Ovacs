@@ -6,6 +6,10 @@ import 'package:provider/provider.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../providers/upload_documents_provider.dart';
+import '../../../core/config/permission_config.dart';
+import '../../../core/enums/document_security_level.dart';
+import '../../../core/enums/user_role.dart';
+import '../../../core/mixins/permission_mixin.dart';
 
 class UploadDocumentsPage extends StatefulWidget {
   final int id;
@@ -25,7 +29,8 @@ class UploadDocumentsPage extends StatefulWidget {
   State<UploadDocumentsPage> createState() => _UploadDocumentsPageState();
 }
 
-class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
+class _UploadDocumentsPageState extends State<UploadDocumentsPage>
+    with PermissionMixin {
   late TextEditingController _groupNameController;
   late TextEditingController _groupDescriptionController;
 
@@ -42,6 +47,47 @@ class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
       text: widget.groupDescription ?? '',
     );
     _storeAsGroup = widget.groupId != null || widget.groupName != null;
+    // Load permissions
+    loadPermissions().then((_) {
+      // Reset selected security level if it's not allowed for current user
+      if (_selectedSecurityLevel != null) {
+        final allowedLevels = _getAllowedSecurityLevels();
+        if (!allowedLevels.contains(_selectedSecurityLevel)) {
+          setState(() {
+            _selectedSecurityLevel = null;
+          });
+        }
+      }
+    });
+  }
+
+  /// Get allowed security levels based on user role
+  List<String> _getAllowedSecurityLevels() {
+    final userRole = currentUserRole;
+    final allowedLevels = PermissionConfig.getCreatableDocumentLevels(userRole);
+
+    return allowedLevels.map((level) => level.value).toList();
+  }
+
+  /// Get display name for security level
+  String _getSecurityLevelDisplayName(String level) {
+    final securityLevel = DocumentSecurityLevel.fromString(level);
+    return securityLevel.displayName;
+  }
+
+  /// Get helper text for security level dropdown
+  String _getSecurityLevelHelperText() {
+    final userRole = currentUserRole;
+    switch (userRole) {
+      case UserRole.silver:
+        return 'Silver users can only upload Green (General) documents';
+      case UserRole.gold:
+        return 'Gold users can upload Yellow (Confidential) and Green (General) documents';
+      case UserRole.diamond:
+      case UserRole.admin:
+      case UserRole.owner:
+        return 'You can upload documents with any security level';
+    }
   }
 
   @override
@@ -86,6 +132,20 @@ class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
       _showSnackBar(AppLocalizations.of(context)!.pleaseSelectSecurityLevel);
       return;
     }
+
+    // Validate user has permission to upload documents with selected security level
+    final userRole = currentUserRole;
+    final selectedLevel = DocumentSecurityLevel.fromString(
+      _selectedSecurityLevel!,
+    );
+    if (!PermissionConfig.canCreateDocumentLevel(userRole, selectedLevel)) {
+      _showSnackBar(
+        'You do not have permission to upload ${selectedLevel.displayName} documents. '
+        'Please select a different security level.',
+      );
+      return;
+    }
+
     if (_storeAsGroup && _groupNameController.text.trim().isEmpty) {
       _showSnackBar(AppLocalizations.of(context)!.pleaseEnterGroupName);
       return;
@@ -159,11 +219,11 @@ class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
           children: [
             DropdownButtonFormField<String>(
               value: _selectedSecurityLevel,
-              items: ['red', 'yellow', 'green']
+              items: _getAllowedSecurityLevels()
                   .map(
                     (level) => DropdownMenuItem(
                       value: level,
-                      child: Text(level[0].toUpperCase() + level.substring(1)),
+                      child: Text(_getSecurityLevelDisplayName(level)),
                     ),
                   )
                   .toList(),
@@ -171,6 +231,7 @@ class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
                   setState(() => _selectedSecurityLevel = value),
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.securityLevel,
+                helperText: _getSecurityLevelHelperText(),
               ),
             ),
             const SizedBox(height: 15),

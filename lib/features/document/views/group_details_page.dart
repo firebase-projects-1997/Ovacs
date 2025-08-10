@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import '../../../common/widgets/rounded_container.dart';
+import '../../../common/widgets/permission_guard.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/enums/permission_resource.dart';
 import '../../../core/enums/permission_action.dart';
@@ -92,12 +93,11 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
                       AppLocalizations.of(context)!.documents,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    // Only show add document button if user has create permission
-                    if (hasPermissionWithOwnership(
-                      PermissionResource.document,
-                      PermissionAction.create,
-                    ))
-                      RoundedContainer(
+                    // Add document button with security level restrictions
+                    PermissionGuard(
+                      resource: PermissionResource.document,
+                      action: PermissionAction.create,
+                      child: RoundedContainer(
                         onTap: () {
                           navigatorKey.currentState!.push(
                             MaterialPageRoute(
@@ -117,6 +117,7 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
                               : AppColors.charcoalGrey,
                         ),
                       ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 10),

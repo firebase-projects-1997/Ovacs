@@ -28,4 +28,13 @@ class AppSizes {
       bottom: MediaQuery.paddingOf(context).bottom + 20,
     );
   }
+
+  static double screenWidth(BuildContext context) => MediaQuery.of(context).size.width;
+  static double screenHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
+
+  static double w(BuildContext context, double value) =>
+      value * screenWidth(context) / 375;
+  static double h(BuildContext context, double value) =>
+      value * screenHeight(context) / 812;
 }

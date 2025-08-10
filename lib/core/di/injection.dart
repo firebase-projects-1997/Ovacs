@@ -16,7 +16,7 @@ import 'package:new_ovacs/data/repositories/permission_repository.dart';
 import 'package:new_ovacs/features/case/provider/add_case_provider.dart';
 import 'package:new_ovacs/features/case/provider/case_details_provider.dart';
 import 'package:new_ovacs/features/case/provider/cases_provider.dart';
-import 'package:new_ovacs/features/case/providers/assigned_accounts_provider.dart';
+import 'package:new_ovacs/features/case/provider/assigned_accounts_provider.dart';
 import 'package:new_ovacs/features/client/providers/add_client_provider.dart';
 import 'package:new_ovacs/features/client/providers/client_details_provider.dart';
 import 'package:new_ovacs/features/client/providers/clients_provider.dart';
@@ -44,6 +44,7 @@ import '../../features/message/providers/edit_delete_message_provider.dart';
 import '../../features/message/providers/message_details_provider.dart';
 import '../../features/message/providers/send_message_provider.dart';
 import '../../services/storage_service.dart';
+import '../../services/trial_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -51,6 +52,9 @@ Future<void> setupLocator() async {
   // storage
   final prefs = await SharedPreferences.getInstance();
   getIt.registerLazySingleton(() => StorageService(prefs));
+
+  // trial service
+  getIt.registerLazySingleton(() => TrialService(getIt<StorageService>()));
 
   // theme & locale
   getIt.registerLazySingleton(() => ThemeProvider(getIt<StorageService>()));
@@ -147,7 +151,10 @@ Future<void> setupLocator() async {
     ),
   );
   getIt.registerLazySingleton(
-    () => AddSessionProvider(getIt<SessionRepository>()),
+    () => AddSessionProvider(
+      getIt<SessionRepository>(),
+      getIt<WorkspaceProvider>(),
+    ),
   );
   getIt.registerLazySingleton(
     () => SessionDetailProvider(
@@ -182,7 +189,10 @@ Future<void> setupLocator() async {
     ),
   );
   getIt.registerLazySingleton(
-    () => UploadDocumentsProvider(getIt<DocumentRepository>()),
+    () => UploadDocumentsProvider(
+      getIt<DocumentRepository>(),
+      getIt<WorkspaceProvider>(),
+    ),
   );
   getIt.registerLazySingleton(
     () =>

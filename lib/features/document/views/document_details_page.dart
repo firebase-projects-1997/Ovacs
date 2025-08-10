@@ -8,6 +8,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/enums/permission_resource.dart';
 import '../../../core/enums/permission_action.dart';
 import '../../../core/enums/document_security_level.dart';
+import '../../../core/enums/user_role.dart';
+import '../../../core/config/permission_config.dart';
 import '../../../common/widgets/permission_guard.dart';
 import '../../../core/mixins/permission_mixin.dart';
 import '../../../data/models/document_model.dart';
@@ -452,6 +454,20 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage>
     );
   }
 
+  /// Get helper text for security level dropdown
+  String _getSecurityLevelHelperText(UserRole userRole) {
+    switch (userRole) {
+      case UserRole.silver:
+        return 'Silver users can only edit Green (General) documents';
+      case UserRole.gold:
+        return 'Gold users can edit Yellow (Confidential) and Green (General) documents';
+      case UserRole.diamond:
+      case UserRole.admin:
+      case UserRole.owner:
+        return 'You can edit documents with any security level';
+    }
+  }
+
   void _showEditDialog(
     BuildContext context,
     DocumentModel document,
@@ -460,26 +476,56 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage>
     String selectedLevel = document.securityLevel;
     final l10n = AppLocalizations.of(context)!;
 
+    // Get allowed security levels for current user role
+    final userRole = currentUserRole;
+    final allowedLevels = PermissionConfig.getCreatableDocumentLevels(userRole);
+    final allowedLevelStrings = allowedLevels
+        .map((level) => level.value)
+        .toList();
+
+    // If current document security level is not in allowed levels, user can't edit it
+    if (!allowedLevelStrings.contains(selectedLevel)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'You do not have permission to edit ${DocumentSecurityLevel.fromString(selectedLevel).displayName} documents.',
+          ),
+          backgroundColor: AppColors.red,
+        ),
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.edit),
-        content: DropdownButtonFormField<String>(
-          value: selectedLevel,
-          items: ['green', 'yellow', 'red']
-              .map(
-                (level) => DropdownMenuItem(
-                  value: level,
-                  child: Text(level[0].toUpperCase() + level.substring(1)),
-                ),
-              )
-              .toList(),
-          onChanged: (value) {
-            if (value != null) {
-              selectedLevel = value;
-            }
-          },
-          decoration: InputDecoration(labelText: l10n.securityLevel),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DropdownButtonFormField<String>(
+              value: selectedLevel,
+              items: allowedLevelStrings
+                  .map(
+                    (level) => DropdownMenuItem(
+                      value: level,
+                      child: Text(
+                        DocumentSecurityLevel.fromString(level).displayName,
+                      ),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  selectedLevel = value;
+                }
+              },
+              decoration: InputDecoration(
+                labelText: l10n.securityLevel,
+                helperText: _getSecurityLevelHelperText(userRole),
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(

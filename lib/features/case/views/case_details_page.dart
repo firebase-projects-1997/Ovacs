@@ -4,7 +4,7 @@ import 'package:new_ovacs/core/constants/app_colors.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
 import 'package:new_ovacs/features/case/provider/case_details_provider.dart';
 import 'package:new_ovacs/features/case/provider/cases_provider.dart';
-import 'package:new_ovacs/features/case/providers/assigned_accounts_provider.dart';
+import 'package:new_ovacs/features/case/provider/assigned_accounts_provider.dart';
 import 'package:new_ovacs/features/connection/providers/connection_provider.dart';
 import 'package:new_ovacs/features/message/views/messages_page.dart';
 import 'package:new_ovacs/features/session/views/add_session_page.dart';
@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 
 import '../../../common/providers/workspace_provider.dart';
 import '../../../common/widgets/rounded_container.dart';
+import '../../../common/widgets/permission_guard.dart';
 import '../../../core/functions/is_dark_mode.dart';
 import '../../../core/enums/permission_resource.dart';
 import '../../../core/enums/permission_action.dart';
@@ -329,35 +330,89 @@ class _CaseDetailsPageState extends State<CaseDetailsPage>
                         AppLocalizations.of(context)!.sessions,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                      // Only show add session button when in personal workspace
-                      Consumer<WorkspaceProvider>(
-                        builder: (context, workspaceProvider, child) {
-                          if (workspaceProvider.isConnectionMode) {
-                            // Don't show add session button when viewing another account's cases
-                            return const SizedBox.shrink();
-                          }
-
-                          return RoundedContainer(
-                            onTap: () {
-                              navigatorKey.currentState!.push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      AddSessionPage(caseId: widget.caseId),
-                                ),
-                              );
-                            },
-                            child: Icon(
-                              Iconsax.add,
-                              color: isDarkMode(context)
-                                  ? AppColors.pureWhite
-                                  : AppColors.charcoalGrey,
-                            ),
-                          );
-                        },
+                      // Show add session button based on permissions
+                      PermissionGuard(
+                        resource: PermissionResource.session,
+                        action: PermissionAction.create,
+                        child: RoundedContainer(
+                          onTap: () {
+                            navigatorKey.currentState!.push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AddSessionPage(caseId: widget.caseId),
+                              ),
+                            );
+                          },
+                          child: Icon(
+                            Iconsax.add,
+                            color: isDarkMode(context)
+                                ? AppColors.pureWhite
+                                : AppColors.charcoalGrey,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  // Search field for sessions
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        hintText: 'Search sessions by title...',
+                        prefixIcon: const Icon(Iconsax.search_normal),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Iconsax.close_circle),
+                          onPressed: () {
+                            // Clear search and refresh sessions
+                            context.read<SessionsProvider>().fetchSessions(
+                              widget.caseId,
+                            );
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: AppColors.mediumGrey.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: AppColors.mediumGrey.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.primaryBlue,
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: AppColors.pureWhite,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        if (value.trim().isEmpty) {
+                          // Clear search when input is empty
+                          context.read<SessionsProvider>().fetchSessions(
+                            widget.caseId,
+                          );
+                        } else {
+                          // Search by session title
+                          final filters = <String, dynamic>{
+                            'search': value.trim(),
+                          };
+                          context.read<SessionsProvider>().fetchSessions(
+                            widget.caseId,
+                            filters: filters,
+                          );
+                        }
+                      },
+                    ),
+                  ),
                   Consumer<SessionsProvider>(
                     builder: (context, provider, _) {
                       if (provider.isLoading) {

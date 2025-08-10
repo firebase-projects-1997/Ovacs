@@ -8,7 +8,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/functions/show_snackbar.dart';
 import '../../../data/models/assigned_model.dart';
 import '../../../l10n/app_localizations.dart';
-import '../providers/assigned_accounts_provider.dart';
+import '../provider/assigned_accounts_provider.dart';
 
 class AssignedAccountsHorizontalList extends StatefulWidget {
   final int caseId;
@@ -27,13 +27,24 @@ class AssignedAccountsHorizontalList extends StatefulWidget {
 
 class _AssignedAccountsHorizontalListState
     extends State<AssignedAccountsHorizontalList> {
+  // 📏 Responsive scaling helpers
+  double screenWidth(BuildContext context) => MediaQuery.of(context).size.width;
+  double screenHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
+  double w(BuildContext context, double value) =>
+      value * screenWidth(context) / 375; // base width scale
+  double h(BuildContext context, double value) =>
+      value * screenHeight(context) / 812; // base height scale
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AssignedAccountsProvider>().fetchAssignedAccounts(
-        widget.caseId,
-      );
+    Future.microtask(() {
+      if (mounted) {
+        context.read<AssignedAccountsProvider>().fetchAssignedAccounts(
+          widget.caseId,
+        );
+      }
     });
   }
 
@@ -45,21 +56,25 @@ class _AssignedAccountsHorizontalListState
       builder: (context, provider, child) {
         if (provider.status == AssignedAccountsStatus.loading &&
             provider.assignedAccounts.isEmpty) {
-          return const SizedBox(
-            height: 80,
-            child: Center(child: CircularProgressIndicator()),
+          return SizedBox(
+            height: h(context, 80),
+            child: const Center(child: CircularProgressIndicator()),
           );
         }
 
         if (provider.status == AssignedAccountsStatus.error) {
           return SizedBox(
-            height: 100,
+            height: h(context, 100),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Iconsax.warning_2, color: Colors.red, size: 24),
-                  const SizedBox(height: 4),
+                  Icon(
+                    Iconsax.warning_2,
+                    color: Colors.red,
+                    size: w(context, 24),
+                  ),
+                  SizedBox(height: h(context, 4)),
                   Text(
                     localizations.failedToLoad,
                     style: Theme.of(
@@ -79,17 +94,17 @@ class _AssignedAccountsHorizontalListState
 
         if (provider.assignedAccounts.isEmpty) {
           return SizedBox(
-            height: 80,
+            height: h(context, 80),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Iconsax.user_minus,
                     color: AppColors.mediumGrey,
-                    size: 24,
+                    size: w(context, 24),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: h(context, 4)),
                   Text(
                     localizations.noAccountsAssigned,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -103,11 +118,12 @@ class _AssignedAccountsHorizontalListState
         }
 
         return SizedBox(
-          height: 120,
+          height: h(context, 130),
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: provider.assignedAccounts.length,
-            separatorBuilder: (context, index) => const SizedBox(width: 8),
+            separatorBuilder: (context, index) =>
+                SizedBox(width: w(context, 8)),
             itemBuilder: (context, index) {
               final assignedAccount = provider.assignedAccounts[index];
               return _buildAssignedAccountCard(
@@ -140,49 +156,47 @@ class _AssignedAccountsHorizontalListState
     );
 
     return RoundedContainer(
-      padding: const EdgeInsets.all(8),
+      padding: EdgeInsets.all(w(context, 8)),
       child: SizedBox(
-        width: 120,
+        width: w(context, 130),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 15,
+          spacing: h(context, 15),
           children: [
             CircleAvatar(
-              radius: 20,
+              radius: w(context, 20),
               backgroundColor: _getRoleColor(
                 assignedAccount.role,
               ).withValues(alpha: 0.2),
               child: Icon(
                 Iconsax.user,
+                size: w(context, 20),
                 color: _getRoleColor(assignedAccount.role),
               ),
             ),
-            // Account name
-            Text(
-              account.name ?? localizations.unknown,
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
+            Expanded(
+              child: Text(
+                account.name ?? localizations.unknown,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
             ),
-
-            // Role
             Text(
               assignedAccount.role.toUpperCase(),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: _getRoleColor(assignedAccount.role),
-                fontSize: 10,
+                fontSize: w(context, 10),
                 fontWeight: FontWeight.bold,
               ),
             ),
-
-            // Action buttons (only show on long press or tap)
             if (isUpdating || isDeassigning)
               SizedBox(
-                width: 12,
-                height: 12,
+                width: w(context, 12),
+                height: w(context, 12),
                 child: CircularProgressIndicator(
                   strokeWidth: 1.5,
                   color: _getRoleColor(assignedAccount.role),
@@ -228,20 +242,20 @@ class _AssignedAccountsHorizontalListState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Account info header
             Row(
               children: [
                 CircleAvatar(
-                  radius: 20,
+                  radius: w(context, 20),
                   backgroundColor: _getRoleColor(
                     assignedAccount.role,
                   ).withValues(alpha: 0.2),
                   child: Icon(
                     Iconsax.user,
+                    size: w(context, 20),
                     color: _getRoleColor(assignedAccount.role),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: w(context, 12)),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,10 +268,10 @@ class _AssignedAccountsHorizontalListState
                         children: [
                           Icon(
                             Iconsax.crown,
-                            size: 14,
+                            size: w(context, 14),
                             color: _getRoleColor(assignedAccount.role),
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: w(context, 4)),
                           Text(
                             assignedAccount.role.toUpperCase(),
                             style: Theme.of(context).textTheme.bodySmall
@@ -273,10 +287,7 @@ class _AssignedAccountsHorizontalListState
                 ),
               ],
             ),
-
-            const SizedBox(height: 16),
-
-            // Action buttons
+            SizedBox(height: h(context, 16)),
             Row(
               children: [
                 Expanded(
@@ -285,18 +296,18 @@ class _AssignedAccountsHorizontalListState
                       Navigator.of(context).pop();
                       _showUpdateRoleDialog(context, assignedAccount, provider);
                     },
-                    icon: const Icon(Iconsax.edit),
+                    icon: Icon(Iconsax.edit, size: w(context, 16)),
                     label: const Text('Update Role'),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: w(context, 8)),
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
                       Navigator.of(context).pop();
                       _showDeassignDialog(context, assignedAccount, provider);
                     },
-                    icon: const Icon(Iconsax.user_minus),
+                    icon: Icon(Iconsax.user_minus, size: w(context, 16)),
                     label: const Text('Remove'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
@@ -329,7 +340,7 @@ class _AssignedAccountsHorizontalListState
             Text(
               'Update role for ${assignedAccount.account.name ?? 'Unknown Account'}',
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: h(context, 16)),
             DropdownButtonFormField<String>(
               value: selectedRole,
               items: provider.availableRoles.map((role) {
@@ -337,8 +348,12 @@ class _AssignedAccountsHorizontalListState
                   value: role,
                   child: Row(
                     children: [
-                      Icon(Iconsax.crown, size: 16, color: _getRoleColor(role)),
-                      const SizedBox(width: 8),
+                      Icon(
+                        Iconsax.crown,
+                        size: w(context, 16),
+                        color: _getRoleColor(role),
+                      ),
+                      SizedBox(width: w(context, 8)),
                       Text(role.toUpperCase()),
                     ],
                   ),

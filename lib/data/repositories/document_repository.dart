@@ -108,6 +108,7 @@ class DocumentRepository {
     int? groupId,
     String? groupName,
     String? groupDescription,
+    Map<String, dynamic>? queryParams,
   }) async {
     final List<MultipartFile> files = await Future.wait(
       filePaths.map(
@@ -134,7 +135,11 @@ class DocumentRepository {
 
     final formData = FormData.fromMap(formMap);
 
-    final response = await _dio.post(AppUrls.uploadDocument, data: formData);
+    final response = await _dio.post(
+      AppUrls.uploadDocument,
+      data: formData,
+      queryParameters: queryParams,
+    );
 
     return response.fold((failure) => Left(failure), (res) {
       final List<dynamic> jsonList = res.data['data'];
