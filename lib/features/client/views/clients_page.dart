@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:new_ovacs/core/constants/app_routes.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
 import 'package:new_ovacs/common/widgets/permission_guard.dart';
 import 'package:new_ovacs/core/enums/permission_resource.dart';
 import 'package:new_ovacs/core/enums/permission_action.dart';
+import 'package:new_ovacs/features/case/views/add_new_case_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -30,9 +30,11 @@ class _ClientsPageState extends State<ClientsPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-      () => Provider.of<ClientsProvider>(context, listen: false).fetchClients(),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Provider.of<ClientsProvider>(context, listen: false).fetchClients();
+      }
+    });
 
     _scrollController = ScrollController();
     _scrollController.addListener(() {
@@ -186,9 +188,13 @@ class _ClientsPageState extends State<ClientsPage> {
               resource: PermissionResource.client,
               action: PermissionAction.create,
               child: RoundedContainer(
-                onTap: () => navigatorKey.currentState!.pushNamed(
-                  AppRoutes.addClientRoute,
-                ),
+                onTap: () {
+                  navigatorKey.currentState!.push(
+                    MaterialPageRoute(
+                      builder: (context) => const AddNewCasePage(),
+                    ),
+                  );
+                },
                 child: Icon(
                   Iconsax.add,
                   color: isDarkMode(context)

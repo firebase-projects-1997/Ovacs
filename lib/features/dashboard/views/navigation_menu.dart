@@ -7,7 +7,6 @@ import '../../../common/providers/workspace_provider.dart';
 import '../../../common/widgets/workspace_banner.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/trial_service.dart';
-import '../../trial/widgets/trial_banner.dart';
 import '../../case/views/cases_page.dart';
 import '../../client/views/clients_page.dart';
 import '../../connection/views/connections_page.dart';

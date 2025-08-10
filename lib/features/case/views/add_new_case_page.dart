@@ -5,7 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:new_ovacs/common/widgets/labeled_text_field.dart';
 import 'package:new_ovacs/core/functions/show_snackbar.dart';
-import 'package:new_ovacs/features/case/provider/cases_provider.dart';
+import 'package:new_ovacs/features/case/providers/cases_provider.dart';
 import 'package:new_ovacs/features/client/views/add_client_page.dart';
 import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +15,7 @@ import '../../../common/widgets/rounded_container.dart';
 import '../../../data/models/client_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../client/providers/clients_provider.dart';
-import '../provider/add_case_provider.dart';
+import '../providers/add_case_provider.dart';
 
 class AddNewCasePage extends StatefulWidget {
   const AddNewCasePage({super.key});
@@ -37,7 +37,11 @@ class _AddNewCasePageState extends State<AddNewCasePage> {
     _caseNameController = TextEditingController();
     _caseDescriptionController = TextEditingController();
     _dateController = TextEditingController();
-    Future.microtask(() => context.read<ClientsProvider>().fetchClients());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ClientsProvider>().fetchClients();
+      }
+    });
   }
 
   @override
@@ -93,6 +97,7 @@ class _AddNewCasePageState extends State<AddNewCasePage> {
     }
 
     final provider = context.read<AddCaseProvider>();
+
     final success = await provider.addCase(
       clientId: _selectedClient!.id,
       title: _caseNameController.text.trim(),
@@ -100,16 +105,22 @@ class _AddNewCasePageState extends State<AddNewCasePage> {
       date: _dateController.text.trim(),
     );
 
+    if (!mounted) return;
+
     if (success) {
-      context.read<CasesProvider>().fetchCases();
-      Navigator.of(context).pop();
-      showAppSnackBar(
-        context,
-        AppLocalizations.of(context)!.caseCreatedSuccessfully,
-        type: SnackBarType.success,
-      );
+      if (mounted) {
+        context.read<CasesProvider>().fetchCases();
+        Navigator.of(context).pop();
+        showAppSnackBar(
+          context,
+          AppLocalizations.of(context)!.caseCreatedSuccessfully,
+          type: SnackBarType.success,
+        );
+      }
     } else {
-      showAppSnackBar(context, provider.errorMessage);
+      if (mounted) {
+        showAppSnackBar(context, provider.errorMessage);
+      }
     }
   }
 

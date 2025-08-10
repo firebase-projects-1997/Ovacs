@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/constants/app_urls.dart';
 import '../../core/error/failure.dart';
@@ -46,7 +47,7 @@ class ConnectionsRepository {
   Future<Either<Failure, InvitationResponse>> sendDirectInvitations(
     SendInvitationRequest request,
   ) async {
-    print(request.toJson());
+    debugPrint(request.toJson().toString());
     try {
       final response = await _dioClient.post(
         AppUrls.sendDirectInvitation,

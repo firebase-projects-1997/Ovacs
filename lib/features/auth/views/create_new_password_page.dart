@@ -7,10 +7,10 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_images.dart';
-import '../../../../core/constants/app_routes.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../main.dart';
 import '../providers/auth_provider.dart';
+import 'login_page.dart';
 
 class CreateNewPasswordPage extends StatefulWidget {
   final String email;
@@ -238,6 +238,8 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
       newPassword: _passwordController.text.trim(),
     );
 
+    if (!mounted) return;
+
     if (success) {
       showAppSnackBar(
         context,
@@ -245,8 +247,8 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
         type: SnackBarType.success,
       );
 
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(
-        AppRoutes.loginRoute,
+      navigatorKey.currentState!.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginPage()),
         (_) => false,
       );
     } else {

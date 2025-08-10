@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:new_ovacs/common/widgets/rounded_container.dart';
+import 'package:new_ovacs/features/auth/views/login_page.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_images.dart';
-import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/functions/url_luncher.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../main.dart';
 
@@ -96,11 +97,14 @@ class _WelcomePageState extends State<WelcomePage> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
-                      onPressed: () =>
-                          navigatorKey.currentState!.pushNamedAndRemoveUntil(
-                            AppRoutes.loginRoute,
-                            (route) => false,
+                      onPressed: () {
+                        navigatorKey.currentState!.pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
                           ),
+                          (route) => false,
+                        );
+                      },
                       icon: Text(
                         AppLocalizations.of(context)!.skip,
                         style: textTheme.bodySmall!.copyWith(
@@ -196,23 +200,42 @@ class _WelcomePageState extends State<WelcomePage> {
                           ),
                         ),
                       ),
-
                       Row(
                         children: [
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              launchGivenUrl(
+                                context,
+                                'https://www.facebook.com/',
+                              );
+                            },
                             icon: SvgPicture.asset(AppImages.facebook),
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              launchGivenUrl(
+                                context,
+                                'https://www.twitter.com/',
+                              );
+                            },
                             icon: SvgPicture.asset(AppImages.x),
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              launchGivenUrl(
+                                context,
+                                'https://www.linkedin.com/',
+                              );
+                            },
                             icon: SvgPicture.asset(AppImages.linkedin),
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              launchGivenUrl(
+                                context,
+                                'https://www.instagram.com/',
+                              );
+                            },
                             icon: SvgPicture.asset(AppImages.instagram),
                           ),
                         ],

@@ -17,17 +17,17 @@ class RoleBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final config = _getRoleConfig(role);
-    
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: compact ? 6 : 8,
         vertical: compact ? 2 : 4,
       ),
       decoration: BoxDecoration(
-        color: config.color.withOpacity(0.1),
+        color: config.color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(compact ? 4 : 6),
         border: Border.all(
-          color: config.color.withOpacity(0.3),
+          color: config.color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -35,12 +35,7 @@ class RoleBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showIcon) ...[
-            Text(
-              config.icon,
-              style: TextStyle(
-                fontSize: compact ? 10 : 12,
-              ),
-            ),
+            Text(config.icon, style: TextStyle(fontSize: compact ? 10 : 12)),
             SizedBox(width: compact ? 2 : 4),
           ],
           Text(
@@ -117,8 +112,8 @@ class RoleHierarchyIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasRequiredLevel = requiredRole == null || 
-                           currentRole.hasPermissionLevel(requiredRole!);
+    final hasRequiredLevel =
+        requiredRole == null || currentRole.hasPermissionLevel(requiredRole!);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -149,10 +144,7 @@ class RoleHierarchyIndicator extends StatelessWidget {
 class RolePermissionMatrix extends StatelessWidget {
   final UserRole currentRole;
 
-  const RolePermissionMatrix({
-    super.key,
-    required this.currentRole,
-  });
+  const RolePermissionMatrix({super.key, required this.currentRole});
 
   @override
   Widget build(BuildContext context) {
@@ -161,31 +153,31 @@ class RolePermissionMatrix extends StatelessWidget {
       children: [
         Text(
           'Role Hierarchy',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         ...UserRole.values.map((role) {
           final isCurrent = role == currentRole;
           final hasLevel = currentRole.hasPermissionLevel(role);
-          
+
           return Container(
             margin: const EdgeInsets.only(bottom: 4),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isCurrent 
-                ? Theme.of(context).primaryColor.withOpacity(0.1)
-                : hasLevel
-                  ? Colors.green.withOpacity(0.05)
-                  : Colors.grey.withOpacity(0.05),
+              color: isCurrent
+                  ? Theme.of(context).primaryColor.withValues(alpha: 0.1)
+                  : hasLevel
+                  ? Colors.green.withValues(alpha: 0.05)
+                  : Colors.grey.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
-                color: isCurrent 
-                  ? Theme.of(context).primaryColor
-                  : hasLevel
-                    ? Colors.green.withOpacity(0.3)
-                    : Colors.grey.withOpacity(0.3),
+                color: isCurrent
+                    ? Theme.of(context).primaryColor
+                    : hasLevel
+                    ? Colors.green.withValues(alpha: 0.3)
+                    : Colors.grey.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
@@ -194,7 +186,10 @@ class RolePermissionMatrix extends StatelessWidget {
                 const SizedBox(width: 8),
                 if (isCurrent)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(2),
@@ -217,7 +212,7 @@ class RolePermissionMatrix extends StatelessWidget {
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

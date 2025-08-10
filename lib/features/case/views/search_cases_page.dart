@@ -6,7 +6,7 @@ import '../../../common/widgets/labeled_text_field.dart';
 import '../../../data/models/client_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../client/providers/clients_provider.dart';
-import '../provider/cases_search_provider.dart';
+import '../providers/cases_search_provider.dart';
 import '../widgets/case_card.dart';
 
 class SearchCasesPage extends StatefulWidget {
@@ -26,9 +26,11 @@ class _SearchCasesPageState extends State<SearchCasesPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      Provider.of<ClientsProvider>(context, listen: false).fetchClients();
-      Provider.of<CasesSearchProvider>(context, listen: false).fetchCases();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Provider.of<ClientsProvider>(context, listen: false).fetchClients();
+        Provider.of<CasesSearchProvider>(context, listen: false).fetchData();
+      }
     });
   }
 
@@ -187,9 +189,9 @@ class _SearchCasesPageState extends State<SearchCasesPage> {
             /// ✅ Results
             if (casesProvider.isLoading)
               const Center(child: CircularProgressIndicator())
-            else if (casesProvider.error != null)
+            else if (casesProvider.errorMessage != null)
               Text(
-                '${AppLocalizations.of(context)!.error}: ${casesProvider.error}',
+                '${AppLocalizations.of(context)!.error}: ${casesProvider.errorMessage}',
                 style: Theme.of(context).textTheme.bodySmall,
               )
             else if (casesProvider.cases.isEmpty)

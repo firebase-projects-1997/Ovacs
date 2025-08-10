@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:new_ovacs/core/constants/app_urls.dart';
 import 'package:new_ovacs/core/error/failure.dart';
 import 'package:new_ovacs/core/network/dio_client.dart';
@@ -26,18 +27,49 @@ class CaseRepository {
 
     return response.fold((failure) => Left(failure), (res) {
       try {
-        print(uri.toString());
-        print(res.data['data']);
-        final data = res.data['data'] as Map<String, dynamic>;
-        final List<dynamic> casesJson = data['data'] ?? [];
-        final cases = casesJson.map((e) => CaseModel.fromJson(e)).toList();
+        debugPrint('[CASES] URL: ${uri.toString()}');
+        debugPrint('[CASES] Full response: ${res.data}');
 
-        final pagination = PaginationModel.fromJson(data['pagination']);
+        // Check if response has the expected structure
+        if (res.data == null) {
+          return Left(ServerFailure('Empty response data'));
+        }
+
+        if (res.data['data'] == null) {
+          return Left(ServerFailure('Missing data field in response'));
+        }
+
+        final data = res.data['data'] as Map<String, dynamic>;
+        debugPrint('[CASES] Inner data: $data');
+
+        if (data['data'] == null) {
+          return Left(ServerFailure('Missing cases array in data'));
+        }
+
+        final List<dynamic> casesJson = data['data'] as List;
+        debugPrint('[CASES] Cases count: ${casesJson.length}');
+
+        final cases = casesJson.map((e) {
+          debugPrint('[CASES] Parsing case: $e');
+          return CaseModel.fromJson(e as Map<String, dynamic>);
+        }).toList();
+
+        if (data['pagination'] == null) {
+          return Left(ServerFailure('Missing pagination in data'));
+        }
+
+        final pagination = PaginationModel.fromJson(
+          data['pagination'] as Map<String, dynamic>,
+        );
+        debugPrint('[CASES] Pagination: ${data['pagination']}');
+
         return Right(
           CasesWithPaginationResponse(cases: cases, pagination: pagination),
         );
-      } catch (e) {
-        return Left(ServerFailure('Error parsing case list'));
+      } catch (e, stackTrace) {
+        debugPrint('[CASES] Error parsing: $e');
+        debugPrint('[CASES] Stack trace: $stackTrace');
+        return Left(ServerFailure('Error parsing case list: $e'));
       }
     });
   }
@@ -53,10 +85,32 @@ class CaseRepository {
 
     return response.fold((failure) => Left(failure), (res) {
       try {
-        final data = res.data['data'];
-        return Right(CaseModel.fromJson(data));
-      } catch (e) {
-        return Left(ServerFailure('Error parsing case detail'));
+        debugPrint('[CASE_DETAIL] Full response: ${res.data}');
+
+        // Check if response has the expected structure
+        if (res.data == null) {
+          return Left(ServerFailure('Empty response data'));
+        }
+
+        if (res.data['data'] == null) {
+          return Left(ServerFailure('Missing data field in response'));
+        }
+
+        // For case details, the structure might be different
+        // Check if it's nested like the list endpoint
+        final outerData = res.data['data'];
+        final caseData =
+            outerData is Map<String, dynamic> && outerData.containsKey('data')
+            ? outerData['data'] // Nested structure
+            : outerData; // Direct structure
+
+        debugPrint('[CASE_DETAIL] Case data: $caseData');
+
+        return Right(CaseModel.fromJson(caseData as Map<String, dynamic>));
+      } catch (e, stackTrace) {
+        debugPrint('[CASE_DETAIL] Error parsing: $e');
+        debugPrint('[CASE_DETAIL] Stack trace: $stackTrace');
+        return Left(ServerFailure('Error parsing case detail: $e'));
       }
     });
   }
@@ -73,10 +127,26 @@ class CaseRepository {
 
     return response.fold((failure) => Left(failure), (res) {
       try {
-        final data = res.data['data'];
-        return Right(CaseModel.fromJson(data));
-      } catch (e) {
-        return Left(ServerFailure('Error creating case'));
+        debugPrint('[CREATE_CASE] Full response: ${res.data}');
+
+        if (res.data == null || res.data['data'] == null) {
+          return Left(ServerFailure('Invalid response structure'));
+        }
+
+        // Handle nested structure like other endpoints
+        final outerData = res.data['data'];
+        final caseData =
+            outerData is Map<String, dynamic> && outerData.containsKey('data')
+            ? outerData['data'] // Nested structure
+            : outerData; // Direct structure
+
+        debugPrint('[CREATE_CASE] Case data: $caseData');
+
+        return Right(CaseModel.fromJson(caseData as Map<String, dynamic>));
+      } catch (e, stackTrace) {
+        debugPrint('[CREATE_CASE] Error parsing: $e');
+        debugPrint('[CREATE_CASE] Stack trace: $stackTrace');
+        return Left(ServerFailure('Error creating case: $e'));
       }
     });
   }
@@ -94,10 +164,26 @@ class CaseRepository {
 
     return response.fold((failure) => Left(failure), (res) {
       try {
-        final data = res.data['data'];
-        return Right(CaseModel.fromJson(data));
-      } catch (e) {
-        return Left(ServerFailure('Error updating case'));
+        debugPrint('[UPDATE_CASE] Full response: ${res.data}');
+
+        if (res.data == null || res.data['data'] == null) {
+          return Left(ServerFailure('Invalid response structure'));
+        }
+
+        // Handle nested structure like other endpoints
+        final outerData = res.data['data'];
+        final caseData =
+            outerData is Map<String, dynamic> && outerData.containsKey('data')
+            ? outerData['data'] // Nested structure
+            : outerData; // Direct structure
+
+        debugPrint('[UPDATE_CASE] Case data: $caseData');
+
+        return Right(CaseModel.fromJson(caseData as Map<String, dynamic>));
+      } catch (e, stackTrace) {
+        debugPrint('[UPDATE_CASE] Error parsing: $e');
+        debugPrint('[UPDATE_CASE] Stack trace: $stackTrace');
+        return Left(ServerFailure('Error updating case: $e'));
       }
     });
   }

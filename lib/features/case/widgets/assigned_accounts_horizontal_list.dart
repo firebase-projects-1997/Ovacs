@@ -8,7 +8,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/functions/show_snackbar.dart';
 import '../../../data/models/assigned_model.dart';
 import '../../../l10n/app_localizations.dart';
-import '../provider/assigned_accounts_provider.dart';
+import '../providers/assigned_accounts_provider.dart';
 
 class AssignedAccountsHorizontalList extends StatefulWidget {
   final int caseId;
@@ -39,11 +39,12 @@ class _AssignedAccountsHorizontalListState
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<AssignedAccountsProvider>().fetchAssignedAccounts(
-          widget.caseId,
-        );
+        final provider = context.read<AssignedAccountsProvider>();
+        // Ensure permissions are initialized
+        provider.initializePermissions(context);
+        provider.fetchAssignedAccounts(widget.caseId);
       }
     });
   }
@@ -54,15 +55,14 @@ class _AssignedAccountsHorizontalListState
 
     return Consumer<AssignedAccountsProvider>(
       builder: (context, provider, child) {
-        if (provider.status == AssignedAccountsStatus.loading &&
-            provider.assignedAccounts.isEmpty) {
+        if (provider.isLoading && provider.items.isEmpty) {
           return SizedBox(
             height: h(context, 80),
             child: const Center(child: CircularProgressIndicator()),
           );
         }
 
-        if (provider.status == AssignedAccountsStatus.error) {
+        if (provider.errorMessage != null) {
           return SizedBox(
             height: h(context, 100),
             child: Center(
@@ -82,8 +82,11 @@ class _AssignedAccountsHorizontalListState
                     ).textTheme.bodySmall?.copyWith(color: Colors.red),
                   ),
                   TextButton(
-                    onPressed: () =>
-                        provider.fetchAssignedAccounts(widget.caseId),
+                    onPressed: () {
+                      // Reinitialize permissions before retrying
+                      provider.initializePermissions(context);
+                      provider.fetchAssignedAccounts(widget.caseId);
+                    },
                     child: Text(localizations.retry),
                   ),
                 ],
@@ -92,7 +95,7 @@ class _AssignedAccountsHorizontalListState
           );
         }
 
-        if (provider.assignedAccounts.isEmpty) {
+        if (provider.items.isEmpty) {
           return SizedBox(
             height: h(context, 80),
             child: Center(
@@ -121,11 +124,11 @@ class _AssignedAccountsHorizontalListState
           height: h(context, 130),
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            itemCount: provider.assignedAccounts.length,
+            itemCount: provider.items.length,
             separatorBuilder: (context, index) =>
                 SizedBox(width: w(context, 8)),
             itemBuilder: (context, index) {
-              final assignedAccount = provider.assignedAccounts[index];
+              final assignedAccount = provider.items[index];
               return _buildAssignedAccountCard(
                 context,
                 assignedAccount,
@@ -328,73 +331,84 @@ class _AssignedAccountsHorizontalListState
     AssignedAccountModel assignedAccount,
     AssignedAccountsProvider provider,
   ) {
-    String selectedRole = assignedAccount.role;
+    // Find the matching role from available roles (case-insensitive)
+    String selectedRole = provider.availableRoles.firstWhere(
+      (role) => role.toLowerCase() == assignedAccount.role.toLowerCase(),
+      orElse: () => provider.availableRoles.first,
+    );
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Update Role'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Update role for ${assignedAccount.account.name ?? 'Unknown Account'}',
-            ),
-            SizedBox(height: h(context, 16)),
-            DropdownButtonFormField<String>(
-              value: selectedRole,
-              items: provider.availableRoles.map((role) {
-                return DropdownMenuItem(
-                  value: role,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Iconsax.crown,
-                        size: w(context, 16),
-                        color: _getRoleColor(role),
-                      ),
-                      SizedBox(width: w(context, 8)),
-                      Text(role.toUpperCase()),
-                    ],
-                  ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) selectedRole = value;
-              },
-              decoration: const InputDecoration(
-                labelText: 'Role',
-                border: OutlineInputBorder(),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Update Role'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Update role for ${assignedAccount.account.name ?? 'Unknown Account'}',
               ),
+              SizedBox(height: h(context, 16)),
+              DropdownButtonFormField<String>(
+                value: selectedRole,
+                items: provider.availableRoles.map((role) {
+                  return DropdownMenuItem(
+                    value: role,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Iconsax.crown,
+                          size: w(context, 16),
+                          color: _getRoleColor(role),
+                        ),
+                        SizedBox(width: w(context, 8)),
+                        Text(role.toUpperCase()),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() {
+                      selectedRole = value;
+                    });
+                  }
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Role',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final success = await provider.updateAccountRole(
+                  accountId: assignedAccount.account.id,
+                  newRole: selectedRole
+                      .toLowerCase(), // Convert to lowercase for backend
+                );
+
+                if (context.mounted) {
+                  showAppSnackBar(
+                    context,
+                    success
+                        ? 'Role updated successfully'
+                        : provider.errorMessage ?? 'Failed to update role',
+                    type: success ? SnackBarType.success : SnackBarType.error,
+                  );
+                }
+              },
+              child: const Text('Update'),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              final success = await provider.updateAccountRole(
-                accountId: assignedAccount.account.id,
-                newRole: selectedRole,
-              );
-
-              if (context.mounted) {
-                showAppSnackBar(
-                  context,
-                  success
-                      ? 'Role updated successfully'
-                      : provider.errorMessage ?? 'Failed to update role',
-                  type: success ? SnackBarType.success : SnackBarType.error,
-                );
-              }
-            },
-            child: const Text('Update'),
-          ),
-        ],
       ),
     );
   }

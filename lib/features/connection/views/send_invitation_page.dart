@@ -314,6 +314,8 @@ class _SendInvitationPageState extends State<SendInvitationPage> {
     provider.updateCustomMessage(_messageController.text);
 
     final localizations = AppLocalizations.of(context)!;
+    final navigator = Navigator.of(context);
+    final currentContext = context;
 
     final success = await provider.sendInvitations();
 
@@ -322,23 +324,23 @@ class _SendInvitationPageState extends State<SendInvitationPage> {
     if (success) {
       final response = provider.lastResponse!;
       showAppSnackBar(
-        context,
+        currentContext,
         '${response.successCount} invitations sent successfully!',
         type: SnackBarType.success,
       );
 
       if (response.failureCount > 0) {
         showAppSnackBar(
-          context,
+          currentContext,
           '${response.failureCount} invitations failed to send',
           type: SnackBarType.warning,
         );
       }
 
-      Navigator.of(context).pop();
+      navigator.pop();
     } else {
       showAppSnackBar(
-        context,
+        currentContext,
         provider.errorMessage ?? localizations.failedToSendInvitations,
         type: SnackBarType.error,
       );

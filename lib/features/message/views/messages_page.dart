@@ -34,7 +34,6 @@ class _MessagesPageState extends State<MessagesPage> {
   bool _isPlaying = false;
   String? _recordingPath;
   String? _currentPlayingUrl;
-  Duration _recordingDuration = Duration.zero;
 
   @override
   void initState() {
@@ -653,7 +652,7 @@ class _MessagesPageState extends State<MessagesPage> {
 
       setState(() {
         _isRecording = true;
-        _recordingDuration = Duration.zero;
+       
       });
 
       HapticFeedback.lightImpact();

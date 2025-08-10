@@ -57,7 +57,7 @@ class DocumentsProvider extends ChangeNotifier
     _errorMessage = value;
   }
 
-  bool _isDownloading = false;
+  final bool _isDownloading = false;
   String? _downloadViewErrorMessage;
 
   bool get isDownloading => _isDownloading;

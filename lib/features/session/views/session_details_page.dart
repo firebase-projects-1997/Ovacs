@@ -157,24 +157,28 @@ class _SessionDetailsPageState extends State<SessionDetailsPage>
                       );
 
                       if (confirmed == true) {
-                        final success = await context
-                            .read<SessionDetailProvider>()
+                        final sessionDetailProvider = context
+                            .read<SessionDetailProvider>();
+                        final sessionsProvider = context
+                            .read<SessionsProvider>();
+                        final navigator = Navigator.of(context);
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+                        final localizations = AppLocalizations.of(context)!;
+
+                        final success = await sessionDetailProvider
                             .deleteSession(widget.sessionId);
+
+                        if (!mounted) return;
+
                         if (success) {
-                          context.read<SessionsProvider>().fetchSessions(
-                            widget.caseId,
-                          );
-                          Navigator.of(context).pop();
+                          sessionsProvider.fetchSessions(widget.caseId);
+                          navigator.pop();
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          scaffoldMessenger.showSnackBar(
                             SnackBar(
                               content: Text(
-                                context
-                                        .read<SessionDetailProvider>()
-                                        .errorMessage ??
-                                    AppLocalizations.of(
-                                      context,
-                                    )!.errorDeletingSession,
+                                sessionDetailProvider.errorMessage ??
+                                    localizations.errorDeletingSession,
                               ),
                             ),
                           );

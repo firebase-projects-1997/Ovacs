@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:device_preview/device_preview.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:new_ovacs/features/document/providers/group_details_provider.dart';
@@ -9,18 +5,15 @@ import 'package:new_ovacs/features/document/providers/upload_documents_provider.
 import 'common/providers/country_provider.dart';
 import 'common/providers/workspace_provider.dart';
 import 'common/providers/permission_provider.dart';
-import 'core/constants/app_routes.dart';
 import 'core/utils/app_theme.dart';
-import 'features/auth/views/login_page.dart';
-import 'features/case/provider/add_case_provider.dart';
-import 'features/case/provider/case_details_provider.dart';
-import 'features/case/provider/cases_provider.dart';
-import 'features/case/provider/assigned_accounts_provider.dart';
+import 'features/case/providers/add_case_provider.dart';
+import 'features/case/providers/case_details_provider.dart';
+import 'features/case/providers/cases_provider.dart';
+import 'features/case/providers/assigned_accounts_provider.dart';
 import 'features/client/providers/add_client_provider.dart';
 import 'features/client/providers/client_details_provider.dart';
 import 'features/client/providers/clients_provider.dart';
 import 'features/client/providers/update_client_provider.dart';
-import 'features/client/views/add_client_page.dart';
 import 'features/connection/providers/connection_provider.dart';
 import 'features/connection/providers/send_invitation_provider.dart';
 import 'features/dashboard/providers/dashboard_provider.dart';
@@ -37,17 +30,13 @@ import 'common/providers/locale_provider.dart';
 import 'common/providers/theme_provider.dart';
 import 'core/di/injection.dart';
 import 'features/auth/providers/auth_provider.dart';
-import 'features/auth/views/forget_password_page.dart';
-import 'features/auth/views/register_page.dart';
-import 'features/case/provider/cases_search_provider.dart';
+import 'features/case/providers/cases_search_provider.dart';
 import 'features/client/providers/client_search_provider.dart';
-import 'features/dashboard/views/dashboard_page.dart';
 import 'features/message/providers/edit_delete_message_provider.dart';
 import 'features/message/providers/message_details_provider.dart';
 import 'features/message/providers/messages_provider.dart';
 import 'features/message/providers/send_message_provider.dart';
 import 'features/onboarding/views/welcome_page.dart';
-import 'features/trial/views/trial_expired_page.dart';
 import 'l10n/app_localizations.dart';
 import 'services/trial_service.dart';
 
@@ -60,12 +49,7 @@ void main() async {
   final trialService = getIt<TrialService>();
   await trialService.init();
 
-  runApp(
-    DevicePreview(
-      enabled: kIsWeb || Platform.isWindows,
-      builder: (context) => MainApp(authProvider: authProvider),
-    ),
-  );
+  runApp(MainApp(authProvider: authProvider));
 }
 
 class MainApp extends StatefulWidget {
@@ -86,14 +70,12 @@ class _MainAppState extends State<MainApp> {
     _initFuture = widget.authProvider.init();
   }
 
-  Widget Function(BuildContext) _getInitialRoute(AuthProvider authProvider) {
-    return (context) {
-      if (authProvider.accessToken != null) {
-        return const NavigationMenu();
-      } else {
-        return const WelcomePage();
-      }
-    };
+  StatefulWidget _getInitialRoute(AuthProvider authProvider) {
+    if (authProvider.accessToken != null) {
+      return const NavigationMenu();
+    } else {
+      return const WelcomePage();
+    }
   }
 
   @override
@@ -239,18 +221,7 @@ class _MainAppState extends State<MainApp> {
                             : 'Fustat',
                         primaryColor: themeProvider.primaryColor,
                       ),
-                initialRoute: '/',
-                routes: {
-                  '/': _getInitialRoute(widget.authProvider),
-                  AppRoutes.loginRoute: (_) => const LoginPage(),
-                  AppRoutes.navigationMenuRoute: (_) => const NavigationMenu(),
-                  AppRoutes.forgetPasswordRoute: (_) =>
-                      const ForgetPasswordPage(),
-                  AppRoutes.registerRoute: (_) => const RegisterPage(),
-                  AppRoutes.homeRoute: (_) => const DashboardPage(),
-                  AppRoutes.addClientRoute: (_) => const AddNewClientPage(),
-                  '/trial-expired': (_) => const TrialExpiredPage(),
-                },
+                home: _getInitialRoute(widget.authProvider),
               );
             },
           ),

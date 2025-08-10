@@ -26,11 +26,13 @@ class _GroupsPageState extends State<GroupsPage> with PermissionMixin {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      Provider.of<GroupsProvider>(
-        context,
-        listen: false,
-      ).fetchGroupsBySession(widget.sessionId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Provider.of<GroupsProvider>(
+          context,
+          listen: false,
+        ).fetchGroupsBySession(widget.sessionId);
+      }
     });
   }
 
@@ -69,18 +71,22 @@ class _GroupsPageState extends State<GroupsPage> with PermissionMixin {
                 dialogContext,
                 listen: false,
               );
+              final groupsProvider = Provider.of<GroupsProvider>(
+                context,
+                listen: false,
+              );
+              final navigator = Navigator.of(dialogContext);
+
               final success = await provider.updateGroup(
                 groupId: group.id,
                 name: nameController.text,
                 description: descriptionController.text,
                 sessionId: widget.sessionId,
               );
-              if (success) {
-                Provider.of<GroupsProvider>(
-                  context,
-                  listen: false,
-                ).fetchGroupsBySession(widget.sessionId);
-                Navigator.pop(dialogContext);
+
+              if (success && mounted) {
+                groupsProvider.fetchGroupsBySession(widget.sessionId);
+                navigator.pop();
               }
             },
             child: const Text('Save'),
@@ -107,13 +113,12 @@ class _GroupsPageState extends State<GroupsPage> with PermissionMixin {
                 context,
                 listen: false,
               );
+              final navigator = Navigator.of(context);
+
               final success = await provider.deleteGroup(group.id);
-              if (success) {
-                Provider.of<GroupsProvider>(
-                  context,
-                  listen: false,
-                ).fetchGroupsBySession(widget.sessionId);
-                Navigator.pop(context);
+              if (success && mounted) {
+                provider.fetchGroupsBySession(widget.sessionId);
+                navigator.pop();
               }
             },
             child: const Text('Delete'),
@@ -157,17 +162,16 @@ class _GroupsPageState extends State<GroupsPage> with PermissionMixin {
                 context,
                 listen: false,
               );
+              final navigator = Navigator.of(context);
+
               final success = await provider.createGroup(
                 sessionId: widget.sessionId,
                 name: nameController.text,
                 description: descriptionController.text,
               );
-              if (success) {
-                Provider.of<GroupsProvider>(
-                  context,
-                  listen: false,
-                ).fetchGroupsBySession(widget.sessionId);
-                Navigator.pop(context);
+              if (success && mounted) {
+                provider.fetchGroupsBySession(widget.sessionId);
+                navigator.pop();
               }
             },
             child: const Text('Add'),

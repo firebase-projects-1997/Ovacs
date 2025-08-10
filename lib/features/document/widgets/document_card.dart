@@ -229,16 +229,6 @@ class _DocumentCardState extends State<DocumentCard> with PermissionMixin {
                 securityLevel: DocumentSecurityLevel.fromString(
                   widget.document.securityLevel,
                 ),
-                child: IconButton(
-                  icon: const Icon(Iconsax.eye),
-                  tooltip: AppLocalizations.of(context)!.view,
-                  onPressed: () {
-                    provider.viewFile(
-                      'https://ovacs.com/backend${widget.document.secureViewUrl}',
-                      widget.document.fileName,
-                    );
-                  },
-                ),
                 fallback: IconButton(
                   icon: const Icon(Iconsax.eye),
                   tooltip: AppLocalizations.of(context)!.view,
@@ -253,12 +243,36 @@ class _DocumentCardState extends State<DocumentCard> with PermissionMixin {
                     );
                   },
                 ),
+                child: IconButton(
+                  icon: const Icon(Iconsax.eye),
+                  tooltip: AppLocalizations.of(context)!.view,
+                  onPressed: () {
+                    provider.viewFile(
+                      'https://ovacs.com/backend${widget.document.secureViewUrl}',
+                      widget.document.fileName,
+                    );
+                  },
+                ),
               ),
               // Download button with security-level guard
               DocumentSecurityGuard(
                 action: PermissionAction.read,
                 securityLevel: DocumentSecurityLevel.fromString(
                   widget.document.securityLevel,
+                ),
+                fallback: IconButton(
+                  icon: const Icon(Iconsax.arrow_circle_down),
+                  tooltip: AppLocalizations.of(context)!.download,
+                  onPressed: () {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "You don't have permission to download this document",
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 child: IconButton(
                   icon: provider.isDocumentDownloading(widget.document.id)
@@ -289,20 +303,6 @@ class _DocumentCardState extends State<DocumentCard> with PermissionMixin {
                             ).showSnackBar(SnackBar(content: Text(message)));
                           }
                         },
-                ),
-                fallback: IconButton(
-                  icon: const Icon(Iconsax.arrow_circle_down),
-                  tooltip: AppLocalizations.of(context)!.download,
-                  onPressed: () {
-                    if (!context.mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "You don't have permission to download this document",
-                        ),
-                      ),
-                    );
-                  },
                 ),
               ),
             ],

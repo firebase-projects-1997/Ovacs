@@ -7,7 +7,8 @@ import '../providers/permission_provider.dart';
 import '../providers/workspace_provider.dart';
 
 /// An app bar that shows different actions based on user permissions
-class PermissionAwareAppBar extends StatelessWidget implements PreferredSizeWidget {
+class PermissionAwareAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   final String title;
   final List<PermissionAwareAction> actions;
   final Widget? leading;
@@ -45,7 +46,9 @@ class PermissionAwareAppBar extends StatelessWidget implements PreferredSizeWidg
                 Text(
                   workspaceProvider.workspaceDisplayName,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.8),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onPrimary.withValues(alpha: 0.8),
                   ),
                 ),
             ],
@@ -105,11 +108,7 @@ class PermissionAwareIconAction extends PermissionAwareAction {
 
   @override
   Widget build(BuildContext context, PermissionProvider permissionProvider) {
-    return IconButton(
-      icon: Icon(icon),
-      onPressed: onPressed,
-      tooltip: tooltip,
-    );
+    return IconButton(icon: Icon(icon), onPressed: onPressed, tooltip: tooltip);
   }
 }
 
@@ -174,12 +173,11 @@ class PermissionAwarePopupMenuItem {
     );
   }
 
-  PopupMenuItem<String> build(BuildContext context, PermissionProvider permissionProvider) {
-    return PopupMenuItem<String>(
-      value: value,
-      onTap: onTap,
-      child: child,
-    );
+  PopupMenuItem<String> build(
+    BuildContext context,
+    PermissionProvider permissionProvider,
+  ) {
+    return PopupMenuItem<String>(value: value, onTap: onTap, child: child);
   }
 }
 
@@ -202,9 +200,7 @@ class PermissionAwareTextAction extends PermissionAwareAction {
       onPressed: onPressed,
       child: Text(
         text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
+        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
       ),
     );
   }

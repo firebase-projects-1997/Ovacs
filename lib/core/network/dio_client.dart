@@ -153,12 +153,26 @@ class DioClient {
         }
 
         if (responseData is Map<String, dynamic>) {
-          // Try to get nested non_field_errors from data["data"]
+          // Handle field-specific validation errors from data field
           if (responseData.containsKey('data')) {
             final innerData = responseData['data'];
-            if (innerData is Map<String, dynamic> &&
-                innerData['non_field_errors'] is List) {
-              return (innerData['non_field_errors'] as List).join(', ');
+            if (innerData is Map<String, dynamic>) {
+              // Check for non_field_errors first
+              if (innerData['non_field_errors'] is List) {
+                return (innerData['non_field_errors'] as List).join(', ');
+              }
+
+              // Extract field-specific errors (like email, password, etc.)
+              final fieldErrors = <String>[];
+              innerData.forEach((key, value) {
+                if (value is List && value.isNotEmpty) {
+                  fieldErrors.addAll(value.map((e) => e.toString()));
+                }
+              });
+
+              if (fieldErrors.isNotEmpty) {
+                return fieldErrors.join(', ');
+              }
             }
           }
 

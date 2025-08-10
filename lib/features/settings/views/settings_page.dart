@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:new_ovacs/common/widgets/rounded_container.dart';
 import 'package:new_ovacs/core/constants/app_colors.dart';
-import 'package:new_ovacs/core/constants/app_routes.dart';
 import 'package:new_ovacs/core/constants/app_sizes.dart';
 import 'package:new_ovacs/core/utils/color_utils.dart';
+import 'package:new_ovacs/features/onboarding/views/welcome_page.dart';
 import 'package:new_ovacs/main.dart';
 import 'package:provider/provider.dart';
 
@@ -226,8 +226,10 @@ class SettingsPage extends StatelessWidget {
                     ),
                     onPressed: () {
                       context.read<AuthProvider>().logout();
-                      navigatorKey.currentState!.pushNamedAndRemoveUntil(
-                        AppRoutes.loginRoute,
+                      navigatorKey.currentState!.pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const WelcomePage(),
+                        ),
                         (route) => false,
                       );
                     },

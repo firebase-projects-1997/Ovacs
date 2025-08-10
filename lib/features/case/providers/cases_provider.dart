@@ -1,121 +1,65 @@
-import 'package:flutter/material.dart';
-
-import '../../../core/mixins/optimistic_update_mixin.dart';
+import '../../../core/providers/base_list_provider.dart';
+import '../../../core/error/failure.dart';
 import '../../../data/models/case_model.dart';
 import '../../../data/repositories/case_repository.dart';
 import '../../../common/providers/workspace_provider.dart';
+import 'package:dartz/dartz.dart';
 
-class CasesProvider extends ChangeNotifier
-    with OptimisticUpdateMixin<CaseModel> {
+class CasesProvider extends BaseListProvider<CaseModel> {
   final CaseRepository _repository;
   final WorkspaceProvider _workspaceProvider;
 
   CasesProvider(this._repository, this._workspaceProvider);
 
-  List<CaseModel> _cases = [];
+  /// Convenience getter for cases
+  List<CaseModel> get cases => items;
 
   @override
-  List<CaseModel> get items => _cases;
+  Future<Either<Failure, List<CaseModel>>> performFetch({
+    required int page,
+    Map<String, dynamic>? params,
+  }) async {
+    // Merge workspace parameters with provided params
+    final filters = _workspaceProvider.mergeWithWorkspaceParams(params);
 
-  @override
-  set items(List<CaseModel> value) {
-    _cases = value;
-  }
+    final result = await _repository.getCases(page: page, filters: filters);
 
-  List<CaseModel> get cases => _cases;
-
-  bool _isLoading = false;
-
-  @override
-  bool get isLoading => _isLoading;
-
-  @override
-  set isLoading(bool value) {
-    _isLoading = value;
-  }
-
-  bool _isLoadingMore = false;
-  bool get isLoadingMore => _isLoadingMore;
-
-  int _currentPage = 1;
-  bool _hasMore = true;
-
-  String? _errorMessage;
-
-  @override
-  String? get errorMessage => _errorMessage;
-
-  @override
-  set errorMessage(String? value) {
-    _errorMessage = value;
-  }
-
-  Map<String, dynamic>? _filters;
-
-  Future<void> fetchCases({Map<String, dynamic>? filters}) async {
-    _isLoading = true;
-    _errorMessage = null;
-    _currentPage = 1;
-    _hasMore = true;
-    _filters = _workspaceProvider.mergeWithWorkspaceParams(filters);
-    notifyListeners();
-
-    final result = await _repository.getCases(
-      page: _currentPage,
-      filters: _filters,
-    );
-
-    result.fold(
+    return result.fold(
       (failure) {
         // Provide user-friendly error messages
+        String errorMessage;
         if (failure.message.contains("Permission") ||
             failure.message.contains("unhashable") ||
             failure.message.contains("Server permission system error")) {
-          _errorMessage =
+          errorMessage =
               "There's a temporary issue with the permission system. Please try again later or contact support.";
         } else if (failure.message.contains("Server configuration error")) {
-          _errorMessage =
+          errorMessage =
               "Server is experiencing technical difficulties. Please try again later.";
         } else {
-          _errorMessage = failure.message;
+          errorMessage = failure.message;
         }
-        _cases = [];
+        return Left(ServerFailure(errorMessage));
       },
       (response) {
-        _cases = response.cases;
-        _hasMore = response.pagination.hasNext;
-        _errorMessage = null; // Clear any previous errors
+        // Update pagination info
+        setPaginationInfo(
+          hasMore: response.pagination.hasNext,
+          totalCount: response.pagination.count,
+        );
+        return Right(response.cases);
       },
     );
-
-    _isLoading = false;
-    notifyListeners();
   }
 
-  Future<void> fetchMoreCases() async {
-    if (_isLoadingMore || !_hasMore) return;
+  /// Fetch cases with filters (convenience method)
+  Future<bool> fetchCases({Map<String, dynamic>? filters}) async {
+    return await fetchData(params: filters);
+  }
 
-    _isLoadingMore = true;
-    notifyListeners();
-
-    _currentPage++;
-    final result = await _repository.getCases(
-      page: _currentPage,
-      filters: _filters,
-    );
-
-    result.fold(
-      (failure) {
-        _errorMessage = failure.message;
-      },
-      (response) {
-        _cases.addAll(response.cases);
-        _hasMore = response.pagination.hasNext;
-      },
-    );
-
-    _isLoadingMore = false;
-    notifyListeners();
+  /// Load more cases (convenience method)
+  Future<bool> fetchMoreCases({Map<String, dynamic>? filters}) async {
+    return await loadMore(params: filters);
   }
 
   /// Optimistically adds a new case
@@ -146,11 +90,15 @@ class CasesProvider extends ChangeNotifier
       'date': date,
     };
 
-    return await optimisticAdd<CaseModel>(
+    // Get workspace query parameters
+    final queryParams = _workspaceProvider.getWorkspaceQueryParams();
+
+    return await addItem(
       item: tempCase,
-      operation: () => _repository.createCase(payload),
+      operation: () =>
+          _repository.createCase(payload, queryParams: queryParams),
       getId: (caseModel) => caseModel.id,
-      mapResult: (response) => response, // The response is already a CaseModel
+      successMessage: 'Case created successfully',
     );
   }
 
@@ -162,7 +110,7 @@ class CasesProvider extends ChangeNotifier
     required String date,
   }) async {
     // Find the existing case to preserve other fields
-    final existingCase = _cases.firstWhere((c) => c.id == id);
+    final existingCase = items.firstWhere((c) => c.id == id);
 
     final updatedCase = CaseModel(
       id: id,
@@ -180,12 +128,12 @@ class CasesProvider extends ChangeNotifier
     final payload = {'title': title, 'description': description, 'date': date};
     final queryParams = _workspaceProvider.getWorkspaceQueryParams();
 
-    return await optimisticUpdate<CaseModel>(
+    return await updateItem(
       updatedItem: updatedCase,
       operation: () =>
           _repository.updateCase(id, payload, queryParams: queryParams),
       getId: (caseModel) => caseModel.id,
-      mapResult: (response) => response, // The response is already a CaseModel
+      successMessage: 'Case updated successfully',
     );
   }
 
@@ -193,10 +141,11 @@ class CasesProvider extends ChangeNotifier
   Future<bool> deleteCaseOptimistic(int caseId) async {
     final queryParams = _workspaceProvider.getWorkspaceQueryParams();
 
-    return await optimisticDelete<bool>(
+    return await deleteItem(
       itemId: caseId,
       operation: () => _repository.deleteCase(caseId, queryParams: queryParams),
       getId: (caseModel) => caseModel.id,
+      successMessage: 'Case deleted successfully',
     );
   }
 }

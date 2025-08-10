@@ -10,11 +10,11 @@ import 'package:provider/provider.dart';
 
 import '../../../common/widgets/labeled_text_field.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_routes.dart';
 import '../../../core/functions/url_luncher.dart';
 import '../../../data/models/country_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
+import 'login_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -103,6 +103,8 @@ class _RegisterPageState extends State<RegisterPage> {
       countryId: selectedCountry!.id,
     );
 
+    if (!mounted) return;
+
     if (success) {
       showAppSnackBar(
         context,
@@ -184,7 +186,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           builder: (context, value, child) {
                             return !value.isLoading
                                 ? DropdownButtonFormField<CountryModel>(
-                                    isExpanded: true,
+                                    padding: EdgeInsets.zero,
+                                    // isExpanded: true,
                                     value: selectedCountry,
                                     hint: Text(
                                       '+',
@@ -233,7 +236,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
 
                       Expanded(
-                        flex: 5,
+                        flex: 3,
                         child: LabeledTextField(
                           labelColor: AppColors.pureWhite,
                           label: '',
@@ -342,7 +345,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   ..onTap = () {
                                     launchGivenUrl(
                                       context,
-                                      'https://your-terms-of-service-url.com',
+                                      'https://ovacs.com/',
                                     );
                                   },
                               ),
@@ -359,7 +362,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   ..onTap = () {
                                     launchGivenUrl(
                                       context,
-                                      'https://your-privacy-policy-url.com',
+                                      'https://ovacs.com/',
                                     );
                                   },
                               ),
@@ -405,8 +408,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               .copyWith(color: AppColors.pureWhite),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              navigatorKey.currentState!.pushNamed(
-                                AppRoutes.loginRoute,
+                              navigatorKey.currentState!.push(
+                                MaterialPageRoute(builder: (context) => const LoginPage()),
+
                               );
                             },
                         ),

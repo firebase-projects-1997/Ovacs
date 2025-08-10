@@ -185,6 +185,11 @@ class _AddSessionPageState extends State<AddSessionPage> {
                                 : () async {
                                     if (addSessionFormKey.currentState!
                                         .validate()) {
+                                      final sessionsProvider = context
+                                          .read<SessionsProvider>();
+                                      final navigator = Navigator.of(context);
+                                      final currentContext = context;
+
                                       final success = await value.addSession(
                                         caseId: widget.caseId,
                                         title: sessionNameC.text.trim(),
@@ -193,23 +198,23 @@ class _AddSessionPageState extends State<AddSessionPage> {
                                         date: dateC.text.trim(),
                                         time: timeC.text.trim(),
                                       );
-                                      print(success);
+
+                                      if (!mounted) return;
 
                                       if (success) {
-                                        context
-                                            .read<SessionsProvider>()
-                                            .fetchSessions(widget.caseId);
-
-                                        Navigator.of(context).pop();
+                                        sessionsProvider.fetchSessions(
+                                          widget.caseId,
+                                        );
+                                        navigator.pop();
                                         showAppSnackBar(
-                                          context,
+                                          currentContext,
                                           'Session created successfully',
                                           type: SnackBarType.success,
                                         );
                                         value.reset();
                                       } else if (!success) {
                                         showAppSnackBar(
-                                          context,
+                                          currentContext,
                                           value.errorMessage,
                                         );
                                         value.reset();
@@ -222,7 +227,7 @@ class _AddSessionPageState extends State<AddSessionPage> {
                                 width: 113,
                                 height: 44,
                                 decoration: BoxDecoration(
-                                  gradient:  LinearGradient(
+                                  gradient: LinearGradient(
                                     begin: Alignment.bottomCenter,
                                     end: Alignment.topCenter,
                                     colors: [

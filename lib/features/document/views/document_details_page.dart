@@ -324,16 +324,6 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage>
                         securityLevel: DocumentSecurityLevel.fromString(
                           document.securityLevel,
                         ),
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            context.read<DocumentsProvider>().viewFile(
-                              'https://ovacs.com/backend${document.secureViewUrl}',
-                              document.fileName,
-                            );
-                          },
-                          icon: const Icon(Iconsax.eye),
-                          label: Text(l10n.view),
-                        ),
                         fallback: ElevatedButton.icon(
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -342,6 +332,16 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage>
                                   "You don't have permission to view this document",
                                 ),
                               ),
+                            );
+                          },
+                          icon: const Icon(Iconsax.eye),
+                          label: Text(l10n.view),
+                        ),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            context.read<DocumentsProvider>().viewFile(
+                              'https://ovacs.com/backend${document.secureViewUrl}',
+                              document.fileName,
                             );
                           },
                           icon: const Icon(Iconsax.eye),
@@ -361,10 +361,26 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage>
                             securityLevel: DocumentSecurityLevel.fromString(
                               document.securityLevel,
                             ),
+                            fallback: ElevatedButton.icon(
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "You don't have permission to download this document",
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Iconsax.arrow_circle_down),
+                              label: Text(l10n.download),
+                            ),
                             child: ElevatedButton.icon(
                               onPressed: isDownloading
                                   ? null
                                   : () async {
+                                      final scaffoldMessenger =
+                                          ScaffoldMessenger.of(context);
+
                                       final success = await docProvider
                                           .downloadFile(
                                             'https://ovacs.com/backend${document.secureDownloadUrl}',
@@ -373,9 +389,7 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage>
                                           );
 
                                       if (mounted) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
+                                        scaffoldMessenger.showSnackBar(
                                           SnackBar(
                                             content: Text(
                                               success
@@ -395,19 +409,6 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage>
                                       ),
                                     )
                                   : const Icon(Iconsax.arrow_circle_down),
-                              label: Text(l10n.download),
-                            ),
-                            fallback: ElevatedButton.icon(
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      "You don't have permission to download this document",
-                                    ),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Iconsax.arrow_circle_down),
                               label: Text(l10n.download),
                             ),
                           );
@@ -534,13 +535,16 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage>
           ),
           ElevatedButton(
             onPressed: () async {
-              Navigator.pop(context);
+              final navigator = Navigator.of(context);
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+              navigator.pop();
               final success = await provider.updateDocument(document.id, {
                 'security_level': selectedLevel,
               });
 
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                scaffoldMessenger.showSnackBar(
                   SnackBar(
                     content: Text(
                       success ? l10n.updateSuccessful : l10n.updateFailed,
@@ -575,19 +579,22 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage>
           ),
           ElevatedButton(
             onPressed: () async {
-              Navigator.pop(context);
+              final navigator = Navigator.of(context);
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+              navigator.pop();
               final success = await provider.deleteDocument(document.id);
 
               if (mounted) {
                 if (success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     SnackBar(content: Text(l10n.deleteSuccessful)),
                   );
-                  Navigator.pop(context); // Go back to previous screen
+                  navigator.pop(); // Go back to previous screen
                 } else {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(l10n.deleteFailed)));
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text(l10n.deleteFailed)),
+                  );
                 }
               }
             },

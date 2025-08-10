@@ -30,27 +30,26 @@ class ColorUtils {
   /// Returns colors with different variations: primary, lighter, darker, and accent
   static List<Color> getDashboardColors(Color primaryColor) {
     final HSLColor hslColor = HSLColor.fromColor(primaryColor);
-    
+
     return [
       // Card 1: Original primary color
       primaryColor,
-      
+
       // Card 2: Lighter variation (increased lightness)
-      hslColor.withLightness(
-        (hslColor.lightness + 0.15).clamp(0.0, 1.0)
-      ).toColor(),
-      
+      hslColor
+          .withLightness((hslColor.lightness + 0.15).clamp(0.0, 1.0))
+          .toColor(),
+
       // Card 3: Darker variation (decreased lightness)
-      hslColor.withLightness(
-        (hslColor.lightness - 0.15).clamp(0.0, 1.0)
-      ).toColor(),
-      
+      hslColor
+          .withLightness((hslColor.lightness - 0.15).clamp(0.0, 1.0))
+          .toColor(),
+
       // Card 4: Accent variation (shifted hue)
-      hslColor.withHue(
-        (hslColor.hue + 30) % 360
-      ).withSaturation(
-        (hslColor.saturation + 0.1).clamp(0.0, 1.0)
-      ).toColor(),
+      hslColor
+          .withHue((hslColor.hue + 30) % 360)
+          .withSaturation((hslColor.saturation + 0.1).clamp(0.0, 1.0))
+          .toColor(),
     ];
   }
 
@@ -75,33 +74,33 @@ class ColorUtils {
   /// Creates a lighter shade of the color
   static Color lighten(Color color, [double amount = 0.1]) {
     final HSLColor hslColor = HSLColor.fromColor(color);
-    return hslColor.withLightness(
-      (hslColor.lightness + amount).clamp(0.0, 1.0)
-    ).toColor();
+    return hslColor
+        .withLightness((hslColor.lightness + amount).clamp(0.0, 1.0))
+        .toColor();
   }
 
   /// Creates a darker shade of the color
   static Color darken(Color color, [double amount = 0.1]) {
     final HSLColor hslColor = HSLColor.fromColor(color);
-    return hslColor.withLightness(
-      (hslColor.lightness - amount).clamp(0.0, 1.0)
-    ).toColor();
+    return hslColor
+        .withLightness((hslColor.lightness - amount).clamp(0.0, 1.0))
+        .toColor();
   }
 
   /// Creates a more saturated version of the color
   static Color saturate(Color color, [double amount = 0.1]) {
     final HSLColor hslColor = HSLColor.fromColor(color);
-    return hslColor.withSaturation(
-      (hslColor.saturation + amount).clamp(0.0, 1.0)
-    ).toColor();
+    return hslColor
+        .withSaturation((hslColor.saturation + amount).clamp(0.0, 1.0))
+        .toColor();
   }
 
   /// Creates a less saturated version of the color
   static Color desaturate(Color color, [double amount = 0.1]) {
     final HSLColor hslColor = HSLColor.fromColor(color);
-    return hslColor.withSaturation(
-      (hslColor.saturation - amount).clamp(0.0, 1.0)
-    ).toColor();
+    return hslColor
+        .withSaturation((hslColor.saturation - amount).clamp(0.0, 1.0))
+        .toColor();
   }
 
   /// Checks if a color is light or dark (for text contrast)
@@ -117,7 +116,7 @@ class ColorUtils {
 
   /// Converts a color to hex string
   static String colorToHex(Color color) {
-    return '#${color.value.toRadixString(16).substring(2).toUpperCase()}';
+    return '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
   }
 
   /// Converts hex string to color
@@ -136,7 +135,8 @@ class ColorUtils {
   }
 
   /// Creates a gradient from a primary color
-  static LinearGradient createGradient(Color primaryColor, {
+  static LinearGradient createGradient(
+    Color primaryColor, {
     AlignmentGeometry begin = Alignment.topLeft,
     AlignmentGeometry end = Alignment.bottomRight,
   }) {
@@ -144,8 +144,8 @@ class ColorUtils {
       begin: begin,
       end: end,
       colors: [
-        primaryColor.withOpacity(0.9),
-        primaryColor.withOpacity(0.7),
+        primaryColor.withValues(alpha: 0.9),
+        primaryColor.withValues(alpha: 0.7),
       ],
     );
   }
@@ -164,7 +164,7 @@ class ColorUtils {
       800: darken(color, 0.2),
       900: darken(color, 0.3),
     };
-    
-    return MaterialColor(color.value, swatch);
+
+    return MaterialColor(color.toARGB32(), swatch);
   }
 }

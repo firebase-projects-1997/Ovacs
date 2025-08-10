@@ -7,10 +7,10 @@ import '../../../data/models/case_model.dart';
 import '../../../data/models/client_model.dart';
 import '../../../data/models/country_model.dart';
 import '../../client/providers/clients_provider.dart';
-import '../../case/provider/case_details_provider.dart';
 import '../../../common/widgets/labeled_text_field.dart';
-import '../provider/cases_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../providers/case_details_provider.dart';
+import '../providers/cases_provider.dart';
 
 class EditCasePage extends StatefulWidget {
   final CaseModel caseModel;
@@ -109,21 +109,26 @@ class _EditCasePageState extends State<EditCasePage> {
     };
 
     final provider = context.read<CaseDetailProvider>();
+    final casesProvider = context.read<CasesProvider>();
+    final navigator = Navigator.of(context);
+    final localizations = AppLocalizations.of(context)!;
+
     final success = await provider.updateCase(widget.caseModel.id, payload);
+
+    if (!mounted) return;
 
     setState(() {
       _isLoading = false;
     });
 
     if (success) {
-      context.read<CaseDetailProvider>().fetchCaseDetail(widget.caseModel.id);
-      context.read<CasesProvider>().fetchCases();
-      Navigator.of(context).pop(true);
+      provider.fetchCaseDetail(widget.caseModel.id);
+      casesProvider.fetchCases();
+      navigator.pop(true);
     } else {
       showAppSnackBar(
         context,
-        provider.errorMessage ??
-            AppLocalizations.of(context)!.failedToUpdateCase,
+        provider.errorMessage ?? localizations.failedToUpdateCase,
       );
     }
   }

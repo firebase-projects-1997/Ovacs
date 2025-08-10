@@ -8,10 +8,10 @@ import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_images.dart';
-import '../../../core/constants/app_routes.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../main.dart';
 import '../providers/auth_provider.dart';
+import 'login_page.dart';
 
 class OtpVerificationPage extends StatefulWidget {
   final String email;
@@ -260,7 +260,9 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     if (!mounted) return;
 
     if (success) {
-      navigatorKey.currentState!.pushReplacementNamed(AppRoutes.loginRoute);
+      navigatorKey.currentState!.pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
     } else {
       showAppSnackBar(context, auth.error);
     }

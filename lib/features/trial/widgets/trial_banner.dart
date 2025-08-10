@@ -45,7 +45,7 @@
 //             color: bannerColor,
 //             boxShadow: [
 //               BoxShadow(
-//                 color: bannerColor.withOpacity(0.3),
+//                 color: bannerColor.withValues(alpha:0.3),
 //                 blurRadius: 4,
 //                 offset: const Offset(0, 2),
 //               ),
@@ -75,7 +75,7 @@
 //                     vertical: 4,
 //                   ),
 //                   decoration: BoxDecoration(
-//                     color: textColor.withOpacity(0.2),
+//                     color: textColor.withValues(alpha:0.2),
 //                     borderRadius: BorderRadius.circular(12),
 //                   ),
 //                   child: Text(

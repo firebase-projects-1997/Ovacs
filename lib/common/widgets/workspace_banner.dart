@@ -5,7 +5,7 @@ import 'package:new_ovacs/features/dashboard/providers/dashboard_provider.dart';
 import 'package:provider/provider.dart';
 import '../providers/permission_provider.dart';
 import '../providers/workspace_provider.dart';
-import '../../features/case/provider/cases_provider.dart';
+import '../../features/case/providers/cases_provider.dart';
 import '../../l10n/app_localizations.dart';
 
 class WorkspaceBanner extends StatelessWidget {

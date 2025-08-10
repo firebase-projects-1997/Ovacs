@@ -3,7 +3,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../services/trial_service.dart';
-import '../../../l10n/app_localizations.dart';
 
 class TrialExpiredPage extends StatelessWidget {
   const TrialExpiredPage({super.key});
@@ -22,9 +21,9 @@ class TrialExpiredPage extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppColors.primaryBlue.withOpacity(0.1),
+              AppColors.primaryBlue.withValues(alpha: 0.1),
               Colors.white,
-              AppColors.primaryBlue.withOpacity(0.05),
+              AppColors.primaryBlue.withValues(alpha: 0.05),
             ],
           ),
         ),
@@ -39,7 +38,7 @@ class TrialExpiredPage extends StatelessWidget {
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryBlue.withOpacity(0.1),
+                    color: AppColors.primaryBlue.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -70,10 +69,10 @@ class TrialExpiredPage extends StatelessWidget {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.red.withOpacity(0.1),
+                    color: AppColors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: AppColors.red.withOpacity(0.3),
+                      color: AppColors.red.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -108,7 +107,7 @@ class TrialExpiredPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),

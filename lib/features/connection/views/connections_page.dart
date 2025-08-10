@@ -20,9 +20,11 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      context.read<ConnectionProvider>().fetchFollowing();
-      context.read<ConnectionProvider>().fetchFollowers();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ConnectionProvider>().fetchFollowing();
+        context.read<ConnectionProvider>().fetchFollowers();
+      }
     });
   }
 

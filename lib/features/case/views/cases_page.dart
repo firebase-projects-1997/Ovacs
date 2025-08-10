@@ -14,7 +14,7 @@ import '../../../core/mixins/permission_mixin.dart';
 import '../../../core/functions/is_dark_mode.dart';
 import '../../../data/models/case_model.dart';
 import '../../../l10n/app_localizations.dart';
-import '../provider/cases_provider.dart';
+import '../providers/cases_provider.dart';
 import '../widgets/case_card.dart';
 import 'add_new_case_page.dart';
 import 'search_cases_page.dart';

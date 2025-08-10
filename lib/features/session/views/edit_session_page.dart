@@ -227,26 +227,32 @@ class _EditSessionPageState extends State<EditSessionPage> {
                                         : '',
                                   };
 
+                                  final sessionsProvider = context
+                                      .read<SessionsProvider>();
+                                  final navigator = Navigator.of(context);
+                                  final currentContext = context;
+
                                   final success = await detailProvider
                                       .updateSession(
                                         widget.sessionModel.id,
                                         payload,
                                       );
 
-                                  if (success) {
-                                    context
-                                        .read<SessionsProvider>()
-                                        .fetchSessions(widget.caseId);
+                                  if (!mounted) return;
 
-                                    Navigator.of(context).pop(true);
+                                  if (success) {
+                                    sessionsProvider.fetchSessions(
+                                      widget.caseId,
+                                    );
+                                    navigator.pop(true);
                                     showAppSnackBar(
-                                      context,
+                                      currentContext,
                                       'Session updated successfully',
                                       type: SnackBarType.success,
                                     );
                                   } else {
                                     showAppSnackBar(
-                                      context,
+                                      currentContext,
                                       detailProvider.errorMessage,
                                     );
                                   }
